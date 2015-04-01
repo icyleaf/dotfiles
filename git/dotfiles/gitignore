@@ -1,0 +1,42 @@
+# Xcode project
+*\*.xcodeproj
+!*.xcodeproj/project.pbxproj
+*\project.xcworkspace
+*\xcuserdata
+
+*\build
+*\*.pbxuser
+*\*.mode1v3
+*\*.mode2v3
+*\*.perspectivev3
+*\target/*
+*\.DS_Store
+*\profile
+
+# Xcode workspace
+*\*.xcworkspace
+
+# Eclipse android project
+*\bin
+*\gen
+
+# e textediotr project config file
+*\.eprj
+
+# Eclipse project config file and folders
+*\.project
+*\.settings
+*\.buildpath
+
+# netbeans project config folders
+*\nbproject
+
+# PHPStorm project config folders
+*\.idea
+
+# the Other SCM files
+*\.svn
+*\.hg
+
+# Others
+*.pyc

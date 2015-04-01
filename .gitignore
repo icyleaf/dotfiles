@@ -1,0 +1,5 @@
+vim/dotfiles/vim/bundle/*
+
+home/dotfiles/ssh/id_*
+home/dotfiles/ssh/*rsa
+home/dotfiles/ssh/known_hosts

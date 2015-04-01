@@ -1,0 +1,58 @@
+# Qyer
+Host qydev
+HostName 172.1.40.215
+Port 2233
+User root
+
+Host qymobile
+HostName 172.1.1.227
+Port 22
+User wangshen
+
+Host qymobile.root
+HostName 172.1.1.227
+Port 22
+User root
+
+Host qymini
+HostName 172.1.7.227
+Port 22
+User qyer
+
+Host im1
+HostName 42.62.78.181
+Port 2233
+User root
+
+Host imdb
+HostName 42.62.78.172
+Port 2233
+User root
+
+Host qyerdb
+HostName 115.182.69.205
+IdentityFile ~/.ssh/qyer_db_rsa
+Port 2233
+User mobile_dept
+
+
+# Virtual Host (VPS)
+Host n
+HostName apne1.actionbox.io
+Port 17572
+User action
+
+Host do
+HostName 192.241.220.151
+Port 22
+User icyleaf
+
+Host dh
+HostName scott.dreamhost.com
+Port 22
+User lopor
+
+Host buyvm
+HostName 199.19.224.54
+Port 22
+User icyleaf
