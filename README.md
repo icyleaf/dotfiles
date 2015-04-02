@@ -55,3 +55,8 @@ $ ./bootstrap.sh
 --------
 
 直接问作者本人吧！
+
+更多牛人配置
+------------
+
+https://dotfiles.github.io/
