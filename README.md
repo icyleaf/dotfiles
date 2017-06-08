@@ -7,34 +7,57 @@ icyleaf's dotfiles
 
 ```bash
 .
-├── bootstrap.sh
-├── apps
-│   └── iterm2
+├── README.md
 ├── bin
-│   └── dotfile
+│   ├── bootstrap
+│   └── install
 ├── brew
-│   ├── init.sh
+│   ├── Brewfile
 │   └── install.sh
+├── editorconfig
+│   └── editorconfig.symlink
 ├── functions
 │   └── _bash
 ├── git
-│   ├── dotfiles
-│   ├── install.sh
-│   └── template
-├── home
-│   └── dotfiles
-├── osx
+│   ├── gitattributes.symlink
+│   ├── gitconfig.local.symlink
+│   ├── gitconfig.local.symlink.example
+│   ├── gitconfig.symlink
+│   └── gitignore.symlink
+├── iterm2
+│   └── Preferences
+│       └── com.googlecode.iterm2.plist
+├── macos
 │   └── install.sh
-├── system
-│   └── etc
+├── ruby
+│   ├── gemrc.symlink
+│   └── rvmrc.symlink
+├── ssh
+│   └── ssh.symlink
+│       ├── config
+│       ├── id_boot2docker
+│       ├── id_boot2docker.pub
+│       ├── id_dsa
+│       ├── id_dsa.pub
+│       ├── id_rsa
+│       ├── id_rsa.pub
+│       ├── id_rsa_docker
+│       ├── known_hosts
+│       ├── qyer_db_rsa
+│       └── shen.wang.pem
 ├── tmux
-│   └── dotfiles
+│   ├── tmux.conf.symlink
+│   └── tmuxinator.symlink
+│       └── qmobile.yml
 ├── vim
-│   ├── dotfiles
-│   └── install.sh
+│   ├── install.sh
+│   └── vimrc.symlink
+├── vscode
+│   ├── install.sh
+│   └── syncLocalSettings.json.example
 └── zsh
-    ├── dotfiles
-    └── install.sh
+    ├── install.sh
+    └── zshrc.symlink
 ```
 
 如果安装
@@ -43,7 +66,8 @@ icyleaf's dotfiles
 ```bash
 $ git clone http://gitlab.dev/icyleaf/dotfiles.git
 $ cd dotfiles
-$ ./bootstrap.sh
+$ ./bin/bootstrap
+$ ./bin/install
 ```
 
 实现原理
