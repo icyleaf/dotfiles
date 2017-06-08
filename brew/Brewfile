@@ -1,0 +1,59 @@
+cask_args appdir: '/Applications'
+
+# Taps
+tap "homebrew/services"
+tap "caskroom/fonts"
+
+# DevOps
+brew "ansible"
+
+# Git
+brew "git"
+brew "git-flow-avh"
+brew "tig"
+
+# Development Tools
+brew "mysql"
+brew "mycli"
+brew "redis"
+brew "node"
+brew "imagemagick"
+
+# Development Language
+brew "crystal-lang"
+
+# Tweaks
+brew "fasd"
+brew "axel"
+brew "mtr"
+brew "tree"
+brew "watch"
+brew "wget"
+brew "ssh-copy-id"
+brew "youtube-dl"
+brew "httpie"
+brew "mobile-shell"
+brew "mitmproxy"
+brew "hugo"
+
+# Tmux
+brew "tmux"
+brew "reattach-to-user-namespace"
+
+# # macOS Apps
+cask '1password'
+cask "visual-studio-code"
+cask "google-chrome"
+cask "iterm2"
+cask "the-unarchiver"
+cask "dropbox"
+cask "android-sdk"
+cask "virtualbox"
+cask "android-studio"
+
+# macOS QuickLook Extensions
+cask "provisionql"
+cask "qlcolorcode"
+cask "qlimagesize"
+cask "quicklook-json"
+cask "quicklookapk"
