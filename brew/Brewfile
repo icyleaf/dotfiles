@@ -11,6 +11,7 @@ brew "ansible"
 brew "git"
 brew "git-flow-avh"
 brew "tig"
+brew "kdif3"
 
 # Development Tools
 brew "mysql"
