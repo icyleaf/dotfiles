@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Vim 
+# Vim
 source functions/_bash
 
 # Create bundle dir
@@ -14,6 +14,5 @@ fi
 
 # Install vim plugins from .vimrc
 vim +BundleInstall +BundleClean +qall
-
 
 success "vim/vundle/bundles installed"

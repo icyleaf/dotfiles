@@ -1,0 +1,85 @@
+# tmux source-file ~/.tmux.conf
+# author: icyleaf <icyleaf.cn@gmail.com>
+
+# Golbal
+
+## using the default prefix hotkey
+set -g prefix C-a
+
+## Options
+set -g base-index 1
+set -g pane-base-index 1
+set -g status-position top
+set -g repeat-time 0
+set -sg escape-time 0
+
+## mode-keys
+setw -g mode-keys vi
+
+## bind keys
+bind i display-panes
+bind y copy-mode
+bind p paste-buffer
+
+## extra custom Commands
+bind m command-prompt "splitw 'exec man %%'"
+bind @ command-prompt "splitw 'exec perldoc -t -f %%'"
+bind * command-prompt "splitw 'exec perldoc -t -v %%'"
+bind % command-prompt "splitw 'exec perldoc -t %%'"
+bind / command-prompt "splitw 'exec ri -T %% | less'"
+
+# tmux plugins manager
+set -g @plugins 'tmux-plugins/tpm'
+
+## tmux theme
+set -g @plugins 'caiogondim/maglev'
+set -g @plugins 'tmux-plugins/tmux-open'
+set -g @plugins 'tmux-plugins/tmux-prefix-highlight'
+set -g @plugins 'tmux-plugins/tmux-battery'
+set -g @plugins 'tmux-plugins/tmux-cpu'
+
+# set -g @plugin 'seebi/tmux-colors-solarized'
+# set -g @colors-solarized 'dark'
+
+## tmux suggest default options
+set -g @plugins 'tmux-plugins/tmux-sensible'
+
+## utilities for manipulating tmux sessions.
+## prefix + g: prompts for session name and switches to it.
+## prefix + C: prompt for creating a new session by name.
+## prefix + X: kill current session without detaching tmux.
+## prefix + S: switches to the last session.
+## prefix + @: promote current pane into a new session.
+set -g @plugin 'tmux-plugins/tmux-sessionist'
+
+# copy to clipboard
+# osx must install reattach-to-user-namespace
+# prefix + y: copy text from the command line
+# prefix + Y: copy pane current working directory(PWD)
+set -g @plugins 'tmux-plugins/tmux-yank'
+
+## controlling panes
+## prefix + h and prefix + C-h: select pane on the left
+## prefix + j and prefix + C-j: select pane below the current one
+## prefix + k and prefix + C-k: select pane above
+## prefix + l and prefix + C-l: select pane on the right
+## prefix + |: split current pane horizontally
+## prefix + -: split current pane vertically
+set -g @plugins 'tmux-plugins/tmux-pain-control'
+
+## regix searches with result highlight
+## prefix + /: regex search (strings work too)
+set -g @plugins 'tmux-plugins/tmux-copycat'
+
+## Easy logging and screen capturing
+## prefix + shift + p: Logging
+## prefix + alt + p: Screen capture
+set -g @plugins 'tmux-plugins/tmux-logging'
+
+## Restore tmux environment after system restart.
+set -g @plugins 'tmux-plugins/tmux-resurrect'
+set -g @plugins 'tmux-plugins/tmux-continuum'
+#set -g @continuum-restore 'on'
+
+# Initialize TMUX plugin manager
+run '~/.tmux/plugins/tpm/tpm'

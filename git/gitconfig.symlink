@@ -1,0 +1,25 @@
+# Local/private config goes in the include
+[include]
+  path = ~/.gitconfig.local
+[core]
+  excludesfile = ~/.gitignore
+  attributesfile = ~/.gitattributes
+  editor = vim
+  pager = tig
+[alias]
+  clone = clone --recursive URL
+  count   = !git shortlog -sn
+[log]
+  date = local
+[diff]
+  rename = copy
+[status]
+  color = auto
+[merge]
+  # Install it: http://kdiff3.sourceforge.net/ (For Mac: `brew install kdif3`)
+  tool = kdiff3
+[push]
+  default = simple
+
+[color]
+  pager = off

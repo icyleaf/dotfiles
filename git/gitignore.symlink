@@ -4,7 +4,7 @@
 *\project.xcworkspace
 *\xcuserdata
 
-*\build
+build/*.*
 *\*.pbxuser
 *\*.mode1v3
 *\*.mode2v3
@@ -34,9 +34,19 @@
 # PHPStorm project config folders
 *\.idea
 
+# fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
+
 # the Other SCM files
 *\.svn
 *\.hg
 
+# VS Code
+.history
+
 # Others
 *.pyc
+.avoscloud/
