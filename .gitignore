@@ -1,3 +1,6 @@
 vim/dotfiles/vim/bundle/*
 
-/ssh/
+git/gitconfig.local.symlink
+vscode/syncLocalSettings.json
+
+ssh/
