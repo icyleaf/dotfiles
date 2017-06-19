@@ -12,7 +12,7 @@ pre:
   - brew services start redis
 
 # Runs in each window and pane before window/pane specific commands. Useful for setting up interpreter versions.
-pre_window: rvm use 2.4@qmobile --create
+pre_window: rvm use 2.3@qmobile --create
 
 # Pass command line options to tmux. Useful for specifying a different tmux.conf.
 # tmux_options: -f ~/.tmux.mac.conf

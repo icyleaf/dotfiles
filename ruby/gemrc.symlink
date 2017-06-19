@@ -2,7 +2,6 @@
 :backtrace: false
 :benchmark: false
 :update_sources: true
-:verbose: true
 :sources:
 - https://gems.ruby-china.org
 gem: --no-document

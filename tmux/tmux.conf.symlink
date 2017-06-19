@@ -69,7 +69,7 @@ set -g @plugins 'tmux-plugins/tmux-pain-control'
 
 ## regix searches with result highlight
 ## prefix + /: regex search (strings work too)
-set -g @plugins 'tmux-plugins/tmux-copycat'
+# set -g @plugins 'tmux-plugins/tmux-copycat'
 
 ## Easy logging and screen capturing
 ## prefix + shift + p: Logging
