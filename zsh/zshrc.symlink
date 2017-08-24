@@ -68,4 +68,4 @@ alias la='ll -a'
 alias rake='noglob rake'
 alias reload='source ~/.zshrc'
 alias zshrc='vim ~/.zshrc'
-alias omz='vim ~/.oh-my-zsh'j
+alias omz='vim ~/.oh-my-zsh'

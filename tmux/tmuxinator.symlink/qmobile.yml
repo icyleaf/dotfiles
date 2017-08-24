@@ -32,4 +32,4 @@ pre_window: rvm use 2.4.1@qmobile --create
 windows:
   - editor: clear
   - logs: tail -f log/development.log
-  - foreman: bundle exec foreman start
+  - foreman: bundle exec guard start
