@@ -47,6 +47,10 @@ fastlane/test_output
 # VS Code
 .history
 
+# Crystal
+main.cr
+
 # Others
 *.pyc
 .avoscloud/
+.vscode

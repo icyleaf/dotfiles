@@ -20,6 +20,5 @@
   tool = kdiff3
 [push]
   default = simple
-
 [color]
   pager = off
