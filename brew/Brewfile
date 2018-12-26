@@ -21,7 +21,7 @@ brew "node"
 brew "imagemagick"
 
 # Development Language
-brew "crystal-lang"
+brew "crystal"
 
 # Tweaks
 brew "fasd"
@@ -41,7 +41,7 @@ brew "hugo"
 brew "tmux"
 brew "reattach-to-user-namespace"
 
-# # macOS Apps
+# macOS Apps
 cask '1password'
 cask "visual-studio-code"
 cask "google-chrome"
@@ -50,7 +50,6 @@ cask "the-unarchiver"
 cask "dropbox"
 cask "android-sdk"
 cask "virtualbox"
-cask "android-studio"
 
 # macOS QuickLook Extensions
 cask "provisionql"
