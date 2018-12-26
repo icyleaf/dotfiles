@@ -1,7 +1,7 @@
 ---
 :bulk_threshold: 1000
 :sources:
-- https://gems.ruby-china.org
+- https://gems.ruby-china.com
 :update_sources: true
 benchmark: false
 gem: --no-ri --no-rdoc
