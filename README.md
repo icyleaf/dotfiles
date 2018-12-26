@@ -60,7 +60,7 @@ icyleaf's dotfiles
     └── zshrc.symlink
 ```
 
-如果安装
+安装
 --------
 
 ```bash
