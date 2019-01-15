@@ -4,4 +4,4 @@
 - https://gems.ruby-china.com
 :update_sources: true
 benchmark: false
-gem: --no-ri --no-rdoc
+gem: --no-ri --no-rdoc --no-document
