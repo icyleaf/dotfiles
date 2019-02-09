@@ -4,8 +4,10 @@
 
 source functions/_bash
 
-src="config/karbiner/karbiner.json"
-desc="~/.$src"
+karbiner_pwd=`pwd`
+
+src="config/karbiner"
+desc="~/$HOME/$src"
 
 echo " > Linking ${desc}"
-link_file "$src" "$desc"
+link_file "${karbiner_pwd}/${src}" "$desc"
