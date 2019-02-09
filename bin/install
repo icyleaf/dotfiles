@@ -4,9 +4,36 @@
 
 set -e
 
+source functions/_bash
+
 cd "$(dirname $0)"/..
 
 find . -name install.sh | while read installer ; do
-  echo $installer
+  echo "   [..] $installer"
   sh -c "${installer}"
 done
+
+setup_vscode () {
+  if test ! $(which code)
+  then
+    info "Linking code command"
+    code_path="/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code"
+
+    ln -s $code_path /usr/local/bin/code
+    success 'gitconfig'
+  fi
+
+  settings_sync_file="~/Library/Application Support/Code/User/syncLocalSettings.json"
+  if [ ! -f "$settings_sync_file" ]; then
+    info "Install Settings Sync"
+    code --install-extension Shan.code-settings-sync
+
+    user ' - What is your github access token?'
+    read -e github_access_token
+
+    sed -e "s/GITHUB_ACCESS_TOKEN/$github_access_token/g" vscode/syncLocalSettings.json.example > vscode/syncLocalSettings.json
+    ln -s vscode/syncLocalSettings.json "$settings_sync_file.ex"
+  fi
+}
+
+setup_vscode

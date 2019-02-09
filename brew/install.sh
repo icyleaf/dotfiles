@@ -2,6 +2,8 @@
 #
 # 初始化 Homebrew
 
+source functions/_bash
+
 brew_path=`pwd`
 if test ! $(which brew); then
   # # 检查并安装 Homebrew
@@ -26,4 +28,6 @@ if test ! $(which brew); then
     # 安装 Linuxbrew
     ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install)"
   fi
+else
+  success "skip"
 fi
