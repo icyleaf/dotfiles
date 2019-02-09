@@ -11,7 +11,6 @@ brew "ansible"
 brew "git"
 brew "git-flow-avh"
 brew "tig"
-brew "kdif3"
 
 # Development Tools
 brew "mysql"
@@ -42,7 +41,6 @@ brew "tmux"
 brew "reattach-to-user-namespace"
 
 # macOS Apps
-cask '1password'
 cask "visual-studio-code"
 cask "google-chrome"
 cask "iterm2"
@@ -54,6 +52,8 @@ cask "virtualbox"
 # macOS QuickLook Extensions
 cask "provisionql"
 cask "qlcolorcode"
-cask "qlimagesize"
 cask "quicklook-json"
 cask "quicklookapk"
+
+# macOS Fonts for zsh
+cask "font-droid-sans-mono-for-powerline"
