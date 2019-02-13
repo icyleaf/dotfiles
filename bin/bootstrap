@@ -73,6 +73,12 @@ install_dotfiles () {
 #   done
 # }
 
+
+#############################
+# Main
+#############################
+
+tips "=========icyleaf's dotfiles bootstrap========="
 setup_gitconfig
 install_dotfiles
 
@@ -88,5 +94,4 @@ install_dotfiles
 #   fi
 # fi
 
-echo ''
-echo '  All installed!'
+tips 'All installed!'

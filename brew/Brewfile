@@ -54,6 +54,7 @@ cask "the-unarchiver"
 cask "dropbox"
 cask "android-sdk"
 cask "virtualbox"
+cask "karabiner-elements"
 
 # macOS QuickLook Extensions
 cask "provisionql"

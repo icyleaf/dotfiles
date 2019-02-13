@@ -8,7 +8,7 @@
   pager = tig
 [alias]
   clone = clone --recursive URL
-  count   = !git shortlog -sn
+  count = !git shortlog -sn
 [log]
   date = local
 [diff]

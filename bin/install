@@ -9,7 +9,7 @@ source functions/_bash
 cd "$(dirname $0)"/..
 
 find . -name install.sh | while read installer ; do
-  echo "   [..] $installer"
+  echo "-> $installer"
   sh -c "${installer}"
 done
 
@@ -23,7 +23,7 @@ setup_vscode () {
     success 'gitconfig'
   fi
 
-  settings_sync_file="~/Library/Application Support/Code/User/syncLocalSettings.json"
+  settings_sync_file="$HOME/Library/Application Support/Code/User/syncLocalSettings.json"
   if [ ! -f "$settings_sync_file" ]; then
     info "Install Settings Sync"
     code --install-extension Shan.code-settings-sync
