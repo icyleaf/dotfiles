@@ -53,8 +53,8 @@ cask "iterm2"
 cask "the-unarchiver"
 cask "dropbox"
 cask "android-sdk"
-cask "virtualbox"
 cask "karabiner-elements"
+cask "baiduinput"
 
 # macOS QuickLook Extensions
 cask "provisionql"
@@ -62,5 +62,5 @@ cask "qlcolorcode"
 cask "quicklook-json"
 cask "quicklookapk"
 
-# macOS Fonts for zsh
+# macOS non-ascii Fonts for terminal
 cask "font-droid-sans-mono-for-powerline"
