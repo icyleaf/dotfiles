@@ -18,7 +18,7 @@ if test ! $(which brew); then
     git remote set-url origin https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/homebrew-core.git
 
     cd $brew_path
-    brew update --rebase
+    brew update --verbose
 
     success "homebrew"
 
