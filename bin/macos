@@ -45,6 +45,36 @@ defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
 defaults write com.apple.screencapture disable-shadow -bool true
 
 ###############################################################################
+# Dock, Dashboard, and hot corners                                            #
+###############################################################################
+
+# Set the icon size of Dock items to 38 pixels
+defaults write com.apple.dock tilesize -int 38
+
+# Set the icon large size of Dock items to 47 pixels
+defaults write com.apple.dock largesize -int 47
+
+# Enable magnification
+defaults write com.apple.dock magnification -bool true
+
+# Change minimize/maximize window effect
+defaults write com.apple.dock mineffect -string "scale"
+
+# Remove the auto-hiding Dock delay
+defaults write com.apple.dock autohide-delay -float 0
+# Remove the animation when hiding/showing the Dock
+defaults write com.apple.dock autohide-time-modifier -float 0
+
+# Automatically hide and show the Dock
+defaults write com.apple.dock autohide -bool true
+
+# Make Dock icons of hidden applications translucent
+defaults write com.apple.dock showhidden -bool true
+
+# Don’t show recent applications in Dock
+defaults write com.apple.dock show-recents -bool false
+
+###############################################################################
 # Finder                                                                      #
 ###############################################################################
 
