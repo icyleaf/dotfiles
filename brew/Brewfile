@@ -38,6 +38,7 @@ brew "bat"
 brew "jsonpp"
 brew "neofetch"
 brew "hugo"
+brew "mas"
 
 # Tmux
 brew "tmux"
@@ -47,14 +48,17 @@ brew "reattach-to-user-namespace"
 brew "ansible"
 
 # macOS Apps
+cask "alfred"
 cask "visual-studio-code"
 cask "google-chrome"
 cask "iterm2"
 cask "the-unarchiver"
 cask "dropbox"
-cask "android-sdk"
 cask "karabiner-elements"
 cask "baiduinput"
+cask "java"
+cask "android-sdk"
+cask "android-studio"
 
 # macOS QuickLook Extensions
 cask "provisionql"
