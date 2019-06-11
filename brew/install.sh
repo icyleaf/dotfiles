@@ -27,6 +27,6 @@ fi
 
 # 安装 Brewfile 里面的内容
 info "Installing brew bundle"
-cd $brew_path
+cd "${brew_path}/brew"
 brew bundle -v
 success "brew bundle"
