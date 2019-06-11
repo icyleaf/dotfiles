@@ -25,6 +25,9 @@ while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 # Disable the “Are you sure you want to open this application?” dialog
 defaults write com.apple.LaunchServices LSQuarantine -bool false
 
+# Display date and 24-hours format in menu bar
+defaults write com.apple.menuextra.clock DateFormat -string "M\\U6708d\\U65e5 EEE  HH:mm"
+
 ###############################################################################
 # Trackpad, mouse, keyboard, Bluetooth accessories, and input                 #
 ###############################################################################
@@ -33,7 +36,6 @@ defaults write com.apple.LaunchServices LSQuarantine -bool false
 defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
 defaults -currentHost write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
 defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
-
 
 ###############################################################################
 # Screen                                                                      #
