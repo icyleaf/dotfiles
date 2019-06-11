@@ -10,7 +10,8 @@ icyleaf's dotfiles
 ├── README.md
 ├── bin
 │   ├── bootstrap
-│   └── install
+│   ├── install
+│   └── macos
 ├── brew
 │   ├── Brewfile
 │   └── install.sh
@@ -25,35 +26,33 @@ icyleaf's dotfiles
 │   ├── gitconfig.symlink
 │   └── gitignore.symlink
 ├── iterm2
-│   └── Preferences
-│       └── com.googlecode.iterm2.plist
-├── macos
-│   └── install.sh
+│   ├── Preferences
+│   │   └── com.googlecode.iterm2.plist
+│   ├── install.sh
+│   └── themes
+│       └── seti.itermcolors
+├── karabiner
+│   ├── assets
+│   │   └── complex_modifications
+│   │       └── 60-keyboard.json
+│   ├── install.sh
+│   └── karabiner.json
 ├── ruby
 │   ├── gemrc.symlink
+│   └── irbrc.symlink
+├── rvm
+│   ├── install.sh
 │   └── rvmrc.symlink
-├── ssh
-│   └── ssh.symlink
-│       ├── config
-│       ├── id_boot2docker
-│       ├── id_boot2docker.pub
-│       ├── id_dsa
-│       ├── id_dsa.pub
-│       ├── id_rsa
-│       ├── id_rsa.pub
-│       ├── id_rsa_docker
-│       ├── known_hosts
-│       ├── qyer_db_rsa
-│       └── shen.wang.pem
 ├── tmux
+│   ├── install.sh
 │   ├── tmux.conf.symlink
 │   └── tmuxinator.symlink
+│       ├── hpr.yml
 │       └── qmobile.yml
 ├── vim
-│   ├── install.sh
-│   └── vimrc.symlink
+│   └── install.sh
 ├── vscode
-│   ├── install.sh
+│   ├── syncLocalSettings.json
 │   └── syncLocalSettings.json.example
 └── zsh
     ├── install.sh
@@ -68,6 +67,7 @@ $ git clone http://gitlab.dev/icyleaf/dotfiles.git
 $ cd dotfiles
 $ ./bin/bootstrap
 $ ./bin/install
+$ ./bin/macos
 ```
 
 实现原理
