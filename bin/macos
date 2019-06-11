@@ -149,4 +149,11 @@ defaults write com.apple.SoftwareUpdate AutomaticDownload -int 1
 # Turn on app auto-update
 defaults write com.apple.commerce AutoUpdate -bool true
 
+###############################################################################
+# Tweaks                                                                      #
+###############################################################################
+
+# Enable download apps from anywhere
+sudo spctl --master-disable
+
 success 'Note that some of these changes require a logout/restart to take effect.'
