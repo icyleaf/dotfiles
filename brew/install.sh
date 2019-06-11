@@ -21,11 +21,11 @@ if test ! $(which brew); then
     brew update --verbose
 
     success "homebrew"
-
-    # 安装 Brewfile 里面的内容
-    info "Installing bundle"
-    brew bundle -v
-    success "brew bundle"
 else
     success "skipped, homebrew was installed `pwd`"
 fi
+
+# 安装 Brewfile 里面的内容
+info "Installing brew bundle"
+brew bundle -v
+success "brew bundle"
