@@ -106,3 +106,8 @@ alias rake='noglob rake'
 alias reload='source ~/.zshrc'
 alias zshrc='vim ~/.zshrc'
 alias omz='vim ~/.oh-my-zsh'
+
+export PATH="/usr/local/opt/ruby/bin:/usr/local/lib/ruby/gems/2.6.0/bin:$PATH"
+export ANDROID_SDK_ROOT="/usr/local/share/android-sdk"
+
+export PKG_CONFIG_PATH=/usr/local/opt/openssl/lib/pkgconfig
