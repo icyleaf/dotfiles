@@ -5,7 +5,7 @@ source functions/_bash
 
 if ! [ $SHELL == '/bin/zsh' ] && ! [ $SHELL == '/usr/local/bin/zsh' ]; then
   info 'changing to zsh shell. please input [sudo]'
-  sudo chsh -s /bin/zsh
+  chsh -s /bin/zsh
   success 'zsh installed'
 fi
 
