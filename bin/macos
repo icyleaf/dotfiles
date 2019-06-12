@@ -2,8 +2,6 @@
 
 # Copy from https://github.com/mathiasbynens/dotfiles/blob/master/.macos
 
-set -e
-
 source functions/_bash
 
 info 'setup macOS'
@@ -73,6 +71,25 @@ defaults write com.apple.dock showhidden -bool true
 
 # Don’t show recent applications in Dock
 defaults write com.apple.dock show-recents -bool false
+
+# Remove all most app icons from dock (keep Safari)
+for icon in "com.apple.siri.launcher" \
+            "com.apple.lauchpad.launcher" \
+            "com.apple.mail" \
+            "com.apple.AddressBook" \
+            "com.apple.mail" \
+            "com.apple.iCal" \
+            "com.apple.Notes" \
+            "com.apple.reminders" \
+            "com.apple.Maps" \
+            "com.apple.Photos" \
+            "com.apple.iChat" \
+            "com.apple.FaceTime" \
+            "com.apple.iTunes" \
+            "com.apple.AppStore" \
+            "com.apple.systempreferences"; do
+    remove_dock_icon "${icon}" &> /dev/null
+done
 
 ###############################################################################
 # Finder                                                                      #
@@ -155,5 +172,19 @@ defaults write com.apple.commerce AutoUpdate -bool true
 
 # Enable download apps from anywhere
 sudo spctl --master-disable
+
+for app in "Activity Monitor" \
+    "Calendar" \
+    "Dock" \
+    "Finder" \
+    "Google Chrome" \
+    "Mail" \
+    "Safari" \
+    "Spectacle" \
+    "SystemUIServer" \
+    "Terminal" \
+    "iCal"; do
+    killall "${app}" &> /dev/null
+done
 
 success 'Note that some of these changes require a logout/restart to take effect.'

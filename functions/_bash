@@ -77,6 +77,18 @@ link_file () {
   fi
 }
 
+remove_dock_icon() {
+  local bundle_identifier=$1
+  local position=$(defaults read com.apple.dock persistent-apps | grep bundle-identifier | awk "/${bundle_identifier}/  {printf NR}")
+  local index=$[${position}-1]
+
+  if [ $index -ge 0 ]
+  then
+    tips "deleted ${bundle_identifier}"
+    /usr/libexec/PlistBuddy -c "Delete persistent-apps:$index" ~/Library/Preferences/com.apple.dock.plist
+  fi
+}
+
 info () {
   printf "\r  [ \033[00;34m..\033[0m ] $1\n"
 }
