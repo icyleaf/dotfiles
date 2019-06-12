@@ -68,7 +68,7 @@ ZSH_THEME="bullet-train"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(osx sudo brew fasd rsync docker docker-compose git git-flow tmux tmuxinator xcode android gradle ruby rvm bundle capistrano gem rake rails crystal)
+plugins=(osx sudo brew fasd rsync docker docker-compose git git-flow tmux tmuxinator xcode gradle ruby rvm capistrano gem rake rails)
 
 source $ZSH/oh-my-zsh.sh
 
