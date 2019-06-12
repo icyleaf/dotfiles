@@ -3,6 +3,7 @@ cask_args appdir: '/Applications'
 # Taps
 tap "homebrew/services"
 tap "caskroom/fonts"
+tap "adoptopenjdk/openjdk"
 
 # Git
 brew "git"
@@ -56,9 +57,10 @@ cask "the-unarchiver"
 cask "dropbox"
 cask "karabiner-elements"
 cask "baiduinput"
-cask "java"
-cask "android-sdk"
+
+# Android Studio
 cask "android-studio"
+cask "optopenjdk8"
 
 # macOS QuickLook Extensions
 cask "provisionql"
