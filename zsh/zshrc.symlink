@@ -74,23 +74,6 @@ source $ZSH/oh-my-zsh.sh
 
 # User configuration
 
-# You may need to manually set your language environment
-export LANG=en_US.UTF-8
-
-# Preferred editor for local and remote sessions
-export EDITOR=vim
-
-# homebrew
-export PATH="/usr/local/sbin:/usr/local/bin:$PATH"
-
-# Android Platform Tools
-export ANDROID_HOME=/usr/local/opt/android-sdk
-
-# 替换国内镜像 Homebrew bottole s
-export HOMEBREW_BOTTLE_DOMAIN=https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottles
-
-# Compilation flags
-# export ARCHFLAGS="-arch x86_64"
 # Set personal aliases, overriding those provided by oh-my-zsh libs,
 # plugins, and themes. Aliases can be placed here, though oh-my-zsh
 # users are encouraged to define aliases within the ZSH_CUSTOM folder.
@@ -98,7 +81,6 @@ export HOMEBREW_BOTTLE_DOMAIN=https://mirrors.tuna.tsinghua.edu.cn/homebrew-bott
 alias flushdns='sudo killall -HUP mDNSResponder'
 alias ns="sudo lsof -i -P"
 alias nc="lsof -Pni4 | grep LISTEN"
-alias virtualenv='virtualenv --no-site-packages'
 alias ox='open *.xcodeproj'
 alias ow='open *.xcworkspace'
 alias la='ll -a'
@@ -107,7 +89,27 @@ alias reload='source ~/.zshrc'
 alias zshrc='vim ~/.zshrc'
 alias omz='vim ~/.oh-my-zsh'
 
-export PATH="/usr/local/opt/ruby/bin:/usr/local/lib/ruby/gems/2.6.0/bin:$PATH"
-export ANDROID_SDK_ROOT="/usr/local/share/android-sdk"
+# Compilation flags
+# export ARCHFLAGS="-arch x86_64"
 
+# You may need to manually set your language environment
+export LANG=en_US.UTF-8
+
+# Preferred editor for local and remote sessions
+export EDITOR=vim
+
+# openssl PKG path
 export PKG_CONFIG_PATH=/usr/local/opt/openssl/lib/pkgconfig
+
+# 替换国内镜像 Homebrew bottole s
+export HOMEBREW_BOTTLE_DOMAIN=https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottles
+
+# brew 命令路径
+export PATH="/usr/local/sbin:/usr/local/bin:$PATH"
+
+# brew 安装 ruby 的命令路径
+export PATH="/usr/local/opt/ruby/bin:$PATH"
+
+# Android SDK 路径（Android Studio）
+export ANDROID_SDK_ROOT="$HOME/Library/Android/sdk"
+export PATH="${ANDROID_SDK_ROOT}/tools:$PATH"

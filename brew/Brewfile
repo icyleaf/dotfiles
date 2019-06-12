@@ -12,34 +12,39 @@ brew "tig"
 
 # Development Tools
 brew "mysql"
-brew "mycli"
 brew "redis"
 brew "node"
+brew "mycli"
 brew "imagemagick"
 
 # Development Language
+brew "ruby"
 brew "crystal"
+
+# Development tools
+brew "axel"
+brew "httpie"
+brew "mosh"
+brew "mitmproxy"
 brew "ios-sim"
 
 # Tweaks
 brew "zsh"
 brew "fasd"
 brew "fzf"
-brew "axel"
 brew "mtr"
 brew "tree"
 brew "watch"
 brew "wget"
 brew "ssh-copy-id"
 brew "youtube-dl"
-brew "httpie"
-brew "mobile-shell"
-brew "mitmproxy"
 brew "bat"
 brew "jsonpp"
 brew "neofetch"
-brew "hugo"
 brew "mas"
+
+# Blogging
+brew "hugo"
 
 # Tmux
 brew "tmux"
@@ -68,5 +73,5 @@ cask "qlcolorcode"
 cask "quicklook-json"
 cask "quicklookapk"
 
-# macOS non-ascii Fonts for terminal
+# macOS non-ascii fonts for terminal
 cask "font-droid-sans-mono-for-powerline"
