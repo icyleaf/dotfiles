@@ -7,7 +7,7 @@ spacevim_path="$HOME/.SpaceVim"
 spacevim_url="https://github.com/tmux-plugins/tpm"
 
 info "Installing SpaceVim `pwd`"
-if [ -z "$spacevim_path" ]
+if ! [ -d "$spacevim_path" ]
 then
     curl -sLf https://spacevim.org/install.sh | bash
     success "spacvim"
