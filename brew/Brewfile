@@ -1,77 +1,77 @@
 cask_args appdir: '/Applications'
 
 # Taps
-tap "homebrew/services"
-tap "caskroom/fonts"
-tap "adoptopenjdk/openjdk"
+tap 'homebrew/services'
+tap 'caskroom/fonts'
+tap 'adoptopenjdk/openjdk'
 
 # Git
-brew "git"
-brew "git-flow-avh"
-brew "tig"
+brew 'git'
+brew 'git-flow-avh'
+brew 'tig'
 
 # Development Tools
-brew "mysql"
-brew "redis"
-brew "node"
-brew "mycli"
-brew "imagemagick"
+brew 'mariadb'
+brew 'redis'
+brew 'node'
+brew 'mycli'
+brew 'imagemagick'
 
 # Development Language
-brew "ruby"
-brew "crystal"
+brew 'ruby'
+brew 'crystal'
 
 # Development tools
-brew "axel"
-brew "httpie"
-brew "mosh"
-brew "mitmproxy"
-brew "ios-sim"
+brew 'axel'
+brew 'httpie'
+brew 'mosh'
+brew 'mitmproxy'
+brew 'ios-sim'
 
 # Tweaks
-brew "zsh"
-brew "fasd"
-brew "fzf"
-brew "mtr"
-brew "tree"
-brew "watch"
-brew "wget"
-brew "ssh-copy-id"
-brew "youtube-dl"
-brew "bat"
-brew "jsonpp"
-brew "neofetch"
-brew "mas"
+brew 'zsh'
+brew 'fasd'
+brew 'fzf'
+brew 'mtr'
+brew 'tree'
+brew 'watch'
+brew 'wget'
+brew 'ssh-copy-id'
+brew 'youtube-dl'
+brew 'bat'
+brew 'jsonpp'
+brew 'neofetch'
+brew 'mas'
 
 # Blogging
-brew "hugo"
+brew 'hugo'
 
 # Tmux
-brew "tmux"
-brew "reattach-to-user-namespace"
+brew 'tmux'
+brew 'reattach-to-user-namespace'
 
 # DevOps
-brew "ansible"
+brew 'ansible'
 
 # macOS Apps
-cask "alfred"
-cask "visual-studio-code"
-cask "google-chrome"
-cask "iterm2"
-cask "the-unarchiver"
-cask "dropbox"
-cask "karabiner-elements"
-cask "baiduinput"
+cask 'alfred'
+cask 'visual-studio-code'
+cask 'google-chrome'
+cask 'iterm2'
+cask 'the-unarchiver'
+cask 'dropbox'
+cask 'karabiner-elements'
+cask 'baiduinput'
 
 # Android Studio
-cask "android-studio"
-cask "optopenjdk8"
+cask 'android-studio'
+cask 'adoptopenjdk8'
 
 # macOS QuickLook Extensions
-cask "provisionql"
-cask "qlcolorcode"
-cask "quicklook-json"
-cask "quicklookapk"
+cask 'provisionql'
+cask 'qlcolorcode'
+cask 'quicklook-json'
+cask 'quicklookapk'
 
 # macOS non-ascii fonts for terminal
-cask "font-droid-sans-mono-for-powerline"
+cask 'font-droid-sans-mono-for-powerline'
