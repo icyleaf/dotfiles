@@ -88,6 +88,7 @@ alias rake='noglob rake'
 alias reload='source ~/.zshrc'
 alias zshrc='vim ~/.zshrc'
 alias omz='vim ~/.oh-my-zsh'
+alias mux='tmuxinator'
 
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
@@ -108,7 +109,7 @@ export HOMEBREW_BOTTLE_DOMAIN=https://mirrors.tuna.tsinghua.edu.cn/homebrew-bott
 export PATH="/usr/local/sbin:/usr/local/bin:$PATH"
 
 # brew 安装 ruby 的命令路径
-export PATH="/usr/local/opt/ruby/bin:$PATH"
+export PATH="/usr/local/opt/ruby/bin:/usr/local/lib/ruby/gems/2.6.0/bin:$PATH"
 
 # Android SDK 路径（Android Studio）
 export ANDROID_SDK_ROOT="$HOME/Library/Android/sdk"
