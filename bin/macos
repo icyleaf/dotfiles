@@ -166,6 +166,14 @@ defaults write com.apple.SoftwareUpdate AutomaticDownload -int 1
 # Turn on app auto-update
 defaults write com.apple.commerce AutoUpdate -bool true
 
+
+###############################################################################
+# Development                                                                 #
+###############################################################################
+
+# Displaying build times in Xcode
+defaults write com.apple.dt.Xcode ShowBuildOperationDuration -bool YES
+
 ###############################################################################
 # Tweaks                                                                      #
 ###############################################################################
