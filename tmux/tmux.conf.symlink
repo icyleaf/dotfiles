@@ -5,6 +5,7 @@
 
 ## using the default prefix hotkey
 set -g prefix C-a
+bind C-a send-prefix
 
 ## Options
 set -g base-index 1
@@ -12,6 +13,9 @@ set -g pane-base-index 1
 set -g status-position top
 set -g repeat-time 0
 set -sg escape-time 0
+
+set-option -g status-position top
+set-option -g repeat-time 0
 
 ## mode-keys
 setw -g mode-keys vi
@@ -31,6 +35,9 @@ bind / command-prompt "splitw 'exec ri -T %% | less'"
 # tmux plugins manager
 set -g @plugins 'tmux-plugins/tpm'
 
+## tmux suggest default options
+set -g @plugins 'tmux-plugins/tmux-sensible'
+
 ## tmux theme
 set -g @plugins 'caiogondim/maglev'
 set -g @plugins 'tmux-plugins/tmux-open'
@@ -40,9 +47,6 @@ set -g @plugins 'tmux-plugins/tmux-cpu'
 
 # set -g @plugin 'seebi/tmux-colors-solarized'
 # set -g @colors-solarized 'dark'
-
-## tmux suggest default options
-set -g @plugins 'tmux-plugins/tmux-sensible'
 
 ## utilities for manipulating tmux sessions.
 ## prefix + g: prompts for session name and switches to it.
@@ -81,5 +85,5 @@ set -g @plugins 'tmux-plugins/tmux-resurrect'
 set -g @plugins 'tmux-plugins/tmux-continuum'
 #set -g @continuum-restore 'on'
 
-# Initialize TMUX plugin manager
-run '~/.tmux/plugins/tpm/tpm'
+# Initialize TMUX plugin manager (keep this line at the very bottom of tmux.conf)
+run -b '~/.tmux/plugins/tpm/tpm'
