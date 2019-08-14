@@ -2,6 +2,6 @@
   begin
     require lib
   rescue LoadError => err
-    $stderr.puts "Couldn't load #{lib}: #{err}"
+    $stderr.puts "Couldn't load `#{lib}`: #{err}"
   end
 end
