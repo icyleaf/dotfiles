@@ -6,20 +6,25 @@ set -e
 
 source functions/_bash
 
+DOTFILES_ROOT="`pwd`"
+
 cd "$(dirname $0)"/..
 
-find . -name install.sh | while read installer ; do
-  echo "-> $installer"
-  sh -c "${installer}"
-done
+run_installer() {
+  find . -name install.sh | while read installer ; do
+    echo "-> $installer"
+    sh -c "${installer}"
+  done
+}
 
 setup_vscode () {
+  info "Setup VSCode"
   if test ! $(which code)
   then
     info "Linking code command"
     code_path="/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code"
 
-    ln -s $code_path /usr/local/bin/code
+    link_file $code_path /usr/local/bin/code
     success 'gitconfig'
   fi
 
@@ -32,8 +37,10 @@ setup_vscode () {
     read -e github_access_token
 
     sed -e "s/GITHUB_ACCESS_TOKEN/$github_access_token/g" vscode/syncLocalSettings.json.example > vscode/syncLocalSettings.json
-    ln -s vscode/syncLocalSettings.json "$settings_sync_file.ex"
+    link_file "${DOTFILES_ROOT}/vscode/syncLocalSettings.json" "$settings_sync_file"
   fi
+  success "VSCode Done"
 }
 
+run_installer
 setup_vscode
