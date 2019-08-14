@@ -65,7 +65,7 @@ cask 'baiduinput'
 
 # Android Studio
 cask 'android-studio'
-cask 'adoptopenjdk8'
+# cask 'adoptopenjdk8'
 
 # macOS QuickLook Extensions
 cask 'provisionql'
