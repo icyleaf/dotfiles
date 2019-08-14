@@ -1,19 +1,18 @@
 # ~/.tmuxinator/mobile.yml
 
-name: qmobile
-root: ~/Development/qyer/web/qmobile
+name: zealot
+root: ~/Development/ruby/zealot
 
 # Optional tmux socket
 # socket_name: foo
 
 # Runs before everything. Use it to start daemons etc.
 on_project_first_start:
-  # - brew services start mysql
-  - mysql.server start
+  - brew services start mariadb
   - brew services start redis
 
 # Runs in each window and pane before window/pane specific commands. Useful for setting up interpreter versions.
-pre_window: rvm use 2.5.0@qmobile --create
+# pre_window: rvm use 2.5.0@zealot --create
 
 # Pass command line options to tmux. Useful for specifying a different tmux.conf.
 # tmux_options: -f ~/.tmux.mac.conf
@@ -31,6 +30,6 @@ pre_window: rvm use 2.5.0@qmobile --create
 # post: tmux -CC attach -t mobile
 
 windows:
-  - editor: clear
+  - editor: code .
   - guard: bundle exec guard
   - log: tail -f log/development.log
