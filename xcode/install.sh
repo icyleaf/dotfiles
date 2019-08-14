@@ -17,7 +17,7 @@ then
       mv themes xcode
     fi
 
-    ln -s "${root_path}/xcode/themes/${xcode_theme_name}" $xcode_theme_path
+    link_file "${root_path}/xcode/themes/${xcode_theme_name}" $xcode_theme_path
     cd $root_path
     success "Xcode Theme"
 else
