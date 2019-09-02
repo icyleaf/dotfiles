@@ -35,6 +35,9 @@ defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool
 defaults -currentHost write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
 defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
 
+# Disable double dash(--) to emdash(—)
+defaults write 'Apple Global Domain' NSAutomaticDashSubstitutionEnabled 0
+
 ###############################################################################
 # Screen                                                                      #
 ###############################################################################
