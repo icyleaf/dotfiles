@@ -8,7 +8,7 @@ root: ~/Development/ruby/zealot
 
 # Runs before everything. Use it to start daemons etc.
 on_project_first_start:
-  - brew services start mariadb
+  - brew services start postgres
   - brew services start redis
 
 # Runs in each window and pane before window/pane specific commands. Useful for setting up interpreter versions.
