@@ -79,8 +79,9 @@ source $ZSH/oh-my-zsh.sh
 # users are encouraged to define aliases within the ZSH_CUSTOM folder.
 # For a full list of active aliases, run `alias`.
 alias flushdns='sudo killall -HUP mDNSResponder'
-alias ns="sudo lsof -i -P"
-alias nc="lsof -Pni4 | grep LISTEN"
+alias nns="sudo lsof -i -P"
+alias nnc="lsof -Pni4 | grep LISTEN"
+alias mosh='mosh --server=`which mosh-server`'
 alias ox='open *.xcodeproj'
 alias ow='open *.xcworkspace'
 alias la='ll -a'
@@ -106,7 +107,7 @@ export PKG_CONFIG_PATH=/usr/local/opt/openssl/lib/pkgconfig
 export HOMEBREW_BOTTLE_DOMAIN=https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottles
 
 # 关闭 brew 自动更新功能
-HOMEBREW_NO_AUTO_UPDATE=1
+export HOMEBREW_NO_AUTO_UPDATE=1
 
 # brew 命令路径
 export PATH="/usr/local/sbin:/usr/local/bin:$PATH"
@@ -117,4 +118,3 @@ export PATH="/usr/local/lib/ruby/gems/2.6.0/bin:/usr/local/opt/ruby/bin:$PATH"
 # Android SDK 路径（Android Studio）
 export ANDROID_SDK_ROOT="$HOME/Library/Android/sdk"
 export PATH="${ANDROID_SDK_ROOT}/tools:$PATH"
-
