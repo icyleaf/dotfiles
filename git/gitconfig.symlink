@@ -13,6 +13,7 @@
   date = local
 [diff]
   rename = copy
+	tool = vscode
 [status]
   color = auto
 [merge]
@@ -22,3 +23,5 @@
   default = simple
 [color]
   pager = off
+[difftool "vscode"]
+	cmd = "code --wait --diff  "
