@@ -24,7 +24,7 @@ fi
 
 zsh_theme="bullet-train.zsh-theme"
 if ! [ -f $HOME/.oh-my-zsh/themes/$zsh_theme ]; then
-  info 'download ${zsh_theme}'
+  info "download ${zsh_theme}"
   curl -L http://raw.github.com/caiogondim/bullet-train-oh-my-zsh-theme/master/${zsh_theme} -o ~/.oh-my-zsh/themes/${zsh_theme}
-  success '${zsh_theme} downloaded'
+  success "${zsh_theme} downloaded"
 fi
