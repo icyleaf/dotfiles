@@ -2,7 +2,7 @@ cask_args appdir: '/Applications'
 
 # Taps
 tap 'homebrew/services'
-tap 'caskroom/fonts'
+tap 'homebrew/cask-fonts'
 tap 'adoptopenjdk/openjdk'
 
 # Git
@@ -71,7 +71,7 @@ cask 'android-studio'
 cask 'provisionql'
 cask 'qlcolorcode'
 cask 'quicklook-json'
-cask 'quicklookapk'
+# cask 'quicklookapk'
 
 # macOS non-ascii fonts for terminal
 cask 'font-droid-sans-mono-for-powerline'
