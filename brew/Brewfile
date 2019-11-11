@@ -55,6 +55,7 @@ brew 'ansible'
 
 # macOS Apps
 cask 'alfred'
+cask 'dozer'
 cask 'visual-studio-code'
 cask 'google-chrome'
 cask 'iterm2'
@@ -71,7 +72,7 @@ cask 'android-studio'
 cask 'provisionql'
 cask 'qlcolorcode'
 cask 'quicklook-json'
-# cask 'quicklookapk'
+# cask 'quicklookapk' # 不可用暂时关闭
 
 # macOS non-ascii fonts for terminal
 cask 'font-droid-sans-mono-for-powerline'
