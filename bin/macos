@@ -26,6 +26,9 @@ defaults write com.apple.LaunchServices LSQuarantine -bool false
 # Display date and 24-hours format in menu bar
 defaults write com.apple.menuextra.clock DateFormat -string "M\\U6708d\\U65e5 EEE  HH:mm"
 
+# Disable double dash(--) to emdash(—)
+defaults write 'Apple Global Domain' NSAutomaticDashSubstitutionEnabled 0
+
 ###############################################################################
 # Trackpad, mouse, keyboard, Bluetooth accessories, and input                 #
 ###############################################################################
@@ -35,8 +38,12 @@ defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool
 defaults -currentHost write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
 defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
 
-# Disable double dash(--) to emdash(—)
-defaults write 'Apple Global Domain' NSAutomaticDashSubstitutionEnabled 0
+# Enable 3-finger drag. (Moving with 3 fingers in any window "chrome" moves the window.)
+defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadThreeFingerDrag -bool true
+defaults write com.apple.AppleMultitouchTrackpad TrackpadThreeFingerDrag -bool true
+
+# Disable bluetooth mouse scroll direction by natural
+defaults write NSGlobalDomain com.apple.swipescrolldirection -bool false
 
 ###############################################################################
 # Screen                                                                      #
