@@ -26,7 +26,31 @@
           "type": "basic"
         }
       ]
-  },
+    },
+    {
+      "description": "Change fn+escape to eject.",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "escape",
+            "modifiers": {
+              "mandatory": [
+                "fn"
+              ],
+              "optional": [
+                "any"
+              ]
+            }
+          },
+          "to": [
+            {
+              "key_code": "eject"
+            }
+          ]
+        }
+      ]
+    },
     {
       "description": "Change fn+hjkl to arrow keys",
       "manipulators": [

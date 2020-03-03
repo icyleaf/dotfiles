@@ -118,3 +118,6 @@ export PATH="/usr/local/lib/ruby/gems/2.6.0/bin:/usr/local/opt/ruby/bin:$PATH"
 # Android SDK 路径（Android Studio）
 export ANDROID_SDK_ROOT="$HOME/Library/Android/sdk"
 export PATH="${ANDROID_SDK_ROOT}/tools:$PATH"
+
+# openwrt
+export PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"
