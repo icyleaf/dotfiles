@@ -11,10 +11,9 @@ brew 'git-flow-avh'
 brew 'tig'
 
 # Development Tools
-brew 'mariadb'
+brew 'postgresql'
 brew 'redis'
 brew 'node'
-brew 'mycli'
 brew 'imagemagick'
 
 # Development Language
@@ -41,7 +40,6 @@ brew 'youtube-dl'
 brew 'bat'
 brew 'jsonpp'
 brew 'neofetch'
-brew 'mas'
 
 # Blogging
 brew 'hugo'
