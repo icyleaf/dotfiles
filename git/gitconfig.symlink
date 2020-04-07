@@ -13,20 +13,20 @@
   date = local
 [diff]
   rename = copy
-	tool = vscode
+  tool = vscode
 [status]
   color = auto
 [merge]
   # Install it: https://code.visualstudio.com/ (For Mac: `brew cask install vscode`)
   tool = vscode
-	ff = false
+  ff = false
 [mergetool "vscode"]
   cmd = "code --wait $MERGED"
 [diff]
   # VSCode as Git editor: https://code.visualstudio.com/docs/editor/versioncontrol#_vs-code-as-git-editor
   tool = default-difftool
 [difftool "default-difftool"]
-	cmd = code --wait --diff $LOCAL $REMOTE
+  cmd = code --wait --diff $LOCAL $REMOTE
 [push]
   default = simple
 [color]
