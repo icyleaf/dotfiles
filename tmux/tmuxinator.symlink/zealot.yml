@@ -1,7 +1,7 @@
 # ~/.tmuxinator/mobile.yml
 
 name: zealot
-root: ~/Development/ruby/zealot
+root: ~/Development/zealot/zealot
 
 # Optional tmux socket
 # socket_name: foo
@@ -30,6 +30,5 @@ on_project_first_start:
 # post: tmux -CC attach -t mobile
 
 windows:
-  - editor: code .
+  - editor: clear
   - guard: bundle exec guard
-  - log: tail -f log/development.log

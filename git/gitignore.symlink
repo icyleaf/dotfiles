@@ -54,3 +54,6 @@ main.cr
 *.pyc
 .avoscloud/
 .vscode
+
+
+main.rb
