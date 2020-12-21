@@ -112,14 +112,12 @@ export HOMEBREW_NO_AUTO_UPDATE=1
 # brew 命令路径
 export PATH="/usr/local/sbin:/usr/local/bin:$PATH"
 
-# brew 安装 ruby 2.6 的命令路径
-export PATH="/usr/local/lib/ruby/gems/2.6.0/bin:/usr/local/opt/ruby@2.6/bin:$PATH"
+# brew 安装 ruby 2.7 的命令路径
+export PATH="/usr/local/lib/ruby/gems/2.7.0/bin:/usr/local/opt/ruby@2.7/bin:$PATH"
 
 # Android SDK 路径（Android Studio）
 export ANDROID_SDK_ROOT="$HOME/Library/Android/sdk"
-export PATH="${ANDROID_SDK_ROOT}/platform-tools:$PATH"
+export PATH="${ANDROID_SDK_ROOT}/platform-tools:${ANDROID_SDK_ROOT}/tools:$PATH"
 
 # gpg
 export GPG_TTY=$(tty)
-
-export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
