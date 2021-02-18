@@ -33,20 +33,26 @@ bind % command-prompt "splitw 'exec perldoc -t %%'"
 bind / command-prompt "splitw 'exec ri -T %% | less'"
 
 # tmux plugins manager
-set -g @plugins 'tmux-plugins/tpm'
+set -g @plugin 'tmux-plugins/tpm'
 
 ## tmux suggest default options
-set -g @plugins 'tmux-plugins/tmux-sensible'
+set -g @plugin 'tmux-plugins/tmux-sensible'
 
 ## tmux theme
-set -g @plugins 'caiogondim/maglev'
-set -g @plugins 'tmux-plugins/tmux-open'
-set -g @plugins 'tmux-plugins/tmux-prefix-highlight'
-set -g @plugins 'tmux-plugins/tmux-battery'
-set -g @plugins 'tmux-plugins/tmux-cpu'
+set -g @plugin 'dracula/tmux'
+set -g @dracula-show-network false
+set -g @dracula-show-weather false
+set -g @dracula-show-location false
+set -g @dracula-show-fahrenheit false
+set -g @dracula-military-time true
+set -g @dracula-cpu-usage true
+set -g @dracula-ram-usage true
+set -g @dracula-show-flags true
+set -g @dracula-gpu-usage false
 
-# set -g @plugin 'seebi/tmux-colors-solarized'
-# set -g @colors-solarized 'dark'
+## utilities for text
+set -g @plugin 'tmux-plugins/tmux-open'
+set -g @plugin 'tmux-plugins/tmux-urlview'
 
 ## utilities for manipulating tmux sessions.
 ## prefix + g: prompts for session name and switches to it.
@@ -60,7 +66,7 @@ set -g @plugin 'tmux-plugins/tmux-sessionist'
 # osx must install reattach-to-user-namespace
 # prefix + y: copy text from the command line
 # prefix + Y: copy pane current working directory(PWD)
-set -g @plugins 'tmux-plugins/tmux-yank'
+set -g @plugin 'tmux-plugins/tmux-yank'
 
 ## controlling panes
 ## prefix + h and prefix + C-h: select pane on the left
@@ -69,11 +75,11 @@ set -g @plugins 'tmux-plugins/tmux-yank'
 ## prefix + l and prefix + C-l: select pane on the right
 ## prefix + |: split current pane horizontally
 ## prefix + -: split current pane vertically
-set -g @plugins 'tmux-plugins/tmux-pain-control'
+set -g @plugin 'tmux-plugins/tmux-pain-control'
 
 ## regix searches with result highlight
 ## prefix + /: regex search (strings work too)
-# set -g @plugins 'tmux-plugins/tmux-copycat'
+# set -g @plugin 'tmux-plugins/tmux-copycat'
 
 ## Easy logging and screen capturing
 ## prefix + shift + p: Logging
@@ -86,4 +92,4 @@ set -g @plugins 'tmux-plugins/tmux-continuum'
 #set -g @continuum-restore 'on'
 
 # Initialize TMUX plugin manager (keep this line at the very bottom of tmux.conf)
-run -b '~/.tmux/plugins/tpm/tpm'
+run '~/.tmux/plugins/tpm/tpm'
