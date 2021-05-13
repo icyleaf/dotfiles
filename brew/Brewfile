@@ -1,10 +1,5 @@
 cask_args appdir: '/Applications'
 
-# Taps
-tap 'homebrew/services'
-tap 'homebrew/cask-fonts'
-tap 'adoptopenjdk/openjdk'
-
 # Git
 brew 'git'
 brew 'git-flow-avh'
@@ -17,7 +12,6 @@ brew 'node'
 brew 'imagemagick'
 
 # Development Language
-brew 'ruby'
 brew 'crystal'
 
 # Development tools
@@ -25,7 +19,8 @@ brew 'axel'
 brew 'httpie'
 brew 'mosh'
 brew 'mitmproxy'
-brew 'ios-sim'
+brew 'htop'
+brew 'mkcert'
 
 # Tweaks
 brew 'zsh'
@@ -38,8 +33,9 @@ brew 'wget'
 brew 'ssh-copy-id'
 brew 'youtube-dl'
 brew 'bat'
-brew 'jsonpp'
 brew 'neofetch'
+brew 'terminal-notifier'
+
 
 # Blogging
 brew 'hugo'
@@ -58,19 +54,21 @@ cask 'visual-studio-code'
 cask 'google-chrome'
 cask 'iterm2'
 cask 'the-unarchiver'
-cask 'dropbox'
 cask 'karabiner-elements'
+cask 'appcleaner'
+cask 'notion'
 cask 'baiduinput'
+cask 'iina'
+cask 'clashx'
 
 # Android Studio
 cask 'android-studio'
-# cask 'adoptopenjdk8'
 
 # macOS QuickLook Extensions
 cask 'provisionql'
 cask 'qlcolorcode'
 cask 'quicklook-json'
-# cask 'quicklookapk' # 不可用暂时关闭
 
 # macOS non-ascii fonts for terminal
 cask 'font-droid-sans-mono-for-powerline'
+cask 'font-roboto'
