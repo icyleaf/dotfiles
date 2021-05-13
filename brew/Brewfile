@@ -1,9 +1,5 @@
 cask_args appdir: '/Applications'
 
-# Taps
-tap 'homebrew/services'
-tap 'homebrew/cask-fonts'
-
 # Git
 brew 'git'
 brew 'git-flow-avh'
