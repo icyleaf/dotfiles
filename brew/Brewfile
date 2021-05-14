@@ -11,9 +11,6 @@ brew 'redis'
 brew 'node'
 brew 'imagemagick'
 
-# Development Language
-brew 'crystal'
-
 # Development tools
 brew 'axel'
 brew 'httpie'
@@ -23,6 +20,7 @@ brew 'htop'
 brew 'mkcert'
 
 # Tweaks
+brew 'gnupg'
 brew 'zsh'
 brew 'fasd'
 brew 'fzf'
@@ -35,7 +33,7 @@ brew 'youtube-dl'
 brew 'bat'
 brew 'neofetch'
 brew 'terminal-notifier'
-
+brew 'mas'
 
 # Blogging
 brew 'hugo'
@@ -49,19 +47,17 @@ brew 'ansible'
 
 # macOS Apps
 cask 'alfred'
-cask 'dozer'
-cask 'visual-studio-code'
 cask 'google-chrome'
 cask 'iterm2'
 cask 'the-unarchiver'
+cask 'dozer'
+cask 'visual-studio-code'
+cask 'clashx'
 cask 'karabiner-elements'
 cask 'appcleaner'
 cask 'notion'
 cask 'baiduinput'
 cask 'iina'
-cask 'clashx'
-
-# Android Studio
 cask 'android-studio'
 
 # macOS QuickLook Extensions
