@@ -10,13 +10,12 @@ ruby_version=2.7
 
 info " > Installing rvm"
 if test ! $(which rvm); then
-  gpg2 --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
   curl -sSL https://get.rvm.io | bash -s stable
   source ~/.bashrc
   source ~/.bash_profile
   success "rvm"
 else
-    success "skipped, rvm was installed `pwd`"
+  success "skipped, rvm was installed `pwd`"
 fi
 
 info " > Replace RVM source to ruby-china"
@@ -26,7 +25,7 @@ if [ -z "$rvm_db_path" ]; then
     success 'rvm source replaced'
   fi
 else
-    success "skipped, rvm was replaced `pwd`"
+  success "skipped, rvm was replaced `pwd`"
 fi
 
 info " > Install Ruby $ruby_version"
