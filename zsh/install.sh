@@ -28,3 +28,10 @@ if ! [ -f $HOME/.oh-my-zsh/themes/$zsh_theme ]; then
   curl -sLf http://raw.github.com/caiogondim/bullet-train-oh-my-zsh-theme/master/${zsh_theme} -o ~/.oh-my-zsh/themes/${zsh_theme}
   success "${zsh_theme} downloaded"
 fi
+
+zsh-autosuggestions="zsh-autosuggestions"
+if ! [ -f ~/.oh-my-zsh/custom/plugins/$autosuggestions ]; then
+  info "download ${autosuggestions}"
+  git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+  success "${autosuggestions} downloaded"
+fi
