@@ -34,6 +34,7 @@ brew 'bat'
 brew 'neofetch'
 brew 'terminal-notifier'
 brew 'mas'
+brew 'kopia'
 
 # Blogging
 brew 'hugo'
@@ -59,6 +60,7 @@ cask 'notion'
 cask 'baiduinput'
 cask 'iina'
 cask 'android-studio'
+cask 'synology-drive'
 
 # macOS QuickLook Extensions
 cask 'provisionql'
@@ -67,4 +69,5 @@ cask 'quicklook-json'
 
 # macOS non-ascii fonts for terminal
 cask 'font-droid-sans-mono-for-powerline'
+cask 'font-meslo-lg-nerd-font'
 cask 'font-roboto'
