@@ -13,21 +13,37 @@
   date = local
 [diff]
   rename = copy
-	tool = vscode
+  tool = vscode
 [status]
   color = auto
 [merge]
   # Install it: https://code.visualstudio.com/ (For Mac: `brew cask install vscode`)
   tool = vscode
-	ff = false
+  ff = false
 [mergetool "vscode"]
   cmd = "code --wait $MERGED"
 [diff]
   # VSCode as Git editor: https://code.visualstudio.com/docs/editor/versioncontrol#_vs-code-as-git-editor
   tool = default-difftool
 [difftool "default-difftool"]
-	cmd = code --wait --diff $LOCAL $REMOTE
+  cmd = code --wait --diff $LOCAL $REMOTE
+[difftool "ks"]
+  cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
 [push]
   default = simple
 [color]
   pager = off
+[mergetool "ks"]
+  cmd = ksdiff --merge --output \"$MERGED\" --base \"$BASE\" -- \"$LOCAL\" --snapshot \"$REMOTE\" --snapshot
+  trustExitCode = true
+[user]
+	signingkey = 81C2793753873DE1BA7AD6D1B1C7C709F61ABC66
+[gpg]
+	program = gpg
+[commit]
+	gpgsign = true
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true

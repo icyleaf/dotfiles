@@ -1,3 +1,13 @@
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
+# profiler (uncomment below and reload then call zprof)
+# zmodload zsh/zprof
+
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
@@ -8,7 +18,11 @@ export ZSH=$HOME/.oh-my-zsh
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
-ZSH_THEME="bullet-train"
+#ZSH_THEME="bullet-train"
+ZSH_THEME="powerlevel10k/powerlevel10k"
+
+# To customize prompt, run `p10k configure` or edit ~/.dotfiles/zsh/p10k.zsh.
+[[ ! -f ~/.dotfiles/zsh/p10k.zsh ]] || source ~/.dotfiles/zsh/p10k.zsh
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -68,11 +82,14 @@ ZSH_THEME="bullet-train"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(osx sudo brew fasd rsync docker docker-compose git git-flow tmux tmuxinator xcode gradle ruby rvm capistrano gem rake rails)
+plugins=(osx sudo brew fasd rsync docker docker-compose git tig git-flow tmux tmuxinator xcode gradle rvm ruby gem rake rails node npm yarn zsh-autosuggestions fzf)
 
 source $ZSH/oh-my-zsh.sh
 
 # User configuration
+
+# Load local config
+[[ ! -f ~/.zsh-local.zsh ]] || source ~/.zsh-local.zsh
 
 # Set personal aliases, overriding those provided by oh-my-zsh libs,
 # plugins, and themes. Aliases can be placed here, though oh-my-zsh
@@ -89,10 +106,12 @@ alias rake='noglob rake'
 alias reload='source ~/.zshrc'
 alias zshrc='vim ~/.zshrc'
 alias omz='vim ~/.oh-my-zsh'
-alias mux='tmuxinator'
+
+alias dci='docker rmi $(docker images | grep "<none" | awk "{print $3}")'
+alias dcc='docker rm -f $(docker ps -a | grep "Exited" | awk "{print $1}")'
 
 # Compilation flags
-# export ARCHFLAGS="-arch x86_64"
+export ARCHFLAGS="-arch x86_64"
 
 # You may need to manually set your language environment
 export LANG=en_US.UTF-8
@@ -101,23 +120,17 @@ export LANG=en_US.UTF-8
 export EDITOR=vim
 
 # openssl PKG path
-export PKG_CONFIG_PATH=/usr/local/opt/openssl/lib/pkgconfig
-
-# 替换国内镜像 Homebrew bottoles
-export HOMEBREW_BOTTLE_DOMAIN=https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottles
+#export PKG_CONFIG_PATH=/usr/local/opt/openssl/lib/pkgconfig
 
 # 关闭 brew 自动更新功能
 export HOMEBREW_NO_AUTO_UPDATE=1
 
-# brew 命令路径
-export PATH="/usr/local/sbin:/usr/local/bin:$PATH"
-
-# brew 安装 ruby 的命令路径
-export PATH="/usr/local/lib/ruby/gems/2.6.0/bin:/usr/local/opt/ruby/bin:$PATH"
+# Python
+export PATH="/usr/local/opt/python@3/libexec/bin:$PATH"
 
 # Android SDK 路径（Android Studio）
 export ANDROID_SDK_ROOT="$HOME/Library/Android/sdk"
-export PATH="${ANDROID_SDK_ROOT}/tools:$PATH"
+export PATH="${ANDROID_SDK_ROOT}/platform-tools:${ANDROID_SDK_ROOT}/tools:$PATH"
 
-# openwrt
-export PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"
+# gpg
+export GPG_TTY=$(tty)
