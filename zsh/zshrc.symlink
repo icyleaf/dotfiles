@@ -88,6 +88,9 @@ source $ZSH/oh-my-zsh.sh
 
 # User configuration
 
+# Load local config
+[[ ! -f ~/.zsh-local.zsh ]] || source ~/.zsh-local.zsh
+
 # Set personal aliases, overriding those provided by oh-my-zsh libs,
 # plugins, and themes. Aliases can be placed here, though oh-my-zsh
 # users are encouraged to define aliases within the ZSH_CUSTOM folder.
@@ -130,4 +133,4 @@ export ANDROID_SDK_ROOT="$HOME/Library/Android/sdk"
 export PATH="${ANDROID_SDK_ROOT}/platform-tools:${ANDROID_SDK_ROOT}/tools:$PATH"
 
 # gpg
-#export GPG_TTY=$(tty)
+export GPG_TTY=$(tty)
