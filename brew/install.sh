@@ -15,11 +15,13 @@ if test ! $(which brew); then
 
   # 安装 tap
   brew tap homebrew/cask-fonts
+  brew tap homebrew/cask-drivers
+  brew tap kopia/kopia
 
   # 替换为国内源
   git -C "$(brew --repo)" remote set-url origin https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/brew.git
   BREW_TAPS="$(brew tap)"
-  for tap in core services cask{,-fonts}; do
+  for tap in core services cask{,-fonts,-drivers}; do
     if echo "$BREW_TAPS" | grep -qE "^homebrew/${tap}\$"; then
       git -C "$(brew --repo homebrew/${tap})" remote set-url origin https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/homebrew-${tap}.git
       git -C "$(brew --repo homebrew/${tap})" config homebrew.forceautoupdate true
