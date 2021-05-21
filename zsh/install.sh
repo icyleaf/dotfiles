@@ -32,16 +32,16 @@ if ! [ -f $omz_custom_path/themes/$zsh_theme ]; then
   success "${zsh_theme} downloaded"
 fi
 
-zsh-autosuggestions="zsh-autosuggestions"
-if ! [ -f $omz_custom_path/plugins/$autosuggestions ]; then
-  info "download ${autosuggestions}"
-  git clone https://github.com/zsh-users/zsh-autosuggestions "$omz_custom_path/plugins/${autosuggestions}"
-  success "${autosuggestions} downloaded"
+zsh_autosuggestions="zsh-autosuggestions"
+if ! [ -f $omz_custom_path/plugins/$zsh_autosuggestions ]; then
+  info "download ${zsh_autosuggestions}"
+  git clone https://github.com/zsh-users/zsh-autosuggestions "$omz_custom_path/plugins/${zsh_autosuggestions}"
+  success "${zsh_autosuggestions} downloaded"
 fi
 
-powerlevel10="powerlevel10"
-if ! [ -f $omz_custom_path/themes/$powerlevel10 ]; then
-  info "download ${powerlevel10}"
-  git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$omz_custom_path/themes/${powerlevel10}"
-  success "${powerlevel10} downloaded"
+powerlevel10k="powerlevel10k"
+if ! [ -f $omz_custom_path/themes/$powerlevel10k ]; then
+  info "download ${powerlevel10k}"
+  git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$omz_custom_path/themes/${powerlevel10k}"
+  success "${powerlevel10k} downloaded"
 fi

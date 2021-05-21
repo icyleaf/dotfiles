@@ -130,4 +130,4 @@ export ANDROID_SDK_ROOT="$HOME/Library/Android/sdk"
 export PATH="${ANDROID_SDK_ROOT}/platform-tools:${ANDROID_SDK_ROOT}/tools:$PATH"
 
 # gpg
-export GPG_TTY=$(tty)
+#export GPG_TTY=$(tty)
