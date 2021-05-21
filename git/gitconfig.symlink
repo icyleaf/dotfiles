@@ -36,3 +36,14 @@
 [mergetool "ks"]
   cmd = ksdiff --merge --output \"$MERGED\" --base \"$BASE\" -- \"$LOCAL\" --snapshot \"$REMOTE\" --snapshot
   trustExitCode = true
+[user]
+	signingkey = 81C2793753873DE1BA7AD6D1B1C7C709F61ABC66
+[gpg]
+	program = gpg
+[commit]
+	gpgsign = true
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
