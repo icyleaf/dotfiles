@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
 #
 # Mac App Store
-source functions/_bash
 
+if test ! "$(uname)" = "Darwin"; then
+  exit 0
+fi
+
+source functions/_bash
 
 function install_apps () {
   installed_apps=`mas list`
