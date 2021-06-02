@@ -1,4 +1,9 @@
 # Local/private config goes in the include
+#
+# The third-party tools:
+# - vscode: https://code.visualstudio.com/docs/editor/versioncontrol#_vs-code-as-git-editor
+# - ksdiff: https://kaleidoscope.app/ksdiff2
+# - kdiff3: http://kdiff3.sourceforge.net/
 [include]
   path = ~/.gitconfig.local
 [core]
@@ -16,19 +21,26 @@
   tool = vscode
 [status]
   color = auto
+[diff]
+  tool = vscode
+[difftool "vscode"]
+  cmd = code --wait --diff $LOCAL $REMOTE
+  [difftool "ks"]
+  cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
+[difftool "ks"]
+  cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
+[difftool "kdiff3"]
+  cmd = kdiff3
 [merge]
-  # Install it: https://code.visualstudio.com/ (For Mac: `brew cask install vscode`)
   tool = vscode
   ff = false
 [mergetool "vscode"]
   cmd = "code --wait $MERGED"
-[diff]
-  # VSCode as Git editor: https://code.visualstudio.com/docs/editor/versioncontrol#_vs-code-as-git-editor
-  tool = default-difftool
-[difftool "default-difftool"]
-  cmd = code --wait --diff $LOCAL $REMOTE
-[difftool "ks"]
-  cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
+[mergetool "ks"]
+  cmd = ksdiff --merge --output \"$MERGED\" --base \"$BASE\" -- \"$LOCAL\" --snapshot \"$REMOTE\" --snapshot
+  trustExitCode = true
+[mergetool "kdiff3"]
+  cmd = kdiff3
 [push]
   default = simple
 [color]
@@ -41,3 +53,5 @@
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
 	required = true
+[init]
+	defaultBranch = master
