@@ -2,6 +2,10 @@
 #
 # 复制 karabiner-Elements 的配置文件
 
+if test ! "$(uname)" = "Darwin"; then
+  exit 0
+fi
+
 source functions/_bash
 
 karabiner_pwd=`pwd`

@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 #
 # xcode
+
+if test ! "$(uname)" = "Darwin"; then
+  exit 0
+fi
+
 source functions/_bash
 
 xcode_theme_name="Dracula.xccolortheme"

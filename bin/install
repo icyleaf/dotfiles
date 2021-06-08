@@ -42,4 +42,7 @@ setup_vscode () {
 }
 
 run_installer
-setup_vscode
+
+if test "$(uname)" = "Darwin"; then
+  setup_vscode
+fi

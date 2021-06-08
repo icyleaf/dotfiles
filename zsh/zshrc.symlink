@@ -82,11 +82,14 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(osx sudo brew fasd rsync docker docker-compose git tig git-flow tmux tmuxinator xcode gradle rvm ruby gem rake rails node npm yarn zsh-autosuggestions fzf)
+plugins=(osx sudo brew fasd rsync docker docker-compose git tig git-flow tmux tmuxinator xcode gradle rvm ruby gem rake rails node npm yarn zsh-autosuggestions fzf wakatime)
 
 source $ZSH/oh-my-zsh.sh
 
 # User configuration
+
+# Load local config
+[[ ! -f ~/.zsh-local.zsh ]] || source ~/.zsh-local.zsh
 
 # Set personal aliases, overriding those provided by oh-my-zsh libs,
 # plugins, and themes. Aliases can be placed here, though oh-my-zsh
@@ -104,8 +107,8 @@ alias reload='source ~/.zshrc'
 alias zshrc='vim ~/.zshrc'
 alias omz='vim ~/.oh-my-zsh'
 
-alias dci='docker rmi $(docker images | grep "<none" | awk "{print $3}")'
-alias dcc='docker rm -f $(docker ps -a | grep "Exited" | awk "{print $1}")'
+alias dci="docker rmi $(docker images | grep '<none' | awk '{print $3}')"
+alias dcc="docker rm -f $(docker ps -a | grep 'Exited' | awk '{print $1}')"
 
 # Compilation flags
 export ARCHFLAGS="-arch x86_64"
@@ -130,4 +133,4 @@ export ANDROID_SDK_ROOT="$HOME/Library/Android/sdk"
 export PATH="${ANDROID_SDK_ROOT}/platform-tools:${ANDROID_SDK_ROOT}/tools:$PATH"
 
 # gpg
-#export GPG_TTY=$(tty)
+export GPG_TTY=$(tty)
