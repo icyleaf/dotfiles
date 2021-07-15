@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 
-# Copy from https://github.com/mathiasbynens/dotfiles/blob/master/.macos
+# Based on https://github.com/mathiasbynens/dotfiles/blob/master/.macos
+
+if test ! "$(uname)" = "Darwin"; then
+  exit 0
+fi
 
 source functions/_bash
 
@@ -42,8 +46,68 @@ defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
 defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadThreeFingerDrag -bool true
 defaults write com.apple.AppleMultitouchTrackpad TrackpadThreeFingerDrag -bool true
 
-# Disable bluetooth mouse scroll direction by natural
-defaults write NSGlobalDomain com.apple.swipescrolldirection -bool false
+# Enable full keyboard access for all controls (e.g. enable Tab in modal dialogs)
+defaults write NSGlobalDomain AppleKeyboardUIMode -int 3
+
+######################################################################################
+# Hotkey                                                                             #
+# Based on https://github.com/diimdeep/dotfiles/blob/master/osx/configure/hotkeys.sh #
+######################################################################################
+
+# Disable Spotlight hotkey
+defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add 64 "<dict><key>enabled</key><false/></dict>"
+defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add 65 "<dict><key>enabled</key><false/></dict>"
+
+# Switch Input: Cmd + Space
+defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add 60 "
+  <dict>
+    <key>enabled</key><true/>
+    <key>value</key><dict>
+      <key>type</key><string>standard</string>
+      <key>parameters</key>
+      <array>
+        <integer>65535</integer>
+        <integer>49</integer>
+        <integer>1048576</integer>
+      </array>
+    </dict>
+  </dict>
+"
+defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add 61 "
+  <dict>
+    <key>enabled</key><true/>
+    <key>value</key><dict>
+      <key>type</key><string>standard</string>
+      <key>parameters</key>
+      <array>
+        <integer>32</integer>
+        <integer>49</integer>
+        <integer>1310720</integer>
+      </array>
+    </dict>
+  </dict>
+"
+
+# Apply hotkeys changes (thanks: https://zameermanji.com/blog/2021/6/8/applying-com-apple-symbolichotkeys-changes-instantaneously/)
+/System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u
+
+########################################################################################################
+# Login window                                                                                         #
+# Source: https://github.com/diimdeep/dotfiles/blob/master/osx/configure/mavericks/osx_set_defaults.sh #
+########################################################################################################
+
+# Display login window as: Name and password
+# defaults write /Library/Preferences/com.apple.loginwindow SHOWFULLNAME -bool true
+
+# Show shut down etc. buttons
+defaults write /Library/Preferences/com.apple.loginwindow PowerOffDisabled -bool false
+
+# Allow fast user switching
+defaults write /Library/Preferences/.GlobalPreferences MultipleSessionEnabled -bool true
+
+# Require password immediately after sleep or screen saver begins
+defaults write com.apple.screensaver askForPassword -int 1
+defaults write com.apple.screensaver askForPasswordDelay -int 0
 
 ###############################################################################
 # Screen                                                                      #
@@ -97,13 +161,32 @@ for icon in "com.apple.siri.launcher" \
             "com.apple.FaceTime" \
             "com.apple.iTunes" \
             "com.apple.AppStore" \
+            "com.apple.TV" \
+            "com.apple.Music" \
+            "com.apple.podcasts" \
+            "com.apple.MobileSMS" \
             "com.apple.systempreferences"; do
     remove_dock_icon "${icon}" &> /dev/null
 done
 
+# Add special items to the Dock
+# Keys:
+#   persistent-apps: left side of the Dock
+#   persistent-others: right side of the Dock
+# Values:
+#   Spacer Tile : '{tile-data={}; tile-type="spacer-tile";}'
+#   Recent/Favorite items stack: '{ "tile-data" = { "list-type" = 1; }; "tile-type" = "recents-tile"; }'
+
+# Add a spacer to the left of the Dock
+# defaults write com.apple.dock persistent-apps -array-add '{tile-data={}; tile-type="spacer-tile";}'
+
 ###############################################################################
 # Finder                                                                      #
 ###############################################################################
+
+# Use column view in all Finder windows by default
+# Four-letter codes for the other view modes: 'icnv', 'Nlsv', 'clmv', 'glyv'
+defaults write com.apple.finder FXPreferredViewStyle -string Nlsv
 
 # Finder: show status bar
 defaults write com.apple.finder ShowStatusBar -bool true
@@ -112,11 +195,22 @@ defaults write com.apple.finder ShowStatusBar -bool true
 defaults write com.apple.finder ShowPathbar -bool true
 
 # Display full POSIX path as Finder window title
-defaults write com.apple.finder _FXShowPosixPathInTitle -bool false
+defaults write com.apple.finder _FXShowPosixPathInTitle -bool true
 
 # Avoid creating .DS_Store files on network or USB volumes
 defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
 defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true
+
+# Disable the warning when changing a file extension
+defaults write com.apple.finder FXEnableExtensionChangeWarning -bool false
+
+# Allow text selection in QuickLook
+defaults write com.apple.finder QLEnableTextSelection -bool true
+
+# Finder: new window location set to $HOME. Same as Finder > Preferences > New Finder Windows show
+# For other path use "PfLo" and "file:///foo/bar/"
+defaults write com.apple.finder NewWindowTarget -string PfLo
+defaults write com.apple.finder NewWindowTargetPath -string "file://$HOME/"
 
 ###############################################################################
 # Safari & WebKit                                                             #
@@ -145,6 +239,12 @@ defaults write com.apple.Safari SendDoNotTrackHTTPHeader -bool true
 
 # Only use UTF-8 in Terminal.app
 defaults write com.apple.terminal StringEncodings -array 4
+
+# Install the Solarized Dark theme for iTerm
+# open "${HOME}/init/Solarized Dark.itermcolors"
+
+# Don’t display the annoying prompt when quitting iTerm
+# defaults write com.googlecode.iterm2 PromptOnQuit -bool false
 
 ###############################################################################
 # Activity Monitor                                                            #
@@ -176,13 +276,29 @@ defaults write com.apple.SoftwareUpdate AutomaticDownload -int 1
 # Turn on app auto-update
 defaults write com.apple.commerce AutoUpdate -bool true
 
-
 ###############################################################################
 # Development                                                                 #
+# Source: https://github.com/keith/dotfiles/blob/main/osx/defaults.sh         #
 ###############################################################################
 
 # Displaying build times in Xcode
 defaults write com.apple.dt.Xcode ShowBuildOperationDuration -bool YES
+
+# Hide the Xcode 11 minimap
+defaults write com.apple.dt.Xcode DVTTextShowMinimap -bool false
+
+# https://gist.github.com/tkersey/6b6c1d91415c785a10560ae564288a65
+defaults write com.apple.dt.Xcode ShowDVTDebugMenu -bool true
+
+# Disable Source Control
+defaults write com.apple.dt.Xcode IDESourceControlEnableSourceControl_10_0 -bool false
+
+# Make command click jump to definition instead of showing the menu
+defaults write com.apple.dt.Xcode IDECommandClickNavigates -bool true
+
+# Set custom colorscheme
+# defaults write com.apple.dt.Xcode XCFontAndColorCurrentTheme -string panic.xccolortheme
+# defaults write com.apple.dt.Xcode XCFontAndColorCurrentDarkTheme -string panic.xccolortheme
 
 ###############################################################################
 # Tweaks                                                                      #

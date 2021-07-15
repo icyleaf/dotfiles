@@ -19,8 +19,11 @@ brew 'mitmproxy'
 brew 'htop'
 brew 'mkcert'
 
-# Tweaks
+# Gnupg
 brew 'gnupg'
+brew 'pinentry-mac'
+
+# Tweaks
 brew 'zsh'
 brew 'fasd'
 brew 'fzf'
