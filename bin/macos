@@ -49,6 +49,15 @@ defaults write com.apple.AppleMultitouchTrackpad TrackpadThreeFingerDrag -bool t
 # Enable full keyboard access for all controls (e.g. enable Tab in modal dialogs)
 defaults write NSGlobalDomain AppleKeyboardUIMode -int 3
 
+## Baidu Input
+
+# Hide status bar
+defaults write com.baidu.inputmethod.BaiduIM statusbar -int 0
+
+# Resize word to 9 (default is 5 but setted was 2 value)
+defaults write com.baidu.inputmethod.BaiduIM candnum -int 6
+
+
 ######################################################################################
 # Hotkey                                                                             #
 # Based on https://github.com/diimdeep/dotfiles/blob/master/osx/configure/hotkeys.sh #
