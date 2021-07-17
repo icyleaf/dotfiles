@@ -2,7 +2,7 @@
 #
 # vscode
 
-source functions/_bash
+source functions/_lib.sh
 ensure_macos
 
 DOTFILES_ROOT="`pwd`"

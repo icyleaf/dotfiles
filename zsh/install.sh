@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # zsh
-source functions/_bash
+source functions/_lib.sh
 
 if ! [ $SHELL == '/bin/zsh' ] && ! [ $SHELL == '/usr/local/bin/zsh' ]; then
   info 'changing to zsh shell. please input [sudo]'

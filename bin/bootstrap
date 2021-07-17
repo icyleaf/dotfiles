@@ -2,23 +2,18 @@
 #
 # bootstrap installs things.
 
-source functions/_bash
+source functions/_lib.sh
 
-DOTFILES_ROOT="`pwd`"
-
-if ! [ -z "$DOTFILES_PATH" ]
-then
-  fail "Dotfile already install in ${DOTFILES_PATH}"
+if ! [ -z "$ROOTPATH" ]; then
+  fail "Dotfile already install in ${ROOTPATH}"
 fi
 
 setup_gitconfig () {
-  if ! [ -f git/gitconfig.local.symlink ]
-  then
+  if ! [ -f git/gitconfig.local.symlink ]; then
     info 'setup gitconfig'
 
     git_credential='cache'
-    if [ "$(uname -s)" == "Darwin" ]
-    then
+    if [ "$(uname -s)" == "Darwin" ]; then
       git_credential='osxkeychain'
     fi
 
@@ -38,9 +33,8 @@ install_dotfiles () {
 
   local overwrite_all=false backup_all=false skip_all=false
 
-  for src in $(find -H "$DOTFILES_ROOT" -maxdepth 2 -name '*.symlink' -not -path '*.git*')
-  do
-    dst="$HOME/.$(basename "${src%.*}")"
+  for src in $(find -H "$ROOTPATH" -maxdepth 2 -name '*.symlink' -not -path '*.git*'); do
+    dst="${HOME:-~}/.$(basename "${src%.*}")"
     link_file "$src" "$dst"
   done
 }
@@ -49,7 +43,7 @@ install_dotfiles () {
 # Main
 #############################
 
-tips "=========icyleaf's dotfiles bootstrap========="
+tips "========= icyleaf's dotfiles bootstrap ========="
 setup_gitconfig
 install_dotfiles
 

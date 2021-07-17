@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 #
 # Tmux
-source functions/_bash
+source functions/_lib.sh
 
-tpm_path="$HOME/.tmux/plugins/tpm"
+tpm_path="${HOME:-~}/.tmux/plugins/tpm"
 tpm_url="https://github.com/tmux-plugins/tpm"
 
 info " > Installing tpm"
 if ! [ -d "$tpm_path" ]; then
-  git clone $tpm_url $HOME/.tmux/plugins/tpm
-  success "tpm"
+  git clone $tpm_url "$tpm_path"
+  success "tpm installed"
 else
-  success "skipped, tpm was installed `pwd`"
+  success "skipped, tpm was installed"
 fi

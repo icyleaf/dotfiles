@@ -2,21 +2,19 @@
 #
 # 安装脚本里的所有 install.sh 脚本
 
-set -e
-
-source functions/_bash
+source functions/_lib.sh
 
 cd "$(dirname $0)"/..
 
 run_installer() {
   find . -name install.sh | sort | while read installer ; do
-    echo "-> $installer"
+    tips "-> $installer"
     sh -c "${installer}"
   done
 }
 
 run_installer
 
-if test "$(uname)" = "Darwin"; then
-  setup_vscode
-fi
+
+ensure_macos
+setup_vscode

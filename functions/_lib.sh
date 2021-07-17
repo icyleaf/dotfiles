@@ -1,6 +1,10 @@
-#!/usr/bin/env bash
-#
 # Helper
+
+set -euo pipefail
+test "${DEBUG:-}" && set -x
+
+DIRPATH=$(realpath $(dirname "$0"))
+ROOTPATH=$(realpath "${DIRPATH}/..")
 
 ensure_macos () {
   if test ! "$(uname)" = "Darwin"; then

@@ -2,7 +2,7 @@
 #
 # Mac App Store
 
-source functions/_bash
+source functions/_lib.sh
 ensure_macos
 
 function install_apps () {

@@ -2,11 +2,8 @@
 
 # Based on https://github.com/mathiasbynens/dotfiles/blob/master/.macos
 
-if test ! "$(uname)" = "Darwin"; then
-  exit 0
-fi
-
-source functions/_bash
+source functions/_lib.sh
+ensure_macos
 
 info 'setup macOS'
 
