@@ -8,9 +8,11 @@ icyleaf's dotfiles
 ```bash
 .
 ├── README.md
+├── alfred
+│   ├── Alfred.alfredpreferences
+│   └── install.sh
 ├── bin
 │   ├── bootstrap
-│   ├── install
 │   └── macos
 ├── brew
 │   ├── Brewfile
@@ -18,44 +20,44 @@ icyleaf's dotfiles
 ├── editorconfig
 │   └── editorconfig.symlink
 ├── functions
-│   └── _bash
+│   └── _lib.sh
 ├── git
 │   ├── gitattributes.symlink
-│   ├── gitconfig.local.symlink
 │   ├── gitconfig.local.symlink.example
 │   ├── gitconfig.symlink
 │   └── gitignore.symlink
+├── gnupg
+│   ├── gpg-agent.conf
+│   └── install.sh
 ├── iterm2
 │   ├── Preferences
-│   │   └── com.googlecode.iterm2.plist
 │   ├── install.sh
 │   └── themes
-│       └── seti.itermcolors
 ├── karabiner
 │   ├── assets
-│   │   └── complex_modifications
-│   │       └── 60-keyboard.json
 │   ├── install.sh
 │   └── karabiner.json
+├── mas
+│   └── install.sh
 ├── ruby
 │   ├── gemrc.symlink
-│   └── irbrc.symlink
-├── rvm
 │   ├── install.sh
+│   ├── irbrc.symlink
 │   └── rvmrc.symlink
 ├── tmux
 │   ├── install.sh
 │   ├── tmux.conf.symlink
 │   └── tmuxinator.symlink
-│       ├── hpr.yml
-│       └── qmobile.yml
 ├── vim
 │   └── install.sh
 ├── vscode
-│   ├── syncLocalSettings.json
+│   ├── install.sh
 │   └── syncLocalSettings.json.example
+├── xcode
+│   └── install.sh
 └── zsh
     ├── install.sh
+    ├── p10k.zsh
     └── zshrc.symlink
 ```
 
@@ -63,11 +65,9 @@ icyleaf's dotfiles
 --------
 
 ```bash
-$ git clone http://gitlab.dev/icyleaf/dotfiles.git
-$ cd dotfiles
+$ git clone http://gitlab.dev/icyleaf/dotfiles.git ~/.dotfiles
+$ cd ~/.dotfiles
 $ ./bin/bootstrap
-$ ./bin/install
-$ ./bin/macos
 ```
 
 实现原理
