@@ -11,5 +11,5 @@ if ! [ -d "$tpm_path" ]; then
   git clone $tpm_url $HOME/.tmux/plugins/tpm
   success "tpm"
 else
-    success "skipped, tpm was installed `pwd`"
+  success "skipped, tpm was installed `pwd`"
 fi

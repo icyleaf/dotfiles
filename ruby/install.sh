@@ -6,7 +6,7 @@ source functions/_bash
 rvm_db_path="$HOME/.rvm/user/db"
 rvm_ruby_url="ruby_url=https://cache.ruby-china.com/pub/ruby"
 
-ruby_version=2.7
+ruby_version=2.7.2
 
 info " > Installing rvm"
 if test ! $(which rvm); then
@@ -29,8 +29,8 @@ else
 fi
 
 info " > Install Ruby $ruby_version"
-rvm install 2.7 --disable-binary
-rvm use 2.7 --default
+rvm install $ruby_version --disable-binary
+rvm use $ruby_version --default
 success "Ruby $ruby_version"
 
 info " > Installing ruby gems"

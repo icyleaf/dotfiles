@@ -45,35 +45,6 @@ install_dotfiles () {
   done
 }
 
-# link_system_files () {
-#   overwrite_all=false
-#   backup_all=false
-#   skip_all=false
-
-#   system_path="${DOTFILES_ROOT}/system"
-#   for source in `find $system_path -type f ! -iname ".DS_Store"`
-#   do
-#     dest=${source//$system_path/''}
-#     linking_file $source $dest true
-#   done
-# }
-
-# install_apps () {
-#   if test ! $(which brew)
-#   then
-#     info 'installing homebrew'
-#     sh -c "brew/init.sh"
-#     success 'homebrew installed'
-#   fi
-
-#   for installer in `find $DOTFILES_ROOT -d 2 -name "install.sh"`
-#   do
-#     info $installer
-#     sh -c "${installer}"
-#   done
-# }
-
-
 #############################
 # Main
 #############################

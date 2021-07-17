@@ -2,11 +2,8 @@
 #
 # xcode
 
-if test ! "$(uname)" = "Darwin"; then
-  exit 0
-fi
-
 source functions/_bash
+ensure_macos
 
 xcode_theme_name="Dracula.xccolortheme"
 xcode_theme_path="$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes"

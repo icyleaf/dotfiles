@@ -3,22 +3,23 @@
 # homebrew
 
 source functions/_bash
+ensure_macos
 
 brew_path=`pwd`
 
-user "Enable replace brew git source:\n\n\
-         -> https://mirrors.tuna.tsinghua.edu.cn\n\n\
-       what do you want to do?\n\
-       [y]es, [n]o: "
-read -n 1 action
-case "$action" in
-  y|Y )
-    export HOMEBREW_BREW_GIT_REMOTE="https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/brew.git"
-    export HOMEBREW_CORE_GIT_REMOTE="https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/homebrew-core.git"
-    ;;
-  * )
-    ;;
-esac
+# user "Enable replace brew git source:\n\n\
+#          -> https://mirrors.tuna.tsinghua.edu.cn\n\n\
+#        what do you want to do?\n\
+#        [y]es, [n]o: "
+# read -n 1 action
+# case "$action" in
+#   y|Y )
+#     export HOMEBREW_BREW_GIT_REMOTE="https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/brew.git"
+#     export HOMEBREW_CORE_GIT_REMOTE="https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/homebrew-core.git"
+#     ;;
+#   * )
+#     ;;
+# esac
 
 info " > Installing homebrew"
 if test ! $(which brew); then
