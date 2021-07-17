@@ -4,9 +4,8 @@
 
 source functions/_lib.sh
 
-local target_path="${HOME:-~}/.gnupg"
+target_path="${HOME:-~}/.gnupg"
 
-info " > Link gnupg"
 if ! [ -d "${target_path}" ]; then
   mkdir $target_path
   chmod 700 $target_path

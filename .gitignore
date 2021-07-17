@@ -1,4 +1,5 @@
 vim/dotfiles/vim/bundle/*
+brew/*.lock.json
 
 git/gitconfig.local.symlink
 vscode/syncLocalSettings.json

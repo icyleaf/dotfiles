@@ -5,8 +5,6 @@
 source functions/_lib.sh
 ensure_macos
 
-DOTFILES_ROOT="`pwd`"
-
 info "Setup VSCode"
 if test ! $(which code); then
   info "Linking code command"
@@ -30,5 +28,5 @@ if ! [ -f "vscode/syncLocalSettings.json" ]; then
   sed -e "s/GITHUB_ACCESS_TOKEN/$github_access_token/g" vscode/syncLocalSettings.json.example > vscode/syncLocalSettings.json
 fi
 
-link_file "${DOTFILES_ROOT}/vscode/syncLocalSettings.json" "$settings_sync_file"
+link_file "${DIRPATH}/syncLocalSettings.json" "$settings_sync_file"
 success "Setup VSCode"

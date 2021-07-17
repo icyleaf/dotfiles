@@ -7,18 +7,18 @@ ensure_macos
 
 HOMEBREW_SOURCE=https://mirrors.tuna.tsinghua.edu.cn
 
-local replace_sources=false
-local action=
+replace_brew_sources=false
+brew_action=
 
 replace_brew_sources () {
   user "Enable replace brew git source:\n\n\
           -> ${HOMEBREW_SOURCE}\n\n\
         what do you want to do?\n\
         [y]es, [n]o: "
-  read -n 1 action
-  case "$action" in
+  read -n 1 brew_action
+  case "$brew_action" in
     y|Y )
-      replace_sources=true
+      replace_brew_sources=true
       export HOMEBREW_BREW_GIT_REMOTE="${HOMEBREW_SOURCE}/git/homebrew/brew.git"
       export HOMEBREW_CORE_GIT_REMOTE="${HOMEBREW_SOURCE}/git/homebrew/homebrew-core.git"
       ;;
@@ -28,7 +28,7 @@ replace_brew_sources () {
 }
 
 
-info " > Installing homebrew"
+info "Installing homebrew"
 if test ! $(which brew); then
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
@@ -38,7 +38,7 @@ if test ! $(which brew); then
   brew tap kopia/kopia
 
   # 替换为国内源
-  if [ "$replace_sources" == "true" ]; then
+  if [ "$replace_brew_sources" == "true" ]; then
     git -C "$(brew --repo)" remote set-url origin https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/brew.git
     BREW_TAPS="$(brew tap)"
     for tap in core services cask{,-fonts,-drivers}; do

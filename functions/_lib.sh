@@ -6,6 +6,10 @@ test "${DEBUG:-}" && set -x
 DIRPATH=$(realpath $(dirname "$0"))
 ROOTPATH=$(realpath "${DIRPATH}/..")
 
+overwrite_all=false
+backup_all=false
+skip_all=false
+
 ensure_macos () {
   if test ! "$(uname)" = "Darwin"; then
     exit 0
@@ -15,9 +19,9 @@ ensure_macos () {
 link_file () {
   local src=$1 dst=$2
 
-  overwrite_all=${overwrite_all:-false}
-  backup_all=${backup_all:-false}
-  skip_all=${skip_all:-false}
+  local overwrite_all=${overwrite_all:-false}
+  local backup_all=${backup_all:-false}
+  local skip_all=${skip_all:-false}
 
   local overwrite= backup= skip=
   local action=
@@ -28,8 +32,9 @@ link_file () {
       if [ "$currentSrc" == "$src" ]; then
         skip=true;
       else
-        user "File already exists: $dst (${src}), what do you want to do?\n\
+        user "File already exists: $dst (${src#$ROOTPATH/}), what do you want to do?\n\
         [s]kip, [S]kip all, [o]verwrite, [O]verwrite all, [b]ackup, [B]ackup all?"
+
         read -n 1 action
 
         case "$action" in
@@ -71,10 +76,10 @@ link_file () {
   fi
 
   # "false" or empty
-  if [ "$skip" != "true" ]; then
-    ln -s "$1" "$2"
-    success "linked $1 to $2"
-  fi
+  # if [ "$skip" != "true" ]; then
+  #   ln -s "$1" "$2"
+  #   success "linked $1 to $2"
+  # fi
 }
 
 remove_dock_icon() {

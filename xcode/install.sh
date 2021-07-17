@@ -5,12 +5,11 @@
 source functions/_lib.sh
 ensure_macos
 
-local xcode_theme_name="Dracula.xccolortheme"
-local xcode_theme_path="${HOME:-~}/Library/Developer/Xcode/UserData/FontAndColorThemes"
-local xcode_theme_url=https://raw.githubusercontent.com/dracula/xcode/master/Dracula.xccolortheme
-root_path=`pwd`
+xcode_theme_name="Dracula.xccolortheme"
+xcode_theme_path="${HOME:-~}/Library/Developer/Xcode/UserData/FontAndColorThemes"
+xcode_theme_url=https://raw.githubusercontent.com/dracula/xcode/master/Dracula.xccolortheme
 
-info " > Installing Xcode Theme Dracula `pwd`"
+info "Installing Xcode Theme Dracula `pwd`"
 if ! [ -f "$xcode_theme_path" ]; then
   mkdir -p $xcode_theme_path
   curl -sLf $xcode_theme_url  -o "${xcode_theme_path}/${xcode_theme_name}"

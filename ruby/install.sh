@@ -3,21 +3,20 @@
 # Ruby 依赖文件
 source functions/_lib.sh
 
-local rvm_db_path="$HOME/.rvm/user/db"
-local rvm_ruby_url="ruby_url=https://cache.ruby-china.com/pub/ruby"
-local ruby_version=2.7.2
+rvm_db_path="${HOME:-~}/.rvm/user/db"
+rvm_ruby_url="ruby_url=https://cache.ruby-china.com/pub/ruby"
+ruby_version=2.7.2
 
-info " > Installing rvm"
+info "Installing rvm"
 if test ! $(which rvm); then
   curl -sSL https://get.rvm.io | bash -s stable
-  source ~/.bashrc
-  source ~/.bash_profile
+  source ~/.zshrc
   success "rvm"
 else
   success "skipped, rvm was installed `pwd`"
 fi
 
-info " > Replace RVM source to ruby-china"
+info "Replace RVM source to ruby-china"
 if [ -f "$rvm_db_path" ]; then
   if ! grep -q "$rvm_ruby_url" $rvm_db_path; then
     echo "ruby_url=$rvm_ruby_url" > ~/.rvm/user/db
@@ -27,12 +26,16 @@ else
   success "skipped, rvm was replaced `pwd`"
 fi
 
-info " > Install Ruby $ruby_version"
-rvm install $ruby_version --disable-binary
-rvm use $ruby_version --default
+info "Install Ruby $ruby_version"
+if [ -z "$(ruby -v | grep $ruby_version)" ]; then
+  rvm install $ruby_version --disable-binary
+  rvm use $ruby_version --default
+else
+  rvm use $ruby_version --default
+fi
 success "Ruby $ruby_version"
 
-info " > Installing ruby gems"
+info "Installing ruby gems"
 for gem in "irbtools" \
   "awesome_print" \
   "mush" \

@@ -8,4 +8,6 @@ ensure_macos
 config_name="com.googlecode.iterm2.plist"
 install_path="${HOME:-~}/Library/Preferences/${config_name}"
 
+info "Linking iterm2"
 link_file "${DIRPATH}/Preferences/${config_name}" "$install_path"
+success "iterm2"

@@ -5,7 +5,7 @@
 source functions/_lib.sh
 ensure_macos
 
-local config_name="Alfred.alfredpreferences"
-local install_path="${HOME:-~}/Library/Application Support/Alfred/${config_name}"
+alfred_name="Alfred.alfredpreferences"
+alfred_dst="${HOME:-~}/Library/Application Support/Alfred/${alfred_name}"
 
-link_file "${DIRPATH}/Application Support/${config_name}" "$install_path"
+link_file "${DIRPATH}/${alfred_name}" "$alfred_dst"
