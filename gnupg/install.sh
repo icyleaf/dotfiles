@@ -4,11 +4,12 @@
 
 source functions/_lib.sh
 
-target_path="${HOME:-~}/.gnupg"
+gnupg_name=gpg-agent.conf
+gnupg_dst="${HOME:-~}/.gnupg"
 
-if ! [ -d "${target_path}" ]; then
+if ! [ -d "$gnupg_dst" ]; then
   mkdir $target_path
   chmod 700 $target_path
 fi
 
-link_file "${ROOTPATH}/gnupg/gpg-agent.conf" "$target_path/gpg-agent.conf"
+link_file "${DIRPATH}/${gnupg_name}" "$gnupg_dst/${gnupg_name}"

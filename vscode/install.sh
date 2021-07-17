@@ -11,7 +11,6 @@ if test ! $(which code); then
   code_path="/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code"
 
   link_file $code_path /usr/local/bin/code
-  success 'gitconfig'
 fi
 
 settings_sync_file="$HOME/Library/Application Support/Code/User/syncLocalSettings.json"

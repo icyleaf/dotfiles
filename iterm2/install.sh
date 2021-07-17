@@ -5,9 +5,7 @@
 source functions/_lib.sh
 ensure_macos
 
-config_name="com.googlecode.iterm2.plist"
-install_path="${HOME:-~}/Library/Preferences/${config_name}"
+iterm2_name="com.googlecode.iterm2.plist"
+iterm2_dst="${HOME:-~}/Library/Preferences/${iterm2_name}"
 
-info "Linking iterm2"
-link_file "${DIRPATH}/Preferences/${config_name}" "$install_path"
-success "iterm2"
+link_file "${DIRPATH}/Preferences/${iterm2_name}" "$iterm2_dst"

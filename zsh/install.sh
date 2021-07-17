@@ -13,10 +13,14 @@ if ! [ $SHELL == '/bin/zsh' ] && ! [ $SHELL == '/usr/local/bin/zsh' ]; then
   success 'zsh installed'
 fi
 
-if ! [ -d $HOME/.oh-my-zsh ]; then
+zsh_local_file=$DIRPATH/local.zsh
+if ! [ -f "$zsh_local_file" ]; then
+  cp "${zsh_local_file}.example" "$zsh_local_file"
+fi
+
+if ! [ -d ${HOME:-~}/.oh-my-zsh ]; then
   info 'installing oh-my-zsh'
   git clone https://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh
-  success 'oh-my-zsh installed'
 
   tips '=========Oh-My-Zsh========='
   tips 'please include zsh config: '
@@ -24,6 +28,7 @@ if ! [ -d $HOME/.oh-my-zsh ]; then
   tips '$ source ~/.zshrc '
   tips ''
   tips '==========================='
+  success 'oh-my-zsh installed'
 fi
 
 if ! [ -d $omz_custom_path/themes/$powerlevel10k ]; then
