@@ -2,11 +2,8 @@
 #
 # Mac App Store
 
-if test ! "$(uname)" = "Darwin"; then
-  exit 0
-fi
-
-source functions/_bash
+source functions/_lib.sh
+ensure_macos
 
 function install_apps () {
   installed_apps=`mas list`
