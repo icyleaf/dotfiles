@@ -71,5 +71,4 @@ cask 'qlcolorcode'
 cask 'quicklook-json'
 
 # macOS non-ascii fonts for terminal
-cask 'font-droid-sans-mono-for-powerline'
 cask 'font-meslo-lg-nerd-font'

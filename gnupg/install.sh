@@ -2,15 +2,14 @@
 #
 # gungpg
 
-source functions/_bash
+source functions/_lib.sh
 
-root_path=`pwd`
-target_path="${HOME:-~}/.gnupg"
+gnupg_name=gpg-agent.conf
+gnupg_dst="${HOME:-~}/.gnupg"
 
-info " > Link gnupg"
-if ! [ -d "${target_path}" ]; then
-  mkdir $target_path
-  chmod 700 $target_path
+if ! [ -d "$gnupg_dst" ]; then
+  mkdir $gnupg_dst
+  chmod 700 $gnupg_dst
 fi
 
-link_file "${root_path}/gnupg/gpg-agent.conf" "$target_path/gpg-agent.conf"
+link_file "${DIRPATH}/${gnupg_name}" "$gnupg_dst/${gnupg_name}"

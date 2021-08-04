@@ -2,23 +2,14 @@
 #
 # bootstrap installs things.
 
-source functions/_bash
-
-DOTFILES_ROOT="`pwd`"
-
-if ! [ -z "$DOTFILES_PATH" ]
-then
-  fail "Dotfile already install in ${DOTFILES_PATH}"
-fi
+source functions/_lib.sh
 
 setup_gitconfig () {
-  if ! [ -f git/gitconfig.local.symlink ]
-  then
+  if ! [ -f git/gitconfig.local.symlink ]; then
     info 'setup gitconfig'
 
     git_credential='cache'
-    if [ "$(uname -s)" == "Darwin" ]
-    then
+    if [ "$(uname -s)" == "Darwin" ]; then
       git_credential='osxkeychain'
     fi
 
@@ -34,64 +25,37 @@ setup_gitconfig () {
 }
 
 install_dotfiles () {
-  info 'installing dotfiles'
+  info 'Installing dotfiles'
 
-  local overwrite_all=false backup_all=false skip_all=false
-
-  for src in $(find -H "$DOTFILES_ROOT" -maxdepth 2 -name '*.symlink' -not -path '*.git*')
-  do
-    dst="$HOME/.$(basename "${src%.*}")"
+  for src in $(find -H "$ROOTPATH" -maxdepth 2 -name '*.symlink' -not -path '*.git*'); do
+    dst="${HOME:-~}/.$(basename "${src%.*}")"
     link_file "$src" "$dst"
+  done
+  success 'dotfiles done'
+  echo
+}
+
+run_installer() {
+  for installer in $(find . -name install.sh | sort); do
+    info "Running installer: $installer"
+    $installer
+    success "Installer done: $installer"
+    echo
   done
 }
 
-# link_system_files () {
-#   overwrite_all=false
-#   backup_all=false
-#   skip_all=false
-
-#   system_path="${DOTFILES_ROOT}/system"
-#   for source in `find $system_path -type f ! -iname ".DS_Store"`
-#   do
-#     dest=${source//$system_path/''}
-#     linking_file $source $dest true
-#   done
-# }
-
-# install_apps () {
-#   if test ! $(which brew)
-#   then
-#     info 'installing homebrew'
-#     sh -c "brew/init.sh"
-#     success 'homebrew installed'
-#   fi
-
-#   for installer in `find $DOTFILES_ROOT -d 2 -name "install.sh"`
-#   do
-#     info $installer
-#     sh -c "${installer}"
-#   done
-# }
-
+setup_macos() {
+  $ROOTPATH/bin/macos
+}
 
 #############################
 # Main
 #############################
 
-tips "=========icyleaf's dotfiles bootstrap========="
 setup_gitconfig
 install_dotfiles
+run_installer
+setup_macos
 
-# If we're on a Mac, let's install and setup homebrew.
-# if [ "$(uname -s)" == "Darwin" ]
-# then
-#   info "installing dependencies"
-#   if source bin/dot | while read -r data; do info "$data"; done
-#   then
-#     success "dependencies installed"
-#   else
-#     fail "error installing dependencies"
-#   fi
-# fi
-
-tips 'All installed!'
+echo
+echo '  All installed!'

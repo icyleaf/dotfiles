@@ -72,14 +72,14 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(osx sudo brew fasd rsync docker docker-compose git tig git-flow tmux tmuxinator xcode gradle rvm ruby gem rake rails node npm yarn zsh-autosuggestions fzf wakatime)
+plugins=(osx sudo brew fasd rsync docker docker-compose git tig git-flow tmux tmuxinator xcode gradle rvm ruby gem rake rails node npm yarn zsh-autosuggestions fzf)
 
 source $ZSH/oh-my-zsh.sh
 
 # User configuration
 
 # Load local config
-[[ ! -f ~/.zsh-local.zsh ]] || source ~/.zsh-local.zsh
+[[ ! -f ~/.dotfiles/zsh/local.zsh ]] || source ~/.dotfiles/zsh/local.zsh
 
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
@@ -107,8 +107,8 @@ alias reload='source ~/.zshrc'
 alias zshrc='vim ~/.zshrc'
 alias omz='vim ~/.oh-my-zsh'
 
-alias dci="docker rmi $(docker images | grep '<none' | awk '{print $3}')"
-alias dcc="docker rm -f $(docker ps -a | grep 'Exited' | awk '{print $1}')"
+# alias dci="docker rmi $(docker images | grep '<none' | awk '{print $3}')"
+# alias dcc="docker rm -f $(docker ps -a | grep 'Exited' | awk '{print $1}')"
 
 # Compilation flags
 export ARCHFLAGS="-arch x86_64"
@@ -134,3 +134,6 @@ export PATH="${ANDROID_SDK_ROOT}/platform-tools:${ANDROID_SDK_ROOT}/tools:$PATH"
 
 # gpg
 export GPG_TTY=$(tty)
+
+# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
+export PATH="$PATH:$HOME/.rvm/bin"

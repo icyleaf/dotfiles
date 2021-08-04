@@ -6,14 +6,22 @@
 # - kdiff3: http://kdiff3.sourceforge.net/
 [include]
   path = ~/.gitconfig.local
+[init]
+  defaultBranch = main
 [core]
   excludesfile = ~/.gitignore
   attributesfile = ~/.gitattributes
   editor = vim
   pager = tig
+[push]
+  default = simple
+[pull]
+  rebase = false
+[color]
+  pager = off
 [alias]
   clone = clone --recursive URL
-  count = !git shortlog -sn
+  count = !git --no-pager shortlog -sn
 [log]
   date = local
 [diff]
@@ -41,17 +49,6 @@
   trustExitCode = true
 [mergetool "kdiff3"]
   cmd = kdiff3
-[push]
-  default = simple
-[color]
-  pager = off
 [mergetool "ks"]
   cmd = ksdiff --merge --output \"$MERGED\" --base \"$BASE\" -- \"$LOCAL\" --snapshot \"$REMOTE\" --snapshot
   trustExitCode = true
-[filter "lfs"]
-	clean = git-lfs clean -- %f
-	smudge = git-lfs smudge -- %f
-	process = git-lfs filter-process
-	required = true
-[init]
-	defaultBranch = master
