@@ -25,7 +25,8 @@ brew 'pinentry-mac'
 
 # Tweaks
 brew 'zsh'
-brew 'fasd'
+brew 'zoxide'
+brew 'broot'
 brew 'fzf'
 brew 'mtr'
 brew 'tree'

@@ -21,9 +21,9 @@ set-option -g repeat-time 0
 setw -g mode-keys vi
 
 ## bind keys
-bind i display-panes
-bind y copy-mode
-bind p paste-buffer
+# bind i display-panes
+# bind y copy-mode
+# bind p paste-buffer
 
 ## extra custom Commands
 bind m command-prompt "splitw 'exec man %%'"
@@ -63,7 +63,7 @@ set -g @plugin 'tmux-plugins/tmux-urlview'
 set -g @plugin 'tmux-plugins/tmux-sessionist'
 
 # copy to clipboard
-# osx must install reattach-to-user-namespace
+# macOS Required: nstall reattach-to-user-namespace
 # prefix + y: copy text from the command line
 # prefix + Y: copy pane current working directory(PWD)
 set -g @plugin 'tmux-plugins/tmux-yank'
