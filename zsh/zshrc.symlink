@@ -72,7 +72,7 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(osx sudo brew fasd rsync docker docker-compose git tig git-flow tmux tmuxinator xcode gradle rvm ruby gem rake rails node npm yarn zsh-autosuggestions fzf)
+plugins=(macos zoxide sudo brew rsync docker docker-compose git tig git-flow tmux tmuxinator xcode gradle ruby rvm gem rake rails node npm yarn zsh-autosuggestions fzf)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -124,6 +124,9 @@ export EDITOR=vim
 
 # 关闭 brew 自动更新功能
 export HOMEBREW_NO_AUTO_UPDATE=1
+export HOMEBREW_NO_ANALYTICS=1
+#export HOMEBREW_BOTTLE_DOMAIN=https://mirrors.sjtug.sjtu.edu.cn/homebrew-bottles/bottles
+#export HOMEBREW_BOTTLE_DOMAIN=https://mirrors.ustc.edu.cn/homebrew-bottles
 
 # Python
 export PATH="/usr/local/opt/python@3/libexec/bin:$PATH"
@@ -135,5 +138,8 @@ export PATH="${ANDROID_SDK_ROOT}/platform-tools:${ANDROID_SDK_ROOT}/tools:$PATH"
 # gpg
 export GPG_TTY=$(tty)
 
-# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
-export PATH="$PATH:$HOME/.rvm/bin"
+# broot
+source /Users/icyleaf/.config/broot/launcher/bash/br
+
+# rbenv
+export RUBY_BUILD_MIRROR_URL=https://cache.ruby-china.com
