@@ -148,6 +148,3 @@ export GPG_TTY=$(tty)
 
 # broot
 source /Users/icyleaf/.config/broot/launcher/bash/br
-
-# rbenv
-export RUBY_BUILD_MIRROR_URL=https://cache.ruby-china.com
