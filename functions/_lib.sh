@@ -76,10 +76,10 @@ link_file () {
   fi
 
   # "false" or empty
-  # if [ "$skip" != "true" ]; then
-  #   ln -s "$1" "$2"
-  #   success "linked $1 to $2"
-  # fi
+  if [ "$skip" != "true" ]; then
+    ln -s "$1" "$2"
+    success "linked $1 to $2"
+  fi
 }
 
 remove_dock_icon() {
