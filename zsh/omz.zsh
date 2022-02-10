@@ -72,7 +72,7 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(macos zoxide sudo brew rsync docker docker-compose git tig git-flow tmux tmuxinator xcode gradle ruby rvm gem rake rails node npm yarn zsh-autosuggestions fzf)
+plugins=(macos asdf zoxide sudo brew rsync docker docker-compose git tig git-flow tmux tmuxinator xcode gradle ruby gem rake rails node npm yarn zsh-autosuggestions fzf)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -148,3 +148,5 @@ export GPG_TTY=$(tty)
 
 # broot
 source /Users/icyleaf/.config/broot/launcher/bash/br
+
+export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
