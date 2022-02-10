@@ -1,15 +1,13 @@
 cask_args appdir: '/Applications'
 
+def macos?
+  RbConfig::CONFIG['host_os'].include?('darwin')
+end
+
 # Git
 brew 'git'
 brew 'git-flow-avh'
 brew 'tig'
-
-# Development Tools
-brew 'postgresql'
-brew 'redis'
-brew 'node'
-brew 'imagemagick'
 
 # Development tools
 brew 'axel'
@@ -21,7 +19,6 @@ brew 'mkcert'
 
 # Gnupg
 brew 'gnupg'
-brew 'pinentry-mac'
 
 # Tweaks
 brew 'zsh'
@@ -37,7 +34,6 @@ brew 'youtube-dl'
 brew 'bat'
 brew 'neofetch'
 brew 'terminal-notifier'
-brew 'mas'
 brew 'kopia'
 
 # Blogging
@@ -50,26 +46,38 @@ brew 'reattach-to-user-namespace'
 # DevOps
 brew 'ansible'
 
-# macOS Apps
-cask 'alfred'
-cask 'google-chrome'
-cask 'iterm2'
-cask 'the-unarchiver'
-cask 'dozer'
-cask 'visual-studio-code'
-cask 'clashx'
-cask 'karabiner-elements'
-cask 'appcleaner'
-cask 'notion'
-cask 'baiduinput'
-cask 'iina'
-cask 'android-studio'
-cask 'synology-drive'
+if macos?
+  # Development Tools
+  brew 'postgresql'
+  brew 'redis'
+  brew 'node'
+  brew 'imagemagick'
 
-# macOS QuickLook Extensions
-cask 'provisionql'
-cask 'qlcolorcode'
-cask 'quicklook-json'
+  # Tweaks
+  brew 'pinentry-mac'
+  brew 'mas'
 
-# macOS non-ascii fonts for terminal
-cask 'font-meslo-lg-nerd-font'
+  # macOS Apps
+  cask 'alfred'
+  cask 'google-chrome'
+  cask 'iterm2'
+  cask 'the-unarchiver'
+  cask 'dozer'
+  cask 'visual-studio-code'
+  cask 'clashx'
+  cask 'karabiner-elements'
+  cask 'appcleaner'
+  cask 'notion'
+  cask 'baiduinput'
+  cask 'iina'
+  cask 'android-studio'
+  cask 'synology-drive'
+
+  # macOS QuickLook Extensions
+  cask 'provisionql'
+  cask 'qlcolorcode'
+  cask 'quicklook-json'
+
+  # macOS non-ascii fonts for terminal
+  cask 'font-meslo-lg-nerd-font'
+end
