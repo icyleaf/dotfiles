@@ -29,12 +29,11 @@ zinit light djui/alias-tips
 
 # oh-my-zsh
 zinit snippet OMZL::completion.zsh
-
-zinit ice svn
-zinit snippet OMZP::macos
-
-## lib
+zinit snippet OMZL::directories.zsh
 zinit snippet OMZL::git.zsh
+
+# zinit ice svn
+# zinit snippet OMZP::macos
 
 ## plugins
 ## core
@@ -46,6 +45,7 @@ zinit snippet OMZP::rsync
 zinit snippet OMZP::git
 zinit snippet OMZP::tig
 zinit snippet OMZP::git-flow-avh
+# zinit snippet OMZP::mosh
 
 ## docker
 # zinit ice as"completion"
@@ -63,6 +63,7 @@ zinit snippet OMZP::tmuxinator
 zinit snippet OMZP::asdf
 zinit snippet OMZP::ruby
 zinit snippet OMZP::gem
+zinit snippet OMZP::bundler
 zinit snippet OMZP::rake
 zinit snippet OMZP::rails
 
@@ -73,7 +74,16 @@ zinit snippet OMZP::xcode
 # wakatime
 zinit load sobolevn/wakatime-zsh-plugin
 
+# lima completion
+source <(limactl completion zsh)
+source <(nerdctl.lima completion zsh)
+
+# completion generation
+autoload -Uz compinit
+compinit
+
 # alias
+alias moss='mosh --server=/usr/bin/mosh-server'
 alias flushdns='sudo killall -HUP mDNSResponder'
 alias nns="sudo lsof -i -P"
 alias nnc="lsof -Pni4 | grep LISTEN"
