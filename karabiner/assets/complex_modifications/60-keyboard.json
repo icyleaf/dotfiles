@@ -5,12 +5,13 @@
       "description": "Change caps_lock to control when used as modifier, escape when used alone",
       "manipulators": [
         {
+          "type": "basic",
           "from": {
             "key_code": "caps_lock",
             "modifiers": {
-                "optional": [
-                    "any"
-                ]
+              "optional": [
+                "any"
+              ]
             }
           },
           "to": [
@@ -22,8 +23,7 @@
             {
               "key_code": "escape"
             }
-          ],
-          "type": "basic"
+          ]
         }
       ]
     },
@@ -54,82 +54,82 @@
     {
       "description": "Change fn+hjkl to arrow keys",
       "manipulators": [
-          {
-              "from": {
-                  "key_code": "h",
-                  "modifiers": {
-                      "mandatory": [
-                          "fn"
-                      ],
-                      "optional": [
-                          "any"
-                      ]
-                  }
-              },
-              "to": [
-                  {
-                      "key_code": "left_arrow"
-                  }
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "h",
+            "modifiers": {
+              "mandatory": [
+                "fn"
               ],
-              "type": "basic"
+              "optional": [
+                "any"
+              ]
+            }
           },
-          {
-              "from": {
-                  "key_code": "j",
-                  "modifiers": {
-                      "mandatory": [
-                          "fn"
-                      ],
-                      "optional": [
-                          "any"
-                      ]
-                  }
-              },
-              "to": [
-                  {
-                      "key_code": "down_arrow"
-                  }
+          "to": [
+            {
+              "key_code": "left_arrow"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "j",
+            "modifiers": {
+              "mandatory": [
+                "fn"
               ],
-              "type": "basic"
+              "optional": [
+                "any"
+              ]
+            }
           },
-          {
-              "from": {
-                  "key_code": "k",
-                  "modifiers": {
-                      "mandatory": [
-                          "fn"
-                      ],
-                      "optional": [
-                          "any"
-                      ]
-                  }
-              },
-              "to": [
-                  {
-                      "key_code": "up_arrow"
-                  }
+          "to": [
+            {
+              "key_code": "down_arrow"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "k",
+            "modifiers": {
+              "mandatory": [
+                "fn"
               ],
-              "type": "basic"
+              "optional": [
+                "any"
+              ]
+            }
           },
-          {
-              "from": {
-                  "key_code": "l",
-                  "modifiers": {
-                      "mandatory": [
-                          "fn"
-                      ],
-                      "optional": [
-                          "any"
-                      ]
-                  }
-              },
-              "to": [
-                  {
-                      "key_code": "right_arrow"
-                  }
+          "to": [
+            {
+              "key_code": "up_arrow"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "l",
+            "modifiers": {
+              "mandatory": [
+                "fn"
               ],
-              "type": "basic"
-          }
+              "optional": [
+                "any"
+              ]
+            }
+          },
+          "to": [
+            {
+              "key_code": "right_arrow"
+            }
+          ]
+        }
       ]
     }
   ]
