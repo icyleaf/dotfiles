@@ -74,9 +74,14 @@ zinit snippet OMZP::xcode
 # wakatime
 zinit load sobolevn/wakatime-zsh-plugin
 
-# lima completion
-source <(limactl completion zsh)
-source <(nerdctl.lima completion zsh)
+if test "$(uname)" = "Darwin"; then
+  # lima completion
+  zinit light <(limactl completion zsh)
+
+  if ! [ -z "$(limactl list &> /dev/null | grep default | grep Running)" ]; then
+    zinit light <(nerdctl.lima completion zsh)
+  fi
+fi
 
 # completion generation
 autoload -Uz compinit
