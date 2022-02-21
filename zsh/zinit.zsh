@@ -18,19 +18,31 @@ fi
 # zinit ice pick"async.zsh" src"pure.zsh"
 # zinit light sindresorhus/pure
 
+zinit wait lucid for \
+      OMZL::git.zsh \
+  atload"unalias grv" \
+      OMZP::git
+
+zinit wait lucid for \
+  atinit"zicompinit; zicdreplay"  \
+      zdharma-continuum/fast-syntax-highlighting \
+      OMZP::colored-man-pages \
+  as"completion" \
+      OMZP::docker/_docker
+
 # Plugins
 ## broot
 source /Users/icyleaf/.config/broot/launcher/bash/br
 
 zinit light zsh-users/zsh-completions
 zinit light zsh-users/zsh-autosuggestions
-zinit light zdharma-continuum/fast-syntax-highlighting
+# zinit light zdharma-continuum/fast-syntax-highlighting
 zinit light djui/alias-tips
 
 # oh-my-zsh
 zinit snippet OMZL::completion.zsh
 zinit snippet OMZL::directories.zsh
-zinit snippet OMZL::git.zsh
+# zinit snippet OMZL::git.zsh
 
 # zinit ice svn
 # zinit snippet OMZP::macos
@@ -74,32 +86,40 @@ zinit snippet OMZP::xcode
 # wakatime
 zinit load sobolevn/wakatime-zsh-plugin
 
-if test "$(uname)" = "Darwin"; then
-  # lima completion
-  zinit light <(limactl completion zsh)
+# zinit wait as"none" \
+#   id-as"local-plugins" nocompile \
+#   multisrc"${HOME:-~}/.dotfiles/zsh/plugins/*.zsh" \
+#   atpull"zinit creinstall -q ${ZDOTDIR}/completions" \
+#   run-atpull \
+# for icyleaf/icyleaf
 
-  if ! [ -z "$(limactl list &> /dev/null | grep default | grep Running)" ]; then
-    zinit light <(nerdctl.lima completion zsh)
-  fi
-fi
+zinit ice as"completion" id-as"local-plugin-lima"
+zinit snippet "${HOME:-~}/.dotfiles/zsh/plugins/lima.zsh"
+
+# if test "$(uname)" = "Darwin"; then
+#   # lima completion
+#   zinit light <(limactl completion zsh)
+
+#   if ! [ -z "$(limactl list &> /dev/null | grep default | grep Running)" ]; then
+#     zinit light <(nerdctl.lima completion zsh)
+#   fi
+# fi
 
 # completion generation
 autoload -Uz compinit
 compinit
 
 # alias
-alias moss='mosh --server=/usr/bin/mosh-server'
 alias flushdns='sudo killall -HUP mDNSResponder'
 alias nns="sudo lsof -i -P"
 alias nnc="lsof -Pni4 | grep LISTEN"
-alias mosh='mosh --server=`which mosh-server`'
+alias moss='mosh --server=`which mosh-server`'
 alias ox='open *.xcodeproj'
 alias ow='open *.xcworkspace'
 alias la='ll -a'
 alias rake='noglob rake'
 alias reload='source ~/.zshrc'
 alias zshrc='vim ~/.zshrc'
-alias omz='vim ~/.oh-my-zsh'
 
 # brew alias
 alias b='brew'
