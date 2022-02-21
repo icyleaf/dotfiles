@@ -98,7 +98,7 @@ fi
 alias flushdns='sudo killall -HUP mDNSResponder'
 alias nns="sudo lsof -i -P"
 alias nnc="lsof -Pni4 | grep LISTEN"
-alias mosh='mosh --server=`which mosh-server`'
+alias moss='mosh --server=`which mosh-server`'
 alias ox='open *.xcodeproj'
 alias ow='open *.xcworkspace'
 alias la='ll -a'

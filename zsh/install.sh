@@ -45,12 +45,6 @@ install_omz () {
   if ! [ -d ${HOME:-~}/.oh-my-zsh ]; then
     git clone https://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh
 
-    tips '=========Oh-My-Zsh========='
-    tips 'please include zsh config: '
-    tips ''
-    tips '$ source ~/.zshrc '
-    tips ''
-    tips '==========================='
     success 'oh-my-zsh installed'
   else
     success "skipped, oh-my-zsh was installed"
@@ -77,6 +71,13 @@ install_omz () {
 
   info 'Link omz config'
   link_file "$DIRPATH/omz.zsh" "$HOME/.zshrc"
+
+  tips '=========Oh-My-Zsh========='
+  tips 'please include zsh config: '
+  tips ''
+  tips '$ source ~/.zshrc'
+  tips ''
+  tips '==========================='
 }
 
 ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
@@ -86,12 +87,6 @@ install_zinit () {
     mkdir -p "$(dirname $ZINIT_HOME)"
     git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
 
-    tips '=========Zinit========='
-    tips 'please include zsh config: '
-    tips ''
-    tips '$ source ~/.zshrc '
-    tips ''
-    tips '==========================='
     success 'zinit installed'
   else
     success "skipped, zinit was installed"
@@ -100,8 +95,16 @@ install_zinit () {
   info 'Link zinit config'
   link_file "$DIRPATH/zinit.zsh" "$HOME/.zshrc"
 
-  source "$HOME/.zshrc"
-  zinit update --parallel
+  tips '=========Zinit========='
+  tips 'please include zsh config: '
+  tips ''
+  tips '$ source ~/.zshrc'
+  tips '$ zinit update --parallel'
+  tips ''
+  tips '==========================='
+
+  # source "$HOME/.zshrc"
+  # zinit update --parallel
 
   # wakatime="wakatime"
   # if ! [ -f $omz_custom_path/plugins/$wakatime ]; then
