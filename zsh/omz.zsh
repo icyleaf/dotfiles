@@ -2,7 +2,7 @@
 # zmodload zsh/zprof
 
 # If you come from bash you might have to change your $PATH.
-# export PATH=$HOME/bin:/usr/local/bin:$PATH
+export PATH=/usr/local/bin:/usr/local/sbin:$PATH
 
 # Path to your oh-my-zsh installation.
 export ZSH=$HOME/.oh-my-zsh
@@ -72,7 +72,7 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(macos zoxide sudo brew rsync docker docker-compose git tig git-flow tmux tmuxinator xcode gradle ruby rvm gem rake rails node npm yarn zsh-autosuggestions fzf)
+plugins=(macos asdf zoxide sudo brew rsync docker docker-compose git tig git-flow tmux tmuxinator xcode gradle ruby gem rake rails node npm yarn zsh-autosuggestions fzf)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -98,7 +98,7 @@ fi
 alias flushdns='sudo killall -HUP mDNSResponder'
 alias nns="sudo lsof -i -P"
 alias nnc="lsof -Pni4 | grep LISTEN"
-alias mosh='mosh --server=`which mosh-server`'
+alias moss='mosh --server=`which mosh-server`'
 alias ox='open *.xcodeproj'
 alias ow='open *.xcworkspace'
 alias la='ll -a'
@@ -149,5 +149,4 @@ export GPG_TTY=$(tty)
 # broot
 source /Users/icyleaf/.config/broot/launcher/bash/br
 
-# rbenv
-export RUBY_BUILD_MIRROR_URL=https://cache.ruby-china.com
+export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
