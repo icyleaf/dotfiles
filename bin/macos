@@ -39,6 +39,9 @@ defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool
 defaults -currentHost write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
 defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
 
+# Press Fn key to do nothing (apply since macOS 12)
+defaults write com.apple.HIToolbox AppleFnUsageType -int ０
+
 # Enable 3-finger drag. (Moving with 3 fingers in any window "chrome" moves the window.)
 defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadThreeFingerDrag -bool true
 defaults write com.apple.AppleMultitouchTrackpad TrackpadThreeFingerDrag -bool true
