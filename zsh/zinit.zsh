@@ -84,7 +84,7 @@ zinit snippet OMZP::xcode
 
 # plugins
 # wakatime
-zinit load sobolevn/wakatime-zsh-plugin
+#zinit load sobolevn/wakatime-zsh-plugin
 
 # zinit wait as"none" \
 #   id-as"local-plugins" nocompile \

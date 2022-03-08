@@ -17,23 +17,32 @@ if ! [ -f "$zsh_local_file" ]; then
 fi
 
 choose_zsh_plugin_manager () {
-  user "Which zsh plugin manager do you want to use?\n\
-        1 [o]h-my-zsh\n\
-        2 [z]init"
-  read -n 1 zsh_plugin_manager
-  echo ""
-  case "$zsh_plugin_manager" in
-    1|o|O )
-      install_omz
-      ;;
-    2|z|Z )
+  local zsh_plugin_manager=${ZSH_PKG_MANAGER:-}
+  if ! [ -f "${HOME:-~}/.zshrc" ]; then
+    if [ "$zsh_plugin_manager" == 'zinit' ]; then
       install_zinit
-      ;;
-    * )
-      warn "Do not detch any zsh plugin manager, try again!"
-      choose_zsh_plugin_manager
-      ;;
-  esac
+    elif [ "$zsh_plugin_manager" == 'omz' ]; then
+      install_omz
+    else
+      user "Which zsh plugin manager do you want to use?\n\
+            1 [z]init\n\
+            2 [o]h-my-zsh"
+      read -n 1 zsh_plugin_manager
+      echo ""
+      case "$zsh_plugin_manager" in
+        1|z|Z )
+          install_zinit
+          ;;
+        2|o|O )
+          install_omz
+          ;;
+        * )
+          warn "Do not detch any zsh plugin manager, try again!"
+          choose_zsh_plugin_manager
+          ;;
+      esac
+    fi
+  fi
 }
 
 install_omz () {
