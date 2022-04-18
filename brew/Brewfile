@@ -10,6 +10,7 @@ brew 'git-flow-avh'
 brew 'tig'
 
 # Development tools
+brew 'asdf'
 brew 'axel'
 brew 'httpie'
 brew 'mosh'
