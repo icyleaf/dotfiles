@@ -157,7 +157,10 @@ defaults write com.apple.dock show-recents -bool false
 
 # Remove all most app icons from dock (keep Safari)
 for icon in "com.apple.siri.launcher" \
-            "com.apple.lauchpad.launcher" \
+            "com.apple.launchpad.launcher" \
+            "com.apple.iWork.Keynote" \
+            "com.apple.iWork.Numbers" \
+            "com.apple.iWork.Pages" \
             "com.apple.mail" \
             "com.apple.AddressBook" \
             "com.apple.mail" \
