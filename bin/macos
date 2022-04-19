@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
-
+#
+# This script needs the whole repository of icyleaf/dotfiles to setup.
+#
 # Based on https://github.com/mathiasbynens/dotfiles/blob/master/.macos
 
 source functions/_lib.sh
