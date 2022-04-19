@@ -7,3 +7,5 @@ vscode/syncLocalSettings.json
 
 ssh/
 zsh/local.zsh
+
+.tool-versions
