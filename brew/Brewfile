@@ -4,6 +4,11 @@ def macos?
   RbConfig::CONFIG['host_os'].include?('darwin')
 end
 
+# 第三方库
+tap "homebrew/cask-fonts"
+tap "homebrew/cask-drivers"
+tap "kopia/kopia"
+
 # Git
 brew 'git'
 brew 'git-flow-avh'
@@ -24,7 +29,7 @@ brew 'gnupg'
 # Tweaks
 brew 'zsh'
 brew 'zoxide'
-brew 'broot'
+# brew 'broot'
 brew 'fzf'
 brew 'mtr'
 brew 'tree'
@@ -51,7 +56,7 @@ if macos?
   # Development Tools
   brew 'postgresql'
   brew 'redis'
-  brew 'node'
+  # brew 'node'
   brew 'imagemagick'
 
   # Tweaks
@@ -71,7 +76,7 @@ if macos?
   cask 'notion'
   cask 'baiduinput'
   cask 'iina'
-  cask 'android-studio'
+  # cask 'android-studio'
   cask 'synology-drive'
 
   # macOS QuickLook Extensions

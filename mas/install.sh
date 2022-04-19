@@ -5,27 +5,6 @@
 source functions/_lib.sh
 ensure_macos
 
-function install_apps () {
-  installed_apps=`mas list`
-
-  for app in "PastePal" \
-    "Sip" \
-    "Amphetamine" \
-    "Irvue" \
-    "Hex Fiend" \
-    "TweetDeck" \
-    "DaisyDisk"; do
-
-    no_installed=$(ls /Applications/ | grep -i "$app")
-    if [ -z "$no_installed" ]; then
-      mas lucky "$app"
-    else
-      echo "$app was installed"
-    fi
-  done
-  success "MAS Apps"
-}
-
 function login () {
   user "[Action request] login with App Store app please, choose action:\n\
         [l]og in, the other key to skip this?"
@@ -41,10 +20,25 @@ function login () {
 
 info " > Installing Apps"
 
-mas account > /dev/null 2>&1
-RESULT=$?
-if ! [ $RESULT -eq 0 ]; then
-  login
+if test ! $(which mas); then
+  fail "mas was not installed, run brew/install.sh to install first."
 fi
 
-install_apps
+installed_apps=`mas list`
+
+for app in "PastePal" \
+  "Amphetamine" \
+  "Irvue" \
+  "Hex Fiend" \
+  "TweetDeck" \
+  "MenubarX" \
+  "CotEditor" \
+  "DaisyDisk"; do
+
+  if [ -z "$(ls /Applications | grep -i "$app")" ]; then
+    mas lucky "$app"
+  else
+    echo "$app was installed"
+  fi
+done
+success "MAS Apps"
