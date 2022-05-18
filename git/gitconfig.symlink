@@ -16,7 +16,7 @@
 [push]
   default = simple
 [pull]
-  rebase = false
+  rebase = true
 [color]
   pager = off
 [alias]
