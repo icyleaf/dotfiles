@@ -32,11 +32,6 @@ info "Installing homebrew"
 if test ! $(which brew); then
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-  # 安装 tap
-  brew tap homebrew/cask-fonts
-  brew tap homebrew/cask-drivers
-  brew tap kopia/kopia
-
   # 替换为国内源
   if [ "$replace_brew_sources" == "true" ]; then
     git -C "$(brew --repo)" remote set-url origin https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/brew.git

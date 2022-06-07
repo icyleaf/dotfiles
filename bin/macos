@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
-
+#
+# This script needs the whole repository of icyleaf/dotfiles to setup.
+#
 # Based on https://github.com/mathiasbynens/dotfiles/blob/master/.macos
 
 source functions/_lib.sh
@@ -157,7 +159,10 @@ defaults write com.apple.dock show-recents -bool false
 
 # Remove all most app icons from dock (keep Safari)
 for icon in "com.apple.siri.launcher" \
-            "com.apple.lauchpad.launcher" \
+            "com.apple.launchpad.launcher" \
+            "com.apple.iWork.Keynote" \
+            "com.apple.iWork.Numbers" \
+            "com.apple.iWork.Pages" \
             "com.apple.mail" \
             "com.apple.AddressBook" \
             "com.apple.mail" \
