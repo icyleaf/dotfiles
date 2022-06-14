@@ -51,7 +51,6 @@ zinit snippet OMZL::directories.zsh
 zinit snippet OMZP::zoxide
 zinit snippet OMZP::fzf
 zinit snippet OMZP::sudo
-zinit snippet OMZP::brew
 zinit snippet OMZP::rsync
 zinit snippet OMZP::git
 zinit snippet OMZP::tig
@@ -87,6 +86,9 @@ if (( $+commands[docker-compose] )); then
   zinit snippet OMZP::docker-compose/_docker-compose
 fi
 
+zinit ice id-as"local-plugin-homebrew"
+zinit snippet "${HOME:-~}/.dotfiles/zsh/plugins/homebrew.zsh"
+
 zinit ice id-as"local-plugin-talosctl"
 zinit snippet "${HOME:-~}/.dotfiles/zsh/plugins/talosctl.zsh"
 
@@ -96,7 +98,9 @@ zinit snippet "${HOME:-~}/.dotfiles/zsh/plugins/broot.zsh"
 zinit ice as"completion" id-as"local-plugin-lima"
 zinit snippet "${HOME:-~}/.dotfiles/zsh/plugins/lima.zsh"
 
-zinit light ptavares/zsh-terraform
+if (( $+commands[terraform] )); then
+  zinit light ptavares/zsh-terraform
+fi
 
 ## plugins
 
@@ -128,26 +132,14 @@ alias rake='noglob rake'
 alias reload='source ~/.zshrc'
 alias zshrc='vim ~/.zshrc'
 
-# brew alias
-alias b='brew'
-alias bs='brew services'
-alias bsc='brew services cleanup'
-alias bsl='brew services list'
-alias bsr='brew services restart'
-alias bss='brew services start'
-
 # Compilation flags
-export ARCHFLAGS="-arch x86_64"
+export ARCHFLAGS="-arch $(uname -m)"
 
 # You may need to manually set your language environment
 export LANG=en_US.UTF-8
 
 # Preferred editor for local and remote sessions
 export EDITOR=vim
-
-# 关闭 brew 自动更新功能
-export HOMEBREW_NO_AUTO_UPDATE=1
-export HOMEBREW_NO_ANALYTICS=1
 
 # gpg
 export GPG_TTY=$(tty)
@@ -156,13 +148,6 @@ export GPG_TTY=$(tty)
 export REPO_OS_OVERRIDE=macosx
 export ANDROID_SDK_ROOT="$HOME/Library/Android/sdk"
 export PATH="${ANDROID_SDK_ROOT}/platform-tools:${ANDROID_SDK_ROOT}/tools/bin:$PATH"
-
-export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
-
-# pnpm
-export PNPM_HOME="/Users/icyleaf/Library/pnpm"
-export PATH="$PNPM_HOME:$PATH"
-# pnpm end
 
 ZSH_CACHE_DIR=$TEMP_ZSH_CACHE_DIR
 unset TEMP_ZSH_CACHE_DIR
