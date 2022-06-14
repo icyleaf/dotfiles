@@ -3,8 +3,13 @@
 set -euo pipefail
 test "${DEBUG:-}" && set -x
 
-DIRPATH=$(realpath $(dirname "$0"))
-ROOTPATH=$(realpath "${DIRPATH}/..")
+# From https://stackoverflow.com/a/3572105
+read_path () (
+  [[ $1 = /* ]] && echo "$1" || echo "$PWD/${1#./}"
+)
+
+DIRPATH=$(read_path $(dirname "$0"))
+ROOTPATH=$(read_path "${DIRPATH}/..")
 
 overwrite_all=false
 backup_all=false

@@ -1,20 +1,25 @@
-if test "$(uname)" = "Darwin"; then
-  if test $(which lima); then
-    ZSH_COMPLETION_PATH="/usr/local/share/zsh/site-functions"
-    LIMACTL_COMPLETION_FILE="${ZSH_COMPLETION_PATH}/_limactl"
-    NERDCTL_COMPLETION_FILE="${ZSH_COMPLETION_PATH}/_nerdctl"
+if (( $+commands[limactl] )); then
+  LIMACTL_COMPLETION_FILE="${ZSH_CACHE_DIR}/completions/_limactl"
+  NERDCTL_COMPLETION_FILE="${ZSH_COMPLETION_PATH}/completions/_nerdctl"
 
-    # lima completion
-    if ! [ -f "$LIMACTL_COMPLETION_FILE" ]; then
-      limactl completion zsh > $LIMACTL_COMPLETION_FILE
-    fi
-
-    if ! [ -z "$(limactl list &> /dev/null | grep default | grep Running)" ]; then
-      nerdctl.lima completion zsh > $NERDCTL_COMPLETION_FILE
-    fi
-
-    unset ZSH_COMPLETION_PATH
-    unset LIMACTL_COMPLETION_FILE
-    unset NERDCTL_COMPLETION_FILE
+  # If the completion file does not exist, generate it and then source it
+  # Otherwise, source it and regenerate in the background
+  if [[ ! -f "$TALOSCTL_COMPLETION_FILE" ]]; then
+    limactl completion zsh | tee "$LIMACTL_COMPLETION_FILE" >/dev/null
+    source "$LIMACTL_COMPLETION_FILE"
+  else
+    source "$LIMACTL_COMPLETION_FILE"
+    limactl completion zsh | tee "$LIMACTL_COMPLETION_FILE" >/dev/null &|
   fi
+
+  if [[ ! -f "$NERDCTL_COMPLETION_FILE" ]]; then
+    nerdctl.lima completion zsh | tee "$NERDCTL_COMPLETION_FILE" >/dev/null
+    source "$NERDCTL_COMPLETION_FILE"
+  else
+    source "$NERDCTL_COMPLETION_FILE"
+    nerdctl.lima completion zsh | tee "$NERDCTL_COMPLETION_FILE" >/dev/null &|
+  fi
+
+  unset LIMACTL_COMPLETION_FILE
+  unset NERDCTL_COMPLETION_FILE
 fi

@@ -1,8 +1,11 @@
 vim/dotfiles/vim/bundle/*
 brew/*.lock.json
+gnupg/gpg-agent.conf
 
 git/gitconfig.local.symlink
 vscode/syncLocalSettings.json
 
 ssh/
 zsh/local.zsh
+
+.tool-versions
