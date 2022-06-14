@@ -1,12 +1,12 @@
 HOMEBREW_INSTALLED=0
 
 if test "$(uname)" = "Darwin"; then
-  if test "$(uname -m)" = "arm64" && test $(which "/opt/homebrew/bin/brew" > /dev/null) ; then
+  if test "$(uname -m)" = "arm64" && [[ -f "/opt/homebrew/bin/brew" ]]; then
     HOMEBREW_INSTALLED=1
     eval "$(/opt/homebrew/bin/brew shellenv)"
   fi
 
-  if test $(which "/usr/local/bin/brew" >/dev/null); then
+  if [[ -f "/usr/local/bin/brew" ]]; then
     HOMEBREW_INSTALLED=1
     eval "$(/usr/local/bin/brew shellenv)"
   fi
