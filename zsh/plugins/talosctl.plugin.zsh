@@ -5,9 +5,9 @@ if (( $+commands[talosctl] )); then
   # Otherwise, source it and regenerate in the background
   if [[ ! -f "$TALOSCTL_COMPLETION_FILE" ]]; then
     talosctl completion zsh | tee "$TALOSCTL_COMPLETION_FILE" >/dev/null
-    source "$TALOSCTL_COMPLETION_FILE"
+    # source "$TALOSCTL_COMPLETION_FILE"
   else
-    source "$TALOSCTL_COMPLETION_FILE"
+    # source "$TALOSCTL_COMPLETION_FILE"
     talosctl completion zsh | tee "$TALOSCTL_COMPLETION_FILE" >/dev/null &|
   fi
 

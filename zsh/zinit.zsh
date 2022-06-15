@@ -27,17 +27,16 @@ zinit light mollifier/anyframe
 # zinit light sindresorhus/pure
 
 zinit wait lucid for \
-      OMZL::git.zsh \
+    OMZL::git.zsh \
   atload"unalias grv" \
-      OMZP::git
+    OMZP::git
 
 zinit wait lucid for \
   atinit"zicompinit; zicdreplay"  \
-      zdharma-continuum/fast-syntax-highlighting \
-      OMZP::colored-man-pages \
+    zdharma-continuum/fast-syntax-highlighting \
+    OMZP::colored-man-pages \
   as"completion" \
-      OMZP::docker/_docker
-
+    OMZP::docker/_docker
 
 # bindkey '^xb' anyframe-widget-cdr
 # autoload -Uz chpwd_recent_dirs cdr add-zsh-hook
@@ -101,8 +100,6 @@ if (( $+commands[docker-compose] )); then
   zinit snippet OMZP::docker-compose/_docker-compose
 fi
 
-zinit snippet "${HOME:-~}/.dotfiles/zsh/plugins/homebrew.plugin.zsh"
-
 if (( $+commands[terraform] )); then
   zinit load ptavares/zsh-terraform
 fi
@@ -114,24 +111,21 @@ if (( $+commands[wakatime] )); then
   zinit load sobolevn/wakatime-zsh-plugin
 fi
 
-zinit ice id-as"local-plugin-homebrew"
-zinit snippet "${HOME:-~}/.dotfiles/zsh/plugins/homebrew.plugin.zsh"
-
-zinit ice id-as"local-plugin-talosctl"
-zinit snippet "${HOME:-~}/.dotfiles/zsh/plugins/talosctl.plugin.zsh"
-
-zinit ice id-as"local-plugin-broot"
-zinit snippet "${HOME:-~}/.dotfiles/zsh/plugins/broot.plugin.zsh"
-
-zinit ice as"completion" id-as"local-plugin-lima"
-zinit snippet "${HOME:-~}/.dotfiles/zsh/plugins/lima.plugin.zsh"
-
 # zinit wait as"none" \
 #   id-as"local-plugins" nocompile \
 #   multisrc"${HOME:-~}/.dotfiles/zsh/plugins/*.zsh" \
 #   atpull"zinit creinstall -q ${ZDOTDIR}/completions" \
 #   run-atpull \
 # for icyleaf/icyleaf
+
+source "${HOME:-~}/.dotfiles/zsh/plugins/homebrew.plugin.zsh"
+source "${HOME:-~}/.dotfiles/zsh/plugins/talosctl.plugin.zsh"
+source "${HOME:-~}/.dotfiles/zsh/plugins/lima.plugin.zsh"
+source "${HOME:-~}/.dotfiles/zsh/plugins/broot.plugin.zsh"
+# zinit wait'[[ -n "$ZSH_CACHE_DIR" ]]' as"none" \
+#   id-as"local-plugins" nocompile \
+#   multisrc"*.zsh" \
+#   for "${HOME:-~}/.dotfiles/zsh/plugins"
 
 # completion generation
 autoload -Uz compinit

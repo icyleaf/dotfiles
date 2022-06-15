@@ -6,17 +6,17 @@ if (( $+commands[limactl] )); then
   # Otherwise, source it and regenerate in the background
   if [[ ! -f "$TALOSCTL_COMPLETION_FILE" ]]; then
     limactl completion zsh | tee "$LIMACTL_COMPLETION_FILE" >/dev/null
-    source "$LIMACTL_COMPLETION_FILE"
+    # source "$LIMACTL_COMPLETION_FILE"
   else
-    source "$LIMACTL_COMPLETION_FILE"
+    # source "$LIMACTL_COMPLETION_FILE"
     limactl completion zsh | tee "$LIMACTL_COMPLETION_FILE" >/dev/null &|
   fi
 
   if [[ ! -f "$NERDCTL_COMPLETION_FILE" ]]; then
     nerdctl.lima completion zsh | tee "$NERDCTL_COMPLETION_FILE" >/dev/null
-    source "$NERDCTL_COMPLETION_FILE"
+    # source "$NERDCTL_COMPLETION_FILE"
   else
-    source "$NERDCTL_COMPLETION_FILE"
+    # source "$NERDCTL_COMPLETION_FILE"
     nerdctl.lima completion zsh | tee "$NERDCTL_COMPLETION_FILE" >/dev/null &|
   fi
 
