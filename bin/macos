@@ -29,6 +29,9 @@ defaults write com.apple.LaunchServices LSQuarantine -bool false
 # Display date and 24-hours format in menu bar
 defaults write com.apple.menuextra.clock DateFormat -string "M\\U6708d\\U65e5 EEE  HH:mm"
 
+# Display date always(1), never(0), if allow(2)
+defaults write com.apple.menuextra.clock ShowDate -int 1
+
 # Disable double dash(--) to emdash(—)
 defaults write 'Apple Global Domain' NSAutomaticDashSubstitutionEnabled 0
 
