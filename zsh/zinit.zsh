@@ -16,6 +16,12 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
 fi
 [[ ! -f ~/.dotfiles/zsh/p10k.zsh ]] || source ~/.dotfiles/zsh/p10k.zsh
 
+# Plugins
+zinit light zsh-users/zsh-completions
+zinit light zsh-users/zsh-autosuggestions
+zinit light djui/alias-tips
+zinit light mollifier/anyframe
+
 ## pure
 # zinit ice pick"async.zsh" src"pure.zsh"
 # zinit light sindresorhus/pure
@@ -48,8 +54,13 @@ zinit snippet OMZL::directories.zsh
 
 ## plugins
 ## core
-zinit snippet OMZP::zoxide
-zinit snippet OMZP::fzf
+if (( $+commands[zoxide] )); then
+  zinit snippet OMZP::zoxide
+fi
+
+if (( $+commands[fzf] )); then
+  zinit snippet OMZP::fzf
+fi
 zinit snippet OMZP::sudo
 zinit snippet OMZP::rsync
 zinit snippet OMZP::git
