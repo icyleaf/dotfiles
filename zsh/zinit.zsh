@@ -38,11 +38,13 @@ zinit wait lucid for \
   as"completion" \
       OMZP::docker/_docker
 
-# Plugins
-zinit light zsh-users/zsh-completions
-zinit light zsh-users/zsh-autosuggestions
-# zinit light zdharma-continuum/fast-syntax-highlighting
-zinit light djui/alias-tips
+
+# bindkey '^xb' anyframe-widget-cdr
+# autoload -Uz chpwd_recent_dirs cdr add-zsh-hook
+# add-zsh-hook chpwd chpwd_recent_dirs
+
+# bindkey '^xr' anyframe-widget-execute-history
+# bindkey '^x^b' anyframe-widget-checkout-git-branch
 
 # oh-my-zsh
 zinit snippet OMZL::completion.zsh
@@ -69,8 +71,10 @@ zinit snippet OMZP::git-flow-avh
 # zinit snippet OMZP::mosh
 
 ## development
-zinit snippet OMZP::tmux
-zinit snippet OMZP::tmuxinator
+if (( $+commands[tmux] )); then
+  zinit snippet OMZP::tmux
+  zinit snippet OMZP::tmuxinator
+fi
 
 # ruby
 zinit snippet OMZP::asdf
@@ -97,20 +101,10 @@ if (( $+commands[docker-compose] )); then
   zinit snippet OMZP::docker-compose/_docker-compose
 fi
 
-zinit ice id-as"local-plugin-homebrew"
-zinit snippet "${HOME:-~}/.dotfiles/zsh/plugins/homebrew.zsh"
-
-zinit ice id-as"local-plugin-talosctl"
-zinit snippet "${HOME:-~}/.dotfiles/zsh/plugins/talosctl.zsh"
-
-zinit ice id-as"local-plugin-broot"
-zinit snippet "${HOME:-~}/.dotfiles/zsh/plugins/broot.zsh"
-
-zinit ice as"completion" id-as"local-plugin-lima"
-zinit snippet "${HOME:-~}/.dotfiles/zsh/plugins/lima.zsh"
+zinit snippet "${HOME:-~}/.dotfiles/zsh/plugins/homebrew.plugin.zsh"
 
 if (( $+commands[terraform] )); then
-  zinit light ptavares/zsh-terraform
+  zinit load ptavares/zsh-terraform
 fi
 
 ## plugins
@@ -162,5 +156,3 @@ export PATH="${ANDROID_SDK_ROOT}/platform-tools:${ANDROID_SDK_ROOT}/tools/bin:$P
 
 ZSH_CACHE_DIR=$TEMP_ZSH_CACHE_DIR
 unset TEMP_ZSH_CACHE_DIR
-
-source /Users/icyleaf/.config/broot/launcher/bash/br
