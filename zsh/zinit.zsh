@@ -114,6 +114,18 @@ if (( $+commands[wakatime] )); then
   zinit load sobolevn/wakatime-zsh-plugin
 fi
 
+zinit ice id-as"local-plugin-homebrew"
+zinit snippet "${HOME:-~}/.dotfiles/zsh/plugins/homebrew.plugin.zsh"
+
+zinit ice id-as"local-plugin-talosctl"
+zinit snippet "${HOME:-~}/.dotfiles/zsh/plugins/talosctl.plugin.zsh"
+
+zinit ice id-as"local-plugin-broot"
+zinit snippet "${HOME:-~}/.dotfiles/zsh/plugins/broot.plugin.zsh"
+
+zinit ice as"completion" id-as"local-plugin-lima"
+zinit snippet "${HOME:-~}/.dotfiles/zsh/plugins/lima.plugin.zsh"
+
 # zinit wait as"none" \
 #   id-as"local-plugins" nocompile \
 #   multisrc"${HOME:-~}/.dotfiles/zsh/plugins/*.zsh" \
