@@ -35,8 +35,6 @@
   tool = vscode
 [difftool "vscode"]
   cmd = code --wait --diff $LOCAL $REMOTE
-  [difftool "ks"]
-  cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
 [difftool "ks"]
   cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
 [difftool "kdiff3"]
