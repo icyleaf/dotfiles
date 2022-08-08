@@ -52,7 +52,7 @@ set -g @dracula-gpu-usage false
 
 ## utilities for text
 set -g @plugin 'tmux-plugins/tmux-open'
-set -g @plugin 'tmux-plugins/tmux-urlview'
+# set -g @plugin 'tmux-plugins/tmux-urlview'
 
 ## utilities for manipulating tmux sessions.
 ## prefix + g: prompts for session name and switches to it.
