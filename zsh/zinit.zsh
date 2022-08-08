@@ -100,7 +100,7 @@ if (( $+commands[docker-compose] )); then
   zinit snippet OMZP::docker-compose/_docker-compose
 fi
 
-if (( $+commands[terraform] )); then
+if [[ (( $+commands[terraform] )) && $(uname -m) != 'arm64' ]]; then
   zinit load ptavares/zsh-terraform
 fi
 
