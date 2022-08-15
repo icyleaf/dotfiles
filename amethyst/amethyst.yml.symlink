@@ -1,0 +1,14 @@
+# Amethyst 0.16.0+ required
+layouts:
+  - tall
+  - fullscreen
+
+relaunch-amethyst:
+  mod: mod2
+  key: x
+
+float-small-windows: true
+floating:
+  - com.kapeli.dashdoc
+
+use-canary-build: true
