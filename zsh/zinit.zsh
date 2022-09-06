@@ -9,12 +9,16 @@ source "${ZINIT_HOME}/zinit.zsh"
 # Themes
 
 ## powerlevel10k
-zinit ice depth=1;
-zinit light romkatv/powerlevel10k
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
-[[ ! -f ~/.dotfiles/zsh/p10k.zsh ]] || source ~/.dotfiles/zsh/p10k.zsh
+# zinit ice depth=1;
+# zinit light romkatv/powerlevel10k
+# if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+#   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+# fi
+# [[ ! -f ~/.dotfiles/zsh/themes/p10k.zsh ]] || source ~/.dotfiles/zsh/themes/p10k.zsh
+
+## Spaceship
+zinit light spaceship-prompt/spaceship-prompt
+[[ ! -f ~/.dotfiles/zsh/themes/spaceship.zsh ]] || source ~/.dotfiles/zsh/themes/spaceship.zsh
 
 # Plugins
 zinit light zsh-users/zsh-completions
@@ -120,7 +124,7 @@ fi
 
 source "${HOME:-~}/.dotfiles/zsh/plugins/homebrew.plugin.zsh"
 source "${HOME:-~}/.dotfiles/zsh/plugins/talosctl.plugin.zsh"
-source "${HOME:-~}/.dotfiles/zsh/plugins/lima.plugin.zsh"
+# source "${HOME:-~}/.dotfiles/zsh/plugins/lima.plugin.zsh"
 source "${HOME:-~}/.dotfiles/zsh/plugins/broot.plugin.zsh"
 # zinit wait'[[ -n "$ZSH_CACHE_DIR" ]]' as"none" \
 #   id-as"local-plugins" nocompile \
