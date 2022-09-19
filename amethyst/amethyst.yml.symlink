@@ -1,7 +1,17 @@
 # Amethyst 0.16.0+ required
 layouts:
   - tall
+  - wide
   - fullscreen
+  - column
+
+mod1:
+  - option
+  - shift
+mod2:
+  - option
+  - shift
+  - control
 
 relaunch-amethyst:
   mod: mod2
@@ -10,5 +20,9 @@ relaunch-amethyst:
 float-small-windows: true
 floating:
   - com.kapeli.dashdoc
+  - dev.warp.Warp-Stable
+  - com.apple.systempreferences
+  - com.logitech.Logi-Options
+  - com.tinyapp.TablePlus
 
 use-canary-build: true
