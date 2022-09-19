@@ -71,13 +71,6 @@ install_omz () {
     success "${zsh_autosuggestions} downloaded"
   fi
 
-  # wakatime="wakatime"
-  # if ! [ -f $omz_custom_path/plugins/$wakatime ]; then
-  #   info "download ${wakatime}"
-  #   git clone https://github.com/sobolevn/wakatime-zsh-plugin.git "$omz_custom_path/plugins/${wakatime}"
-  #   success "${wakatime} downloaded"
-  # fi
-
   info 'Link omz config'
   link_file "$DIRPATH/omz.zsh" "$HOME/.zshrc"
 

@@ -110,11 +110,6 @@ fi
 
 ## plugins
 
-# wakatime
-if (( $+commands[wakatime] )); then
-  zinit load sobolevn/wakatime-zsh-plugin
-fi
-
 # zinit wait as"none" \
 #   id-as"local-plugins" nocompile \
 #   multisrc"${HOME:-~}/.dotfiles/zsh/plugins/*.zsh" \
