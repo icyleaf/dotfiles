@@ -47,6 +47,9 @@ configure_gpg_agent_file () {
   cat "$DIRPATH/gpg-agent.example.conf" | sed 's|^# pinentry-program|pinentry-program '"$pinentry_path"'|' > "${DIRPATH}/${gnupg_name}"
   link_file "${DIRPATH}/${gnupg_name}" "$gnupg_dst/${gnupg_name}"
 
+  echo "Enable gpg store passphrase in keychain"
+  defaults write org.gpgtools.common DisableKeychain -bool no
+
   gpgconf --kill gpg-agent
   success "Success gpg-agent"
 }
