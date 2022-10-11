@@ -121,6 +121,7 @@ source "${HOME:-~}/.dotfiles/zsh/plugins/homebrew.plugin.zsh"
 source "${HOME:-~}/.dotfiles/zsh/plugins/talosctl.plugin.zsh"
 # source "${HOME:-~}/.dotfiles/zsh/plugins/lima.plugin.zsh"
 source "${HOME:-~}/.dotfiles/zsh/plugins/broot.plugin.zsh"
+source "${HOME:-~}/.dotfiles/zsh/plugins/exa.plugin.zsh"
 # zinit wait'[[ -n "$ZSH_CACHE_DIR" ]]' as"none" \
 #   id-as"local-plugins" nocompile \
 #   multisrc"*.zsh" \

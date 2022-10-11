@@ -29,6 +29,7 @@ brew 'gnupg'
 # Tweaks
 brew 'zsh'
 brew 'zoxide'
+brew 'exa'
 # brew 'broot'
 brew 'fzf'
 brew 'mtr'
@@ -41,6 +42,7 @@ brew 'bat'
 brew 'neofetch'
 brew 'terminal-notifier'
 brew 'kopia'
+
 
 # Blogging
 brew 'hugo'
