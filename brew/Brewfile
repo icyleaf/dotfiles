@@ -20,8 +20,8 @@ brew 'axel'
 brew 'httpie'
 brew 'mosh'
 brew 'mitmproxy'
-brew 'htop'
-brew 'mkcert'
+brew 'btop'
+brew 'helix'
 
 # Gnupg
 brew 'gnupg'
@@ -42,7 +42,6 @@ brew 'bat'
 brew 'neofetch'
 brew 'terminal-notifier'
 brew 'kopia'
-
 
 # Blogging
 brew 'hugo'
