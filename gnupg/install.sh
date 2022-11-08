@@ -107,5 +107,5 @@ choose_pinetry_binary () {
   fi
 }
 
-
+link_file "${DIRPATH}/gpg.conf" "$gnupg_dst/gpg.conf"
 choose_pinetry_binary
