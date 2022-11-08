@@ -4,4 +4,4 @@ auto-format = false
 
 [[language]]
 name = "ruby"
-file-types = ["Fastfile", "Matchfile", "DeliverFile", "Appfile", "Pluginfile"]
+file-types = ["Fastfile", "Matchfile", "DeliverFile", "Appfile", "Pluginfile", "Podfile"]

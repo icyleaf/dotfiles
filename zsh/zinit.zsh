@@ -150,7 +150,7 @@ export ARCHFLAGS="-arch $(uname -m)"
 export LANG=en_US.UTF-8
 
 # Preferred editor for local and remote sessions
-export EDITOR=vim
+export EDITOR=hx
 
 # gpg
 export GPG_TTY=$(tty)
