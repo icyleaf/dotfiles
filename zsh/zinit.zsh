@@ -104,8 +104,9 @@ if (( $+commands[docker-compose] )); then
   zinit snippet OMZP::docker-compose/_docker-compose
 fi
 
-if [[ (( $+commands[terraform] )) && $(uname -m) != 'arm64' ]]; then
-  zinit load ptavares/zsh-terraform
+if (( $+commands[terraform] )); then
+  zinit ice ver"feat/add-arm64-macos"
+  zinit light icyleaf/zsh-terraform
 fi
 
 ## plugins
