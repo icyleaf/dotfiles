@@ -31,4 +31,4 @@ on_project_first_start:
 
 windows:
   - editor: clear
-  - guard: bundle exec guard
+  - services: ./bin/dev
