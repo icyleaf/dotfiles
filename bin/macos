@@ -321,7 +321,7 @@ defaults write com.apple.dt.Xcode IDECommandClickNavigates -bool true
 # Tweaks                                                                      #
 ###############################################################################
 
-# Enable download apps from anywhere
+# Enable any source to download and open app
 sudo spctl --master-disable
 
 for app in "Activity Monitor" \
