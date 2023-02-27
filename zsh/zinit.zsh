@@ -1,5 +1,3 @@
-TEMP_ZSH_CACHE_DIR=$ZSH_CACHE_DIR
-ZSH_CACHE_DIR=${HOME:-~}/.local/share/zinit
 ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
 source "${ZINIT_HOME}/zinit.zsh"
 
@@ -79,6 +77,11 @@ if (( $+commands[tmux] )); then
   zinit snippet OMZP::tmuxinator
 fi
 
+if (( $+commands[nomad] )); then
+  zinit ice as"completion"
+  zinit snippet OMZP::nomad/_nomad
+fi
+
 # ruby
 zinit snippet OMZP::asdf
 zinit snippet OMZP::ruby
@@ -109,41 +112,27 @@ if (( $+commands[terraform] )); then
   zinit light icyleaf/zsh-terraform
 fi
 
-## plugins
-
-# zinit wait as"none" \
-#   id-as"local-plugins" nocompile \
-#   multisrc"${HOME:-~}/.dotfiles/zsh/plugins/*.zsh" \
-#   atpull"zinit creinstall -q ${ZDOTDIR}/completions" \
-#   run-atpull \
-# for icyleaf/icyleaf
-
-source "${HOME:-~}/.dotfiles/zsh/plugins/homebrew.plugin.zsh"
-source "${HOME:-~}/.dotfiles/zsh/plugins/talosctl.plugin.zsh"
-# source "${HOME:-~}/.dotfiles/zsh/plugins/lima.plugin.zsh"
-source "${HOME:-~}/.dotfiles/zsh/plugins/broot.plugin.zsh"
-source "${HOME:-~}/.dotfiles/zsh/plugins/exa.plugin.zsh"
-source "${HOME:-~}/.dotfiles/zsh/plugins/gpg.plugin.zsh"
-# zinit wait'[[ -n "$ZSH_CACHE_DIR" ]]' as"none" \
-#   id-as"local-plugins" nocompile \
-#   multisrc"*.zsh" \
-#   for "${HOME:-~}/.dotfiles/zsh/plugins"
+## local plugins
+LOCAL_PLUGINS="${HOME:-~}/.dotfiles/zsh/plugins/"
+zinit ice lucid nocompile
+zinit snippet "${LOCAL_PLUGINS}/talosctl.plugin.zsh"
+zinit ice lucid nocompile
+zinit snippet "${LOCAL_PLUGINS}/limactl.plugin.zsh"
+zinit ice lucid nocompile
+zinit snippet "${LOCAL_PLUGINS}/gpg.plugin.zsh"
+zinit ice lucid nocompile
+zinit snippet "${LOCAL_PLUGINS}/exa.plugin.zsh"
+zinit ice lucid nocompile
+zinit snippet "${LOCAL_PLUGINS}/homebrew.plugin.zsh"
+zinit ice lucid nocompile
+zinit snippet "${LOCAL_PLUGINS}/gpg.plugin.zsh"
 
 # completion generation
-autoload -Uz compinit
-compinit
+# autoload -Uz compinit
+# compinit
 
 # alias
-alias flushdns='sudo killall -HUP mDNSResponder'
-alias nns="sudo lsof -i -P"
-alias nnc="lsof -Pni4 | grep LISTEN"
-alias moss='mosh --server=`which mosh-server`'
-alias ox='open *.xcodeproj'
-alias ow='open *.xcworkspace'
-alias la='ll -a'
-alias rake='noglob rake'
-alias reload='source ~/.zshrc'
-alias zshrc='vim ~/.zshrc'
+source $HOME/.dotfiles/zsh/alias.zsh
 
 # Compilation flags
 export ARCHFLAGS="-arch $(uname -m)"
@@ -161,6 +150,3 @@ export GPG_TTY=$(tty)
 export REPO_OS_OVERRIDE=macosx
 export ANDROID_SDK_ROOT="$HOME/Library/Android/sdk"
 export PATH="${ANDROID_SDK_ROOT}/platform-tools:${ANDROID_SDK_ROOT}/tools/bin:$PATH"
-
-ZSH_CACHE_DIR=$TEMP_ZSH_CACHE_DIR
-unset TEMP_ZSH_CACHE_DIR

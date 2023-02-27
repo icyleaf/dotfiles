@@ -1,8 +1,6 @@
 # Inspired from https://github.com/MohamedElashri/exa-zsh/blob/main/exa-zsh.plugin.zsh
-
-if ! (( $+commands[exa] )); then
-  print "exa.plugin.zsh: exa not found on path. Please install exa before using this plugin." >&2
-  return 1
+if (( ! $+commands[exa] )); then
+  return
 fi
 
 # general use aliases

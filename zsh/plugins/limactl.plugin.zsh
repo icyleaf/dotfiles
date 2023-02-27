@@ -1,4 +1,13 @@
+if (( ! $+commands[limactl] )); then
+  return
+fi
+
+# source <(limactl completion zsh)
+# compdef _limactl limactl
+
 if (( $+commands[limactl] )); then
+  mkdir -p $ZSH_CACHE_DIR/completions >/dev/null
+
   LIMACTL_COMPLETION_FILE="${ZSH_CACHE_DIR}/completions/_limactl"
   NERDCTL_COMPLETION_FILE="${ZSH_COMPLETION_PATH}/completions/_nerdctl"
 
@@ -12,13 +21,13 @@ if (( $+commands[limactl] )); then
     limactl completion zsh | tee "$LIMACTL_COMPLETION_FILE" >/dev/null &|
   fi
 
-  if [[ ! -f "$NERDCTL_COMPLETION_FILE" ]]; then
-    nerdctl.lima completion zsh | tee "$NERDCTL_COMPLETION_FILE" >/dev/null
-    # source "$NERDCTL_COMPLETION_FILE"
-  else
-    # source "$NERDCTL_COMPLETION_FILE"
-    nerdctl.lima completion zsh | tee "$NERDCTL_COMPLETION_FILE" >/dev/null &|
-  fi
+  # if [[ ! -f "$NERDCTL_COMPLETION_FILE" ]]; then
+  #   nerdctl.lima completion zsh | tee "$NERDCTL_COMPLETION_FILE" >/dev/null
+  #   # source "$NERDCTL_COMPLETION_FILE"
+  # else
+  #   # source "$NERDCTL_COMPLETION_FILE"
+  #   nerdctl.lima completion zsh | tee "$NERDCTL_COMPLETION_FILE" >/dev/null &|
+  # fi
 
   unset LIMACTL_COMPLETION_FILE
   unset NERDCTL_COMPLETION_FILE
