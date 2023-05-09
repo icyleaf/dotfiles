@@ -113,7 +113,7 @@ if (( $+commands[terraform] )); then
 fi
 
 if (( $+commands[atuin] )); then
-  zinit load ellie/atuin
+  source <(atuin init zsh --disable-up-arrow --disable-ctrl-r)
 fi
 
 ## local plugins
