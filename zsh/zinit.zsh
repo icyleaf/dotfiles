@@ -112,6 +112,10 @@ if (( $+commands[terraform] )); then
   zinit light icyleaf/zsh-terraform
 fi
 
+if (( $+commands[atuin] )); then
+  zinit load ellie/atuin
+fi
+
 ## local plugins
 LOCAL_PLUGINS="${HOME:-~}/.dotfiles/zsh/plugins/"
 zinit ice lucid nocompile
@@ -149,4 +153,4 @@ export GPG_TTY=$(tty)
 # Android SDK 路径（Android Studio）
 export REPO_OS_OVERRIDE=macosx
 export ANDROID_SDK_ROOT="$HOME/Library/Android/sdk"
-export PATH="${ANDROID_SDK_ROOT}/platform-tools:${ANDROID_SDK_ROOT}/tools/bin:$PATH"
+export PATH="${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin:${ANDROID_SDK_ROOT}/platform-tools:${ANDROID_SDK_ROOT}/tools/bin:$PATH"
