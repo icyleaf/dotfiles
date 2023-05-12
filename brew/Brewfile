@@ -44,7 +44,7 @@ brew 'terminal-notifier'
 brew 'kopia'
 
 # Blogging
-brew 'hugo'
+# brew 'hugo'
 
 # Tmux
 brew 'tmux'
@@ -52,10 +52,12 @@ brew 'reattach-to-user-namespace'
 
 # DevOps
 brew 'ansible'
+brew 'terraform'
+brew 'kubernetes-cli'
 
 if macos?
   # Development Tools
-  brew 'postgresql'
+  brew 'postgresql@14'
   brew 'redis'
   # brew 'node'
   brew 'imagemagick'
@@ -65,11 +67,12 @@ if macos?
   brew 'mas'
 
   # macOS Apps
-  cask 'alfred'
+  # cask 'alfred'
+  cask 'raycast'
   cask 'google-chrome'
   cask 'iterm2'
   cask 'the-unarchiver'
-  cask 'dozer'
+  cask 'hiddenbar'
   cask 'visual-studio-code'
   cask 'clashx'
   cask 'karabiner-elements'
