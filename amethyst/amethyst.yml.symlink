@@ -1,9 +1,21 @@
 # Amethyst 0.16.0+ required
 layouts:
   - tall
-  - wide
   - fullscreen
+  - tall-right
+  - wide
+  - two-pane
+  - 3column-left
+  - middle-wide
+  - 3column-right
+  - 4column-left
+  - 4column-right
   - column
+  - row
+  - floating
+  - widescreen-tall
+  - widescreen-tall-right
+  - bsp
 
 mod1:
   - option
@@ -19,10 +31,14 @@ relaunch-amethyst:
 
 float-small-windows: true
 floating:
+  - com.apple.systempreferences
+  - com.apple.Stickies
+  - com.apple.QuickTimePlayerX
   - com.kapeli.dashdoc
   - dev.warp.Warp-Stable
-  - com.apple.systempreferences
   - com.logitech.Logi-Options
   - com.tinyapp.TablePlus
+  - com.daisydiskapp.DaisyDisk
+  - AubreeCloud.mini-swatch
 
 use-canary-build: true
