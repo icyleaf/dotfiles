@@ -37,8 +37,9 @@ zinit wait lucid for \
   atinit"zicompinit; zicdreplay"  \
     zdharma-continuum/fast-syntax-highlighting \
     OMZP::colored-man-pages \
-  as"completion" \
-    OMZP::docker/_docker
+  #   OMZP::colored-man-pages \
+  # as"completion" \
+  #   OMZP::docker/_docker
 
 # bindkey '^xb' anyframe-widget-cdr
 # autoload -Uz chpwd_recent_dirs cdr add-zsh-hook
@@ -73,6 +74,13 @@ zinit snippet OMZP::git-flow-avh
 
 ## development
 if (( $+commands[tmux] )); then
+  zinit ice lucid wait="0" atinit"
+    ZSH_TMUX_FIXTERM=false;
+    if [[ "$TERM" = "alacritty" ]]; then
+      ZSH_TMUX_AUTOSTART=true;
+      ZSH_TMUX_AUTOCONNECT=true;
+    fi;
+  "
   zinit snippet OMZP::tmux
   zinit snippet OMZP::tmuxinator
 fi
@@ -98,7 +106,7 @@ zinit snippet OMZP::kubectl
 
 if (( $+commands[docker] )); then
   zinit ice as"completion"
-  zinit snippet OMZP::docker/_docker
+  zinit snippet OMZP::docker/completions/_docker
 fi
 
 if (( $+commands[docker-compose] )); then
