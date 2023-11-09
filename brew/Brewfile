@@ -4,60 +4,64 @@ def macos?
   RbConfig::CONFIG['host_os'].include?('darwin')
 end
 
-# 第三方库
-tap "homebrew/cask-fonts"
-tap "homebrew/cask-drivers"
-tap "kopia/kopia"
+def minimal?
+  is_minimal = ENV.fetch("BREW_MINIMUM", "false")
+  !(is_minimal == "true" || is_minimal == "yes" || is_minimal = "1")
+end
 
-# Git
+# General tools
+brew 'zsh'
 brew 'git'
 brew 'git-flow-avh'
 brew 'tig'
-
-# Development tools
-brew 'asdf'
-brew 'axel'
-brew 'httpie'
 brew 'mosh'
-brew 'mitmproxy'
 brew 'btop'
 brew 'helix'
-
-# Gnupg
 brew 'gnupg'
-
-# Tweaks
-brew 'zsh'
 brew 'zoxide'
 brew 'exa'
 # brew 'broot'
 brew 'fzf'
-brew 'mtr'
-brew 'tree'
 brew 'watch'
 brew 'wget'
 brew 'ssh-copy-id'
-brew 'youtube-dl'
 brew 'bat'
 brew 'neofetch'
-brew 'terminal-notifier'
-brew 'kopia'
-
-# Blogging
-# brew 'hugo'
-
-# Tmux
+brew 'tree'
 brew 'tmux'
-brew 'reattach-to-user-namespace'
 
-# DevOps
-brew 'ansible'
-brew 'terraform'
-brew 'kubernetes-cli'
+if minimal?
+  # 第三方库
+  tap "homebrew/cask-fonts"
+  tap "homebrew/cask-drivers"
+  tap "kopia/kopia"
+
+  # Development tools
+  brew 'asdf'
+  brew 'axel'
+  brew 'httpie'
+  brew 'mitmproxy'
+  brew 'mtr'
+
+  brew 'yt-dlp'
+  brew 'kopia'
+
+  # Blogging
+  brew 'hugo'
+
+  # Tmux
+  brew 'reattach-to-user-namespace'
+
+  # DevOps
+  brew 'ansible'
+  brew 'terraform'
+  brew 'kubernetes-cli'
+end
 
 if macos?
   # Development Tools
-  brew 'postgresql@14'
+  brew 'terminal-notifier'
+  brew 'postgresql@15'
   brew 'redis'
   # brew 'node'
   brew 'imagemagick'
