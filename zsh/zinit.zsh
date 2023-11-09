@@ -91,18 +91,33 @@ if (( $+commands[nomad] )); then
 fi
 
 # ruby
-zinit snippet OMZP::asdf
-zinit snippet OMZP::ruby
-zinit snippet OMZP::gem
-zinit snippet OMZP::bundler
-zinit snippet OMZP::rake
-zinit snippet OMZP::rails
+if (( $+commands[asdf] )); then
+  zinit snippet OMZP::asdf
+fi
 
-# ios
-zinit snippet OMZP::xcode
+if (( $+commands[ruby] )); then
+  zinit snippet OMZP::ruby
+  zinit snippet OMZP::gem
+  zinit snippet OMZP::bundler
+fi
+
+if (( $+commands[rake] )); then
+  zinit snippet OMZP::rake
+fi
+
+if (( $+commands[rails] )); then
+  zinit snippet OMZP::rails
+fi
+
+# apple development
+if (( $+commands[xcodebuild] )); then
+  zinit snippet OMZP::xcode
+fi
 
 ## containerd
-zinit snippet OMZP::kubectl
+if (( $+commands[kubectl] )); then
+  zinit snippet OMZP::kubectl
+fi
 
 if (( $+commands[docker] )); then
   zinit ice as"completion"
