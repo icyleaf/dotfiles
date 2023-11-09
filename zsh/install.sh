@@ -5,10 +5,12 @@ source functions/_lib.sh
 
 zsh_plugin_manager=zinit
 
-if ! [ $SHELL == '/bin/zsh' ] || ! [ $SHELL == '/usr/local/bin/zsh' ]; then
-  info 'changing to zsh shell. need [sudo] role, please input password if nessesary'
-  sudo chsh -s /bin/zsh
-  success 'zsh installed'
+zsh_path=$(command -v zsh)
+
+if ! [ $SHELL == "$zsh_path" ]; then
+  info "changing to zsh shell ($zsh_path), please input password if nessesary"
+  chsh -s "$zsh_path"
+  success 'zsh changed'
 fi
 
 zsh_local_file=$DIRPATH/local.zsh
