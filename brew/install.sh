@@ -26,6 +26,19 @@ replace_brew_sources () {
   esac
 }
 
+# Fix linuxbrew
+if test ! "$(uname)" = "Darwin"; then
+  test -d ~/.linuxbrew && eval "$(~/.linuxbrew/bin/brew shellenv)"
+  test -d /home/linuxbrew/.linuxbrew && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+
+  if [[ "$SHELL" == *"zsh"* ]]; then
+    echo "eval \"\$($(brew --prefix)/bin/brew shellenv)\"" >> ~/.zshrc
+  fi
+
+  if [[ "$SHELL" == *"bash"* ]]; then
+    echo "eval \"\$($(brew --prefix)/bin/brew shellenv)\"" >> ~/.bashrc
+  fi
+fi
 
 info "Installing homebrew"
 if test ! $(which brew); then
@@ -51,8 +64,18 @@ else
   success "Skipped, homebrew was installed"
 fi
 
+# Fix linuxbrew
+if test ! "$(uname)" = "Darwin"; then
+  test -d ~/.linuxbrew && eval "$(~/.linuxbrew/bin/brew shellenv)"
+  test -d /home/linuxbrew/.linuxbrew && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+fi
+
 # 安装 Brewfile 里面的内容
 info "Installing brew bundle"
-cd "${DIRPATH}"
-brew bundle -v
-success "brew bundle installed"
+if test $(which brew); then
+  cd "${DIRPATH}"
+  brew bundle -v
+  success "brew bundle installed"
+else
+  fail "brew install failed"
+fi
