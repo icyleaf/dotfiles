@@ -3,7 +3,6 @@
 # homebrew
 
 source functions/_lib.sh
-ensure_macos
 
 HOMEBREW_SOURCE=https://mirrors.tuna.tsinghua.edu.cn
 
