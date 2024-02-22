@@ -73,17 +73,17 @@ zinit snippet OMZP::git-flow-avh
 # zinit snippet OMZP::mosh
 
 ## development
-if (( $+commands[tmux] )); then
-  zinit ice lucid wait="0" atinit"
-    ZSH_TMUX_FIXTERM=false;
-    if [[ "$TERM" = "alacritty" ]]; then
-      ZSH_TMUX_AUTOSTART=true;
-      ZSH_TMUX_AUTOCONNECT=true;
-    fi;
-  "
-  zinit snippet OMZP::tmux
-  zinit snippet OMZP::tmuxinator
-fi
+##if (( $+commands[tmux] )); then
+##  zinit ice lucid wait="0" atinit"
+##    ZSH_TMUX_FIXTERM=false;
+##    if [[ "$TERM" = "alacritty" ]]; then
+##      ZSH_TMUX_AUTOSTART=true;
+##      ZSH_TMUX_AUTOCONNECT=true;
+##    fi;
+##  "
+##  zinit snippet OMZP::tmux
+##  zinit snippet OMZP::tmuxinator
+##fi
 
 if (( $+commands[nomad] )); then
   zinit ice as"completion"
@@ -135,28 +135,14 @@ if (( $+commands[terraform] )); then
   zinit light icyleaf/zsh-terraform
 fi
 
-if (( $+commands[atuin] )); then
-  source <(atuin init zsh --disable-up-arrow --disable-ctrl-r)
-fi
-
 ## local plugins
 LOCAL_PLUGINS="${HOME:-~}/.dotfiles/zsh/plugins/"
-zinit ice lucid nocompile
-zinit snippet "${LOCAL_PLUGINS}/talosctl.plugin.zsh"
-zinit ice lucid nocompile
-zinit snippet "${LOCAL_PLUGINS}/limactl.plugin.zsh"
-zinit ice lucid nocompile
-zinit snippet "${LOCAL_PLUGINS}/gpg.plugin.zsh"
-zinit ice lucid nocompile
-zinit snippet "${LOCAL_PLUGINS}/exa.plugin.zsh"
-zinit ice lucid nocompile
-zinit snippet "${LOCAL_PLUGINS}/homebrew.plugin.zsh"
-zinit ice lucid nocompile
-zinit snippet "${LOCAL_PLUGINS}/gpg.plugin.zsh"
-
-# completion generation
-# autoload -Uz compinit
-# compinit
+. "${LOCAL_PLUGINS}/limactl.plugin.zsh"
+. "${LOCAL_PLUGINS}/gpg.plugin.zsh"
+. "${LOCAL_PLUGINS}/exa.plugin.zsh"
+. "${LOCAL_PLUGINS}/homebrew.plugin.zsh"
+. "${LOCAL_PLUGINS}/gpg.plugin.zsh"
+unset LOCAL_PLUGINS
 
 # alias
 source $HOME/.dotfiles/zsh/alias.zsh
