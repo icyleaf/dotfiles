@@ -85,6 +85,10 @@ zinit snippet OMZP::git-flow-avh
 ##  zinit snippet OMZP::tmuxinator
 ##fi
 
+if (( $+commands[atuin] )); then
+  zinit load atuinsh/atuin
+fi
+
 if (( $+commands[nomad] )); then
   zinit ice as"completion"
   zinit snippet OMZP::nomad/_nomad
@@ -163,3 +167,5 @@ export GPG_TTY=$(tty)
 export REPO_OS_OVERRIDE=macosx
 export ANDROID_SDK_ROOT="$HOME/Library/Android/sdk"
 export PATH="${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin:${ANDROID_SDK_ROOT}/platform-tools:${ANDROID_SDK_ROOT}/tools/bin:/usr/local/sbin:$PATH"
+
+export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
