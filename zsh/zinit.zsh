@@ -85,10 +85,6 @@ zinit snippet OMZP::git-flow-avh
 ##  zinit snippet OMZP::tmuxinator
 ##fi
 
-if (( $+commands[atuin] )); then
-  zinit load atuinsh/atuin
-fi
-
 if (( $+commands[nomad] )); then
   zinit ice as"completion"
   zinit snippet OMZP::nomad/_nomad
@@ -146,6 +142,7 @@ LOCAL_PLUGINS="${HOME:-~}/.dotfiles/zsh/plugins/"
 . "${LOCAL_PLUGINS}/exa.plugin.zsh"
 . "${LOCAL_PLUGINS}/homebrew.plugin.zsh"
 . "${LOCAL_PLUGINS}/gpg.plugin.zsh"
+. "${LOCAL_PLUGINS}/mise.plugin.zsh"
 unset LOCAL_PLUGINS
 
 # alias
