@@ -54,3 +54,5 @@
   trustExitCode = true
 [rebase]
   autoStash = true
+[safe]
+	directory = /Users/icyleaf/Development/sbc/armbian-build

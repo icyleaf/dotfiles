@@ -62,8 +62,6 @@ if macos?
   # Development Tools
   brew 'terminal-notifier'
   brew 'postgresql@15'
-  brew 'redis'
-  # brew 'node'
   brew 'imagemagick'
 
   # Tweaks
@@ -77,8 +75,8 @@ if macos?
   cask 'iterm2'
   cask 'the-unarchiver'
   cask 'hiddenbar'
+  # cask 'jordanbaird-ice' # requires sonama
   cask 'visual-studio-code'
-  cask 'clashx'
   cask 'karabiner-elements'
   cask 'appcleaner'
   cask 'notion'
