@@ -5,8 +5,8 @@ def macos?
 end
 
 def minimal?
-  is_minimal = ENV.fetch("BREW_MINIMUM", "false")
-  !(is_minimal == "true" || is_minimal == "yes" || is_minimal = "1")
+  is_minimal = ENV.fetch('BREW_MINIMUM', 'false')
+  !(is_minimal == 'true' || is_minimal == 'yes' || is_minimal == '1')
 end
 
 # General tools
@@ -30,11 +30,12 @@ brew 'neofetch'
 brew 'tree'
 brew 'tmux'
 
-if minimal?
+unless minimal?
   # 第三方库
-  tap "homebrew/cask-fonts"
-  tap "homebrew/cask-drivers"
-  tap "kopia/kopia"
+  tap 'homebrew/cask'
+  tap 'homebrew/cask-fonts'
+  tap 'homebrew/cask-drivers'
+  tap 'kopia/kopia'
 
   # Development tools
   brew 'asdf'
