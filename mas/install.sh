@@ -30,7 +30,6 @@ for app in "PastePal" \
   "Amphetamine" \
   "Irvue" \
   "Hex Fiend" \
-  "TweetDeck" \
   "MenubarX" \
   "CotEditor" \
   "DaisyDisk"; do

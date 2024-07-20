@@ -70,12 +70,12 @@ if test ! "$(uname)" = "Darwin"; then
   test -d /home/linuxbrew/.linuxbrew && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
 
-# 安装 Brewfile 里面的内容
-info "Installing brew bundle"
-if test $(which brew); then
-  cd "${DIRPATH}"
-  brew bundle -v
-  success "brew bundle installed"
-else
-  fail "brew install failed"
-fi
+# # 安装 Brewfile 里面的内容
+# info "Installing brew bundle"
+# if test $(which brew); then
+#   cd "${DIRPATH}"
+#   brew bundle -v
+#   success "brew bundle installed"
+# else
+#   fail "brew install failed"
+# fi
