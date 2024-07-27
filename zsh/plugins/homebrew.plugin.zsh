@@ -1,7 +1,3 @@
-if (( ! $+commands[brew] )); then
-  return
-fi
-
 zinit snippet OMZP::brew
 
 # brew alias
