@@ -5,8 +5,8 @@ def macos?
 end
 
 def minimal?
-  is_minimal = ENV.fetch("BREW_MINIMUM", "false")
-  !(is_minimal == "true" || is_minimal == "yes" || is_minimal = "1")
+  is_minimal = ENV.fetch('BREW_MINIMUM', 'false')
+  !(is_minimal == 'true' || is_minimal == 'yes' || is_minimal = '1')
 end
 
 # General tools
@@ -32,9 +32,7 @@ brew 'tmux'
 
 if minimal?
   # 第三方库
-  tap "homebrew/cask-fonts"
-  tap "homebrew/cask-drivers"
-  tap "kopia/kopia"
+  tap 'kopia/kopia'
 
   # Development tools
   brew 'asdf'
@@ -59,9 +57,15 @@ if minimal?
 end
 
 if macos?
+  tap 'homebrew/cask-drivers'
+  tap 'jandedobbeleer/oh-my-posh'
+
+  # zsh themes
+  brew 'oh-my-posh'
+
   # Development Tools
   brew 'terminal-notifier'
-  brew 'postgresql@15'
+  brew 'postgresql@16'
   brew 'imagemagick'
 
   # Tweaks

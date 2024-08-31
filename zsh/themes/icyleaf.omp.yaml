@@ -1,0 +1,132 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json
+
+version: 2
+final_space: true
+console_title_template: "{{ .Shell }} in {{ .Folder }}"
+blocks:
+- type: prompt
+  alignment: left
+  newline: true
+  segments:
+  - type: os
+    style: plain
+    background: transparent
+    foreground: p:os
+    template: "{{ .Icon }}"
+  - type: session
+    style: plain
+    background: transparent
+    foreground: p:grey
+    template: " {{ .HostName }}"
+  - type: path
+    style: plain
+    background: transparent
+    foreground: p:blue
+    template: " {{ .Path }}"
+    properties:
+      style: full
+  - type: git
+    style: plain
+    background: transparent
+    foreground: p:grey
+    template: ' {{ .HEAD }}{{ if or (.Working.Changed) (.Staging.Changed) }}*{{ end }} <cyan>{{ if gt .Behind 0 }}⇣{{ end }}{{ if gt .Ahead 0 }}⇡{{ end }}</>'
+    properties:
+      branch_icon: ''
+      commit_icon: '@'
+      fetch_status: true
+- type: rprompt
+  overflow: hidden
+  segments:
+  - type: docker
+    style: powerline
+    foreground: blue
+    background: transparent
+    template: "  {{ .Context }}"
+  - type: ruby
+    style: powerline
+    foreground: red
+    background: transparent
+    template: "  {{ .Full }} "
+  - type: node
+    style: plain
+    template: "\ue718 "
+    properties:
+      display_mode: files
+      fetch_package_manager: false
+      home_enabled: false
+    background: transparent
+    foreground: p:green
+  - type: go
+    style: plain
+    template: "\ue626 "
+    properties:
+      fetch_version: false
+    background: transparent
+    foreground: p:blue
+  - type: python
+    style: plain
+    template: "\ue235 "
+    properties:
+      display_mode: files
+      fetch_version: false
+      fetch_virtual_env: false
+    background: transparent
+    foreground: p:yellow
+  - type: time
+    style: plain
+    template: ' <p:blue><b>{{ .CurrentDate | date "15:04:05" }}</b></>'
+    background: transparent
+    foreground: p:white
+  - type: executiontime
+    style: plain
+    background: transparent
+    foreground: yellow
+    template: " {{ .FormattedMs }}"
+    properties:
+      threshold: 5000
+- type: prompt
+  alignment: left
+  newline: true
+  segments:
+  - type: path
+    style: plain
+    background: p:transparent
+    foreground_templates:
+      - "{{if gt .Code 0}}red{{end}}"
+      - "{{if eq .Code 0}}green{{end}}"
+    template: ❯
+tooltips:
+- type: aws
+  tips:
+  - aws
+  style: diamond
+  leading_diamond: 
+  trailing_diamond: 
+  template: " \ue7ad {{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }} "
+  properties:
+    display_default: true
+  background: p:orange
+  foreground: p:white
+- type: az
+  tips:
+  - az
+  style: diamond
+  leading_diamond: 
+  trailing_diamond: 
+  template: " \uebd8 {{ .Name }} "
+  properties:
+    display_default: true
+  background: p:blue
+  foreground: p:white
+secondary_prompt:
+  background: transparent
+  foreground: magenta
+  template: '❯❯ '
+palette:
+  os: "#ACB0BE"
+  grey: "#9F9F9F"
+  black: "#262B44"
+  blue: "#4B95E9"
+  orange: "#F07623"
+  white: "#E0DEF4"
+  yellow: "#F3AE35"

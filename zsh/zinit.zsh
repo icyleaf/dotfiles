@@ -6,17 +6,14 @@ source "${ZINIT_HOME}/zinit.zsh"
 
 # Themes
 
-## powerlevel10k
-# zinit ice depth=1;
-# zinit light romkatv/powerlevel10k
-# if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-#   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-# fi
-# [[ ! -f ~/.dotfiles/zsh/themes/p10k.zsh ]] || source ~/.dotfiles/zsh/themes/p10k.zsh
-
 ## Spaceship
-zinit light spaceship-prompt/spaceship-prompt
-[[ ! -f ~/.dotfiles/zsh/themes/spaceship.zsh ]] || source ~/.dotfiles/zsh/themes/spaceship.zsh
+# zinit light spaceship-prompt/spaceship-prompt
+# [[ ! -f ~/.dotfiles/zsh/themes/spaceship.zsh ]] || source ~/.dotfiles/zsh/themes/spaceship.zsh
+
+if [ "$TERM_PROGRAM" != "Apple_Terminal" ] && (( $+commands[oh-my-posh] )); then
+  LOCAL_THEMES="${HOME:-~}/.dotfiles/zsh/themes/"
+  eval "$(oh-my-posh init zsh --config $LOCAL_THEMES/icyleaf.omp.yaml)"
+fi
 
 # Plugins
 zinit light zsh-users/zsh-completions
