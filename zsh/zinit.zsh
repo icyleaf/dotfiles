@@ -140,6 +140,7 @@ LOCAL_PLUGINS="${HOME:-~}/.dotfiles/zsh/plugins/"
 . "${LOCAL_PLUGINS}/homebrew.plugin.zsh"
 . "${LOCAL_PLUGINS}/gpg.plugin.zsh"
 . "${LOCAL_PLUGINS}/mise.plugin.zsh"
+. "${LOCAL_PLUGINS}/atuin.plugin.zsh"
 unset LOCAL_PLUGINS
 
 # alias
