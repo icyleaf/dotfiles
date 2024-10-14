@@ -27,11 +27,12 @@ fi
 installed_apps=`mas list`
 
 for app in "PastePal" \
+  "iShot Pro" \
+  "Windows App" \
   "Amphetamine" \
   "Irvue" \
   "Hex Fiend" \
-  "TweetDeck" \
-  "MenubarX" \
+  "LanScan" \
   "CotEditor" \
   "DaisyDisk"; do
 
