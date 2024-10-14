@@ -2,4 +2,5 @@ if (( ! $+commands[mise] )); then
   return
 fi
 
-eval "$(/usr/local/bin/mise activate zsh)"
+mise_path=$(which mise)
+eval "$($mise_path activate zsh)"
