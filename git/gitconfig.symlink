@@ -18,6 +18,8 @@
   autoSetupRemote = true
 [pull]
   rebase = true
+[pager]
+  branch = false
 [color]
   pager = off
 [alias]
