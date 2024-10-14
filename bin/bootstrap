@@ -3,6 +3,7 @@
 # bootstrap installs things.
 
 source functions/_lib.sh
+source functions/load-cli-parser.sh
 
 setup_gitconfig () {
   if ! [ -f git/gitconfig.local.symlink ]; then
@@ -52,10 +53,16 @@ setup_macos() {
 # Main
 #############################
 
-setup_gitconfig
+if [ "$ONLY_LINK_FILES" == "false" ]; then
+  setup_gitconfig
+fi
+
 install_dotfiles
-run_installer
-setup_macos
+
+if [ "$ONLY_LINK_FILES" == "false" ]; then
+  run_installer
+  setup_macos
+fi
 
 echo
 echo '  All installed!'

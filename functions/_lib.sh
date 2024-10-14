@@ -24,10 +24,6 @@ ensure_macos () {
 link_file () {
   local src=$1 dst=$2
 
-  local overwrite_all=${overwrite_all:-false}
-  local backup_all=${backup_all:-false}
-  local skip_all=${skip_all:-false}
-
   local overwrite= backup= skip=
   local action=
 
@@ -41,7 +37,6 @@ link_file () {
         [s]kip, [S]kip all, [o]verwrite, [O]verwrite all, [b]ackup, [B]ackup all?"
 
         read -n 1 action
-
         case "$action" in
           o )
             overwrite=true;;
