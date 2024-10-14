@@ -5,14 +5,12 @@ source "${ZINIT_HOME}/zinit.zsh"
 [[ ! -f ~/.dotfiles/zsh/local.zsh ]] || source ~/.dotfiles/zsh/local.zsh
 
 # Themes
-
-## Spaceship
-# zinit light spaceship-prompt/spaceship-prompt
-# [[ ! -f ~/.dotfiles/zsh/themes/spaceship.zsh ]] || source ~/.dotfiles/zsh/themes/spaceship.zsh
-
 if [ "$TERM_PROGRAM" != "Apple_Terminal" ] && (( $+commands[oh-my-posh] )); then
   LOCAL_THEMES="${HOME:-~}/.dotfiles/zsh/themes/"
   eval "$(oh-my-posh init zsh --config $LOCAL_THEMES/icyleaf.omp.yaml)"
+else
+  zinit light spaceship-prompt/spaceship-prompt
+  [[ ! -f ~/.dotfiles/zsh/themes/spaceship.zsh ]] || source ~/.dotfiles/zsh/themes/spaceship.zsh
 fi
 
 # Plugins
