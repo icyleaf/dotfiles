@@ -1,0 +1,8 @@
+---
+
+creation_rules:
+  # TODO: MUST encrypt and decrypt with "--input-type dotenv --output-type dotenv"
+  # reletes to https://github.com/getsops/sops/issues/982
+  - path_regex: zsh/.*.enc.zsh
+    age: age1xnflh7627hgjzzjxlc0c2gt0y27484sgwky9qm2kt7aplk086amsdwkuj0
+    pgp: ''

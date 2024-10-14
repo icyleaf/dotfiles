@@ -11,10 +11,27 @@
 ```bash
 $ git clone http://gitlab.dev/icyleaf/dotfiles.git ~/.dotfiles
 $ cd ~/.dotfiles
+$ ./bin/bootstrap -h
 $ ./bin/bootstrap
 
 # macOS 快速配置
 $ ./bin/macos
+```
+
+## 安全数据
+
+配置必然后包含私密数据，仓库新增 sops + age 加密核心数据，目前加密的规则可见 [.sops.yaml](.sops.yaml) 文件。
+
+### zsh 密钥
+
+因 sops 目前未支持配置文件自动识别 dotenv 类型，需要手动指定：
+
+```bash
+# 解密
+$ sops -d --output-type dotenv zsh/local.enc.zsh zsh/local.zsh
+
+# 加密
+$ sops -d --input-type dotenv zsh/local.zsh zsh/local.enc.zsh
 ```
 
 ## 实现原理
