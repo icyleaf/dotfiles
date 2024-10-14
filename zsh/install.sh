@@ -7,7 +7,7 @@ zsh_plugin_manager=zinit
 
 zsh_path=$(command -v zsh)
 
-if ! [ $SHELL == "$zsh_path" ]; then
+if [ "$SHELL" != "$zsh_path" ] && [ "${SKIP_SHELL_DETECT:-false}" == "false" ]; then
   info "changing to zsh shell ($zsh_path), please input password if nessesary"
   chsh -s "$zsh_path"
   success 'zsh changed'
@@ -111,4 +111,13 @@ install_zinit () {
   # zinit update --parallel
 }
 
+decrypt_zsh_local_file () {
+  echo "Decrypt secrets zsh file ..."
+  sops -d --input-type dotenv --output-type dotenv --age age10skqdpjag3uwnhdpeuvwlezc6wlwykdjzhhwqd9mvxvpcrw3gq8s0twla8 --pgp '' zsh/local.enc.zsh > zsh/local.zsh
+}
+
 choose_zsh_plugin_manager
+
+if [ "$ZSH_DECRYPT_ENABLED" == "true"]; then
+  decrypt_zsh_local_file
+fi
