@@ -23,11 +23,8 @@ info "Install ruby gems"
 for gem in "irbtools" \
   "awesome_print" \
   "mush" \
-  "ruby-debug-ide" \
   "rubocop" \
-  "solargraph" \
-  "ripper-tags" \
-  "debase"; do
+  "ripper-tags"; do
 
   if [ -z "$(gem info $gem | grep $gem)" ]; then
     echo "       > ${gem}"
