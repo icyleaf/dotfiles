@@ -7,4 +7,5 @@ source functions/_lib.sh
 source_path="config.toml"
 dest_path="${HOME:-~}/.config/mise"
 
-link_file "${DIRPATH}/${source_path}" "$dest_path"
+mkdir -p $dest_path 2>/dev/null
+link_file "${DIRPATH}/${source_path}" "${dest_path}/${source_path}"

@@ -2,9 +2,14 @@ if (( ! $+commands[mise] )); then
   return
 fi
 
-if declare -F mise > /dev/null; then
-  return
+# installed from homebrew
+mise_path="/usr/local/bin/mise"
+if ! [ -f "$mise_path" ]; then
+  mise_path=$(~/.local/bin/mise)
 fi
 
-mise_path=$(which mise)
-eval "$($mise_path activate zsh)"
+if [ -f "$mise_path" ]; then
+  eval "$($mise_path activate zsh)"
+else
+  echo "Not found mise"
+fi

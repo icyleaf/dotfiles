@@ -87,10 +87,6 @@ if (( $+commands[nomad] )); then
 fi
 
 # ruby
-if (( $+commands[asdf] )); then
-  zinit snippet OMZP::asdf
-fi
-
 if (( $+commands[ruby] )); then
   zinit snippet OMZP::ruby
   zinit snippet OMZP::gem

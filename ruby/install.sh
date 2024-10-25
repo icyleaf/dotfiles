@@ -3,32 +3,20 @@
 # Ruby 依赖文件
 source functions/_lib.sh
 
-ruby_version=3.0.3
+ruby_version=3.3.5
 
-info "Detect asdf"
-if ! test $(which asdf); then
-  fail "abort, asdf not installed"
+info "Detect mise"
+if ! test $(which mise); then
+  fail "abort, mise not installed"
 else
-  success "asdf existed"
-fi
-
-info "Install asdf ruby plugin"
-if [ -z "$(asdf plugin list | grep ruby)" ]; then
-  asdf plugin add ruby
-  success "asdf-ruby"
-else
-  success "asdf-ruby"
+  success "mise existed"
 fi
 
 info "Install Ruby $ruby_version"
 if [ -z "$(ruby -v | grep $ruby_version)" ]; then
-  asdf install ruby $ruby_version
-  asdf global ruby $ruby_version
-  asdf local ruby $ruby_version
-else
-  asdf global ruby $ruby_version
-  asdf local ruby $ruby_version
+  mise install ruby $ruby_version
 fi
+mise global ruby $ruby_version
 success "Ruby $ruby_version"
 
 info "Install ruby gems"
