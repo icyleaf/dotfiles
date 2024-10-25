@@ -41,7 +41,7 @@ if test ! "$(uname)" = "Darwin"; then
 fi
 
 info "Installing homebrew"
-if test ! $(which brew); then
+if test ! $(which brew) && [ "${SKIP_INSTALL_HOMEBRW:-false}" == "false" ]; then
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
   # 替换为国内源
