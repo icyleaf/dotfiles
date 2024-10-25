@@ -15,3 +15,15 @@ alias zshrc='vim ~/.zshrc'
 alias fuckapp='sudo xattr -r -d com.apple.quarantine'
 
 alias sshig="ssh -o StrictHostKeychecking=no -o UserKnownHostsFile=/dev/null"
+
+
+# linux only
+if (( $+commands[xsel] )); then
+  alias pbcopy='xsel --clipboard --input'
+  alias pbpaste='xsel --clipboard --output'
+fi
+
+if (( $+commands[xclip] )); then
+  alias pbcopy='xclip -selection clipboard'
+  alias pbpaste='xclip -selection clipboard -o'
+fi
