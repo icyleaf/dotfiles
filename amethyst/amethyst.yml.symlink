@@ -1,4 +1,5 @@
 # Amethyst 0.16.0+ required
+# sample: https://github.com/ianyh/Amethyst/blob/development/.amethyst.sample.yml
 layouts:
   - tall
   - fullscreen
@@ -29,7 +30,11 @@ relaunch-amethyst:
   mod: mod2
   key: z
 
-float-small-windows: true
+# true if menu bar icon should be hidden (default false).
+hide-menu-bar-icon: false
+
+# true if windows smaller than a 500px square should be floating by default (default true)
+float-small-windows: false
 floating:
   - com.apple.systempreferences
   - com.apple.Stickies
@@ -40,6 +45,15 @@ floating:
   - com.daisydiskapp.DaisyDisk
   - AubreeCloud.mini-swatch
 
+
+# true to insert new windows into the first position and false to insert new windows into the last position (default false).
+new-windows-to-main: false
+
+# true to maintain layout state across application executions (default true).
+restore-layouts-on-launch: true
+
+# true to display some optional debug information in the layout HUD (default false).
 debug-layout-info: true
 
+# true to get updates to beta versions of the software (default false).
 use-canary-build: true
