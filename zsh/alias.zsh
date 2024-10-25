@@ -9,6 +9,9 @@ alias ow='open *.xcworkspace'
 
 alias rake='noglob rake'
 
+# non-macOS alias
+alias hx='helix'
+
 alias reload='source ~/.zshrc && echo zshrc reloaded.'
 alias zshrc='vim ~/.zshrc'
 
