@@ -3,11 +3,11 @@ if (( ! $+commands[mise] )); then
 fi
 
 # installed from homebrew
-possible_paths=("/usr/local/bin/mise" "/usr/bin/mise" "$HOME/.local/bin/mise")
-mise_path="${possible_paths[-1]}"
-for path in "${possible_paths[@]}"; do
-  if [ -f "$path" ]; then
-    mise_path="$path"
+mise_possible_paths=("/usr/local/bin/mise" "/usr/bin/mise" "$HOME/.local/bin/mise")
+mise_path="${mise_possible_paths[-1]}"
+for p in "${mise_possible_paths[@]}"; do
+  if [ -f "$p" ]; then
+    mise_path="$p"
     break
   fi
 done
