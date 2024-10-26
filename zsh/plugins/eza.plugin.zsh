@@ -4,7 +4,7 @@ if (( ! $+commands[eza] )); then
 fi
 
 # general use aliases
-alias ls='eza --icons' # just replace ls by exa and allow all other exa arguments
+alias ls='eza --icons=always $@' # just replace ls by exa and allow all other exa arguments
 alias l='ls -lbF' #   list, size, type
 alias ll='ls -la' # long, all
 alias llm='ll --sort=modified' # list, long, sort by modification date

@@ -1,5 +1,3 @@
-alias la='ll -a'
-
 alias flushdns='sudo killall -HUP mDNSResponder'
 alias nns="sudo lsof -i -P"
 alias nnc="lsof -Pni4 | grep LISTEN"
