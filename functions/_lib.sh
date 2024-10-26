@@ -21,6 +21,12 @@ ensure_macos () {
   fi
 }
 
+ensure_linux () {
+  if test ! "$(uname)" = "Linux"; then
+    exit 0
+  fi
+}
+
 link_file () {
   local src=$1 dst=$2
 
