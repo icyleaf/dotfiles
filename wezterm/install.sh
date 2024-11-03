@@ -9,5 +9,6 @@ dest_path="${HOME:-~}/.config/wezterm"
 
 mkdir -p $dest_path 2> /dev/null
 link_file "${DIRPATH}/config" "${dest_path}/config"
+link_file "${DIRPATH}/utils" "${dest_path}/utils"
 link_file "${DIRPATH}/wezterm.lua" "${dest_path}/wezterm.lua"
 
