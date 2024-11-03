@@ -118,6 +118,6 @@ decrypt_zsh_local_file () {
 
 choose_zsh_plugin_manager
 
-if [ "$ZSH_DECRYPT_ENABLED" == "true"]; then
+if [ "${ZSH_DECRYPT_ENABLED:-false}" == "true" ]; then
   decrypt_zsh_local_file
 fi
