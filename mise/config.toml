@@ -2,3 +2,4 @@
 node = "20.18.0"
 ruby = "3.3.5"
 python = "3.10.13"
+rust = "stable"
