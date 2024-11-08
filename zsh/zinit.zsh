@@ -15,39 +15,32 @@ else
 fi
 
 # Plugins
-zinit light zsh-users/zsh-completions
-zinit light zsh-users/zsh-autosuggestions
-zinit light djui/alias-tips
+
+zinit light-mode for \
+  zsh-users/zsh-completions \
+  zsh-users/zsh-autosuggestions \
+  djui/alias-tips
+
 zinit light mollifier/anyframe
-
-## pure
-# zinit ice pick"async.zsh" src"pure.zsh"
-# zinit light sindresorhus/pure
-
-zinit wait lucid for \
-    OMZL::git.zsh \
-  atload"unalias grv" \
-    OMZP::git
+bindkey '^xb' anyframe-widget-cdr
+autoload -Uz chpwd_recent_dirs cdr add-zsh-hook
+add-zsh-hook chpwd chpwd_recent_dirs
+bindkey '^xr' anyframe-widget-execute-history
+bindkey '^x^b' anyframe-widget-checkout-git-branch
 
 zinit wait lucid for \
-  atinit"zicompinit; zicdreplay"  \
+  atinit"zicompinit; zicdreplay" \
     zdharma-continuum/fast-syntax-highlighting \
-    OMZP::colored-man-pages \
-  #   OMZP::colored-man-pages \
-  # as"completion" \
-  #   OMZP::docker/_docker
-
-# bindkey '^xb' anyframe-widget-cdr
-# autoload -Uz chpwd_recent_dirs cdr add-zsh-hook
-# add-zsh-hook chpwd chpwd_recent_dirs
-
-# bindkey '^xr' anyframe-widget-execute-history
-# bindkey '^x^b' anyframe-widget-checkout-git-branch
+    OMZP::colored-man-pages
 
 # oh-my-zsh
 zinit snippet OMZL::completion.zsh
 zinit snippet OMZL::directories.zsh
-# zinit snippet OMZL::git.zsh
+# zinit snippet OMZP::macos
+zinit wait lucid for \
+    OMZL::git.zsh \
+  atload"unalias grv" \
+    OMZP::git
 
 # zinit ice svn
 # zinit snippet OMZP::macos
