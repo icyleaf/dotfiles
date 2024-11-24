@@ -35,6 +35,9 @@ defaults write com.apple.menuextra.clock ShowDate -int 1
 # Disable double dash(--) to emdash(—)
 defaults write 'Apple Global Domain' NSAutomaticDashSubstitutionEnabled 0
 
+# Click wallpaper to reveal desktop on in Stage Mamager (macOS 15+)
+defaults write com.apple.WindowManager EnableStandardClickToShowDesktop -bool false
+
 ###############################################################################
 # Trackpad, mouse, keyboard, Bluetooth accessories, and input                 #
 ###############################################################################
@@ -155,7 +158,7 @@ defaults write com.apple.dock autohide-time-modifier -float 0
 defaults write com.apple.dock autohide -bool true
 
 # Make Dock icons of hidden applications translucent
-defaults write com.apple.dock showhidden -bool true
+defaults write com.apple.d showhidden -bool true
 
 # Don’t show recent applications in Dock
 defaults write com.apple.dock show-recents -bool false
