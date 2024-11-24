@@ -1,1 +1,1 @@
-Config inspired from https://github.com/kevinhwang91/dotfiles
+Config inspired from https://github.com/KevinSilvester/wezterm-config
