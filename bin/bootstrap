@@ -64,6 +64,7 @@ success 'dotfiles done'
 echo
 
 if [ "$ONLY_LINK_FILES" == "false" ]; then
+  run_installer "${ROOTPATH}/config/general"
   run_installer "${ROOTPATH}/config/$(os_name)"
   setup_macos
 fi
