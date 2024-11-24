@@ -1,0 +1,133 @@
+{
+  "activation_mode": {
+    "labels": "jkl;asdf"
+  },
+  "as_window": false,
+  "builtins": {
+    "applications": {
+      "actions": true,
+      "context_aware": true,
+      "name": "applications",
+      "placeholder": "Applications",
+      "prioritize_new": true,
+      "refresh": true,
+      "show_generic": false,
+      "show_icon_when_single": true,
+      "show_sub_when_single": true,
+      "weight": 5
+    },
+    "calc": {
+      "icon": "accessories-calculator",
+      "min_chars": 4,
+      "name": "calc",
+      "placeholder": "Calculator",
+      "require_number": true,
+      "weight": 5
+    },
+    "clipboard": {
+      "avoid_line_breaks": true,
+      "exec": "wl-copy",
+      "image_height": 300,
+      "max_entries": 10,
+      "name": "clipboard",
+      "placeholder": "Clipboard",
+      "switcher_only": true,
+      "weight": 5
+    },
+    "commands": {
+      "icon": "utilities-terminal",
+      "name": "commands",
+      "placeholder": "Commands",
+      "switcher_only": true,
+      "weight": 5
+    },
+    "custom_commands": {
+      "icon": "utilities-terminal",
+      "name": "custom_commands",
+      "placeholder": "Custom Commands",
+      "weight": 5
+    },
+    "dmenu": {
+      "name": "dmenu",
+      "placeholder": "Dmenu",
+      "switcher_only": true,
+      "weight": 5
+    },
+    "emojis": {
+      "history": true,
+      "name": "emojis",
+      "placeholder": "Emojis",
+      "show_unqualified": false,
+      "switcher_only": true,
+      "typeahead": true,
+      "weight": 5
+    },
+    "finder": {
+      "concurrency": 8,
+      "icon": "folder",
+      "ignore_gitignore": true,
+      "name": "finder",
+      "placeholder": "Finder",
+      "refresh": true,
+      "switcher_only": true,
+      "weight": 5
+    },
+    "runner": {
+      "generic_entry": false,
+      "history": true,
+      "icon": "utilities-terminal",
+      "name": "runner",
+      "placeholder": "Runner",
+      "refresh": true,
+      "typeahead": true,
+      "weight": 5
+    },
+    "ssh": {
+      "history": true,
+      "icon": "preferences-system-network",
+      "name": "ssh",
+      "placeholder": "SSH",
+      "refresh": true,
+      "switcher_only": false,
+      "weight": 5
+    },
+    "switcher": {
+      "name": "switcher",
+      "placeholder": "Switcher",
+      "prefix": "/",
+      "weight": 5
+    },
+    "websearch": {
+      "engines": [
+        "google"
+      ],
+      "icon": "applications-internet",
+      "name": "websearch",
+      "placeholder": "Websearch",
+      "weight": 5
+    },
+    "windows": {
+      "icon": "view-restore",
+      "name": "windows",
+      "placeholder": "Windows",
+      "weight": 5
+    }
+  },
+  "disable_click_to_close": false,
+  "force_keyboard_focus": false,
+  "list": {
+    "keyboard_scroll_style": "vim",
+    "max_entries": 100,
+    "placeholder": "No Results",
+    "show_initial_entries": true,
+    "single_click": true,
+    "visibility_threshold": 20
+  },
+  "monitor": "",
+  "search": {
+    "delay": 0,
+    "placeholder": "Search..."
+  },
+  "theme": "rosepine",
+  "timeout": 0
+}
