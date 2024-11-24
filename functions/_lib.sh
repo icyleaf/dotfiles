@@ -61,19 +61,19 @@ link_file () {
 
         read -n 1 action
         case "$action" in
-          o )
+          o)
             overwrite=true;;
-          O )
+          O)
             overwrite_all=true;;
-          b )
+          b)
             backup=true;;
-          B )
+          B)
             backup_all=true;;
-          s )
+          s)
             skip=true;;
-          S )
+          S)
             skip_all=true;;
-          * )
+          *)
             ;;
         esac
       fi
@@ -115,6 +115,19 @@ remove_dock_icon() {
     tips "deleted ${bundle_identifier}"
     /usr/libexec/PlistBuddy -c "Delete persistent-apps:$index" ~/Library/Preferences/com.apple.dock.plist
   fi
+}
+
+ask_for_sudo() {
+  # Ask for the administrator password upfront
+  sudo -v
+
+  # Update existing `sudo` time stamp until this script has finished
+  # https://gist.github.com/cowboy/3118588
+  while true; do
+    sudo -n true
+    sleep 60
+    kill -0 "$$" || exit
+  done &> /dev/null &
 }
 
 info () {

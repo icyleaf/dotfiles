@@ -4,8 +4,6 @@
 
 source functions/_lib.sh
 
-ensure_linux
-
 dest_path="${HOME:-~}/.config/hypr"
 
 mkdir -p $dest_path 2> /dev/null
