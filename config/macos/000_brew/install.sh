@@ -74,7 +74,7 @@ fi
 info "Installing brew bundle"
 if test $(which brew); then
   cd "${DIRPATH}"
-  brew bundle -v
+  brew bundle --no-upgrade --verbose
   success "brew bundle installed"
 else
   fail "brew install failed"

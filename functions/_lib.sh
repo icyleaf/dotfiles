@@ -9,20 +9,37 @@ read_path () (
 )
 
 DIRPATH=$(read_path $(dirname "$0"))
-ROOTPATH=$(read_path "${DIRPATH}/..")
+ROOTPATH=$(readlink -f "${DIRPATH}/..")
 
 overwrite_all=false
 backup_all=false
 skip_all=false
 
+os_name () {
+  case "$(uname -s)" in
+    Darwin)
+      echo "macos"
+      ;;
+    Linux)
+      echo "linux"
+      ;;
+    CYGWIN*|MINGW*|MSYS*)
+      echo "windows"
+      ;;
+    *)
+      echo "unknown"
+      ;;
+  esac
+}
+
 ensure_macos () {
-  if test ! "$(uname)" = "Darwin"; then
+  if test ! "$(os_name)" = "macos"; then
     exit 0
   fi
 }
 
 ensure_linux () {
-  if test ! "$(uname)" = "Linux"; then
+  if test ! "$(os_name)" = "linux"; then
     exit 0
   fi
 }
@@ -84,7 +101,7 @@ link_file () {
   # "false" or empty
   if [ "$skip" != "true" ]; then
     ln -s "$1" "$2"
-    success "linked $1 to $2"
+    success "linked $2 from $1"
   fi
 }
 

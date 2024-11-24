@@ -4,10 +4,9 @@
 source functions/_lib.sh
 
 zsh_plugin_manager=zinit
-
 zsh_path=$(command -v zsh)
 
-if [ "$SHELL" != "$zsh_path" ] && [ "${SKIP_SHELL_DETECT:-false}" == "false" ]; then
+if [ "$(basename "$SHELL")" != "zsh" ] && [ "${SKIP_SHELL_DETECT:-false}" == "false" ]; then
   info "changing to zsh shell ($zsh_path), please input password if nessesary"
   chsh -s "$zsh_path"
   success 'zsh changed'

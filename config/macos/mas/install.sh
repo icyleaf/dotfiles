@@ -3,7 +3,6 @@
 # Mac App Store
 
 source functions/_lib.sh
-ensure_macos
 
 function login () {
   user "[Action request] login with App Store app please, choose action:\n\

@@ -6,7 +6,7 @@ end
 
 def minimal?
   is_minimal = ENV.fetch('BREW_MINIMUM', 'false')
-  !(is_minimal == 'true' || is_minimal == 'yes' || is_minimal = '1')
+  !(is_minimal == 'true' || is_minimal == 'yes' || is_minimal == '1')
 end
 
 # General tools
@@ -55,7 +55,6 @@ unless minimal?
 end
 
 if macos?
-  tap 'homebrew/cask-drivers'
   tap 'jandedobbeleer/oh-my-posh'
 
   # zsh themes

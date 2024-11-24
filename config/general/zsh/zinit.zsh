@@ -1,17 +1,19 @@
 ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
 source "${ZINIT_HOME}/zinit.zsh"
 
+ZINIT_CUSTOM_HOME="${HOME}/.dotfiles/config/general/zsh"
+
 # Load local config
-[[ ! -f ~/.dotfiles/zsh/local.zsh ]] || source ~/.dotfiles/zsh/local.zsh
-source ~/.dotfiles/zsh/common.zsh
+[[ ! -f "$ZINIT_CUSTOM_HOME/local.zsh" ]] || source $ZINIT_CUSTOM_HOME/local.zsh
+source $ZINIT_CUSTOM_HOME/common.zsh
 
 # Themes
 if [ "$TERM_PROGRAM" != "Apple_Terminal" ] && (( $+commands[oh-my-posh] )); then
-  LOCAL_THEMES="${HOME:-~}/.dotfiles/zsh/themes/"
+  LOCAL_THEMES="${ZINIT_CUSTOM_HOME}/themes/"
   eval "$(oh-my-posh init zsh --config $LOCAL_THEMES/icyleaf.omp.yaml)"
 else
   zinit light spaceship-prompt/spaceship-prompt
-  [[ ! -f ~/.dotfiles/zsh/themes/spaceship.zsh ]] || source ~/.dotfiles/zsh/themes/spaceship.zsh
+  [[ ! -f $ZINIT_CUSTOM_HOME/themes/spaceship.zsh ]] || source $ZINIT_CUSTOM_HOME/themes/spaceship.zsh
 fi
 
 # Plugins
@@ -120,18 +122,16 @@ if (( $+commands[terraform] )); then
   zinit light icyleaf/zsh-terraform
 fi
 
-## local plugins
-LOCAL_PLUGINS="${HOME:-~}/.dotfiles/zsh/plugins/"
-. "${LOCAL_PLUGINS}/limactl.plugin.zsh"
-. "${LOCAL_PLUGINS}/gpg.plugin.zsh"
-. "${LOCAL_PLUGINS}/eza.plugin.zsh"
-. "${LOCAL_PLUGINS}/homebrew.plugin.zsh"
-. "${LOCAL_PLUGINS}/mise.plugin.zsh"
-. "${LOCAL_PLUGINS}/atuin.plugin.zsh"
-unset LOCAL_PLUGINS
+## local plugins$ZINIT_CUSTOM_HOME
+. "${ZINIT_CUSTOM_HOME}/plugins/limactl.plugin.zsh"
+. "${ZINIT_CUSTOM_HOME}/plugins/gpg.plugin.zsh"
+. "${ZINIT_CUSTOM_HOME}/plugins/eza.plugin.zsh"
+. "${ZINIT_CUSTOM_HOME}/plugins/homebrew.plugin.zsh"
+. "${ZINIT_CUSTOM_HOME}/plugins/mise.plugin.zsh"
+. "${ZINIT_CUSTOM_HOME}/plugins/atuin.plugin.zsh"
 
 # alias
-source $HOME/.dotfiles/zsh/alias.zsh
+source $ZINIT_CUSTOM_HOME/alias.zsh
 
 # Compilation flags
 export ARCHFLAGS="-arch $(uname -m)"

@@ -1,0 +1,150 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json
+
+palette:
+  black: "#262B44"
+  blue: "#4B95E9"
+  grey: "#9F9F9F"
+  orange: "#F07623"
+  os: "#ACB0BE"
+  white: "#E0DEF4"
+  yellow: "#F3AE35"
+secondary_prompt:
+  template: "❯❯ "
+  foreground: magenta
+  background: transparent
+console_title_template: "{{ .Shell }} in {{ .Folder }}"
+blocks:
+- type: prompt
+  alignment: left
+  segments:
+  - properties:
+      cache_duration: none
+    template: "{{ .Icon }}"
+    foreground: p:os
+    background: transparent
+    type: os
+    style: plain
+  - properties:
+      cache_duration: none
+    template: " {{ .HostName }}"
+    foreground: p:grey
+    background: transparent
+    type: session
+    style: plain
+  - properties:
+      cache_duration: none
+      style: full
+    template: " {{ .Path }}"
+    foreground: p:blue
+    background: transparent
+    type: path
+    style: plain
+  - properties:
+      branch_icon: ""
+      cache_duration: none
+      commit_icon: "@"
+      fetch_status: true
+    template: " {{ .HEAD }}{{ if or (.Working.Changed) (.Staging.Changed) }}*{{ end }} <cyan>{{ if gt .Behind 0 }}⇣{{ end }}{{ if gt .Ahead 0 }}⇡{{ end }}</>"
+    foreground: p:grey
+    background: transparent
+    type: git
+    style: plain
+  newline: true
+- type: rprompt
+  overflow: hidden
+  segments:
+  - properties:
+      cache_duration: none
+    template: " \uf308 {{ .Context }}"
+    foreground: blue
+    background: transparent
+    type: docker
+    style: powerline
+  - properties:
+      cache_duration: none
+    template: " \ue791 {{ .Full }} "
+    foreground: red
+    background: transparent
+    type: ruby
+    style: powerline
+  - properties:
+      cache_duration: none
+      display_mode: files
+      fetch_package_manager: false
+      home_enabled: false
+    template: "\ue718 "
+    foreground: p:green
+    background: transparent
+    type: node
+    style: plain
+  - properties:
+      cache_duration: none
+      fetch_version: false
+    template: "\ue626 "
+    foreground: p:blue
+    background: transparent
+    type: go
+    style: plain
+  - properties:
+      cache_duration: none
+      display_mode: files
+      fetch_version: false
+      fetch_virtual_env: false
+    template: "\ue235 "
+    foreground: p:yellow
+    background: transparent
+    type: python
+    style: plain
+  - properties:
+      cache_duration: none
+    template: " <p:blue><b>{{ .CurrentDate | date \"15:04:05\" }}</b></>"
+    foreground: p:white
+    background: transparent
+    type: time
+    style: plain
+  - properties:
+      cache_duration: none
+      threshold: 5000
+    template: " {{ .FormattedMs }}"
+    foreground: yellow
+    background: transparent
+    type: executiontime
+    style: plain
+- type: prompt
+  alignment: left
+  segments:
+  - properties:
+      cache_duration: none
+    template: ❯
+    background: p:transparent
+    type: path
+    style: plain
+    foreground_templates:
+    - "{{if gt .Code 0}}red{{end}}"
+    - "{{if eq .Code 0}}green{{end}}"
+  newline: true
+tooltips:
+- properties:
+    display_default: true
+  leading_diamond: 
+  trailing_diamond: 
+  template: " \ue7ad {{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }} "
+  foreground: p:white
+  background: p:orange
+  type: aws
+  style: diamond
+  tips:
+  - aws
+- properties:
+    display_default: true
+  leading_diamond: 
+  trailing_diamond: 
+  template: " \uebd8 {{ .Name }} "
+  foreground: p:white
+  background: p:blue
+  type: az
+  style: diamond
+  tips:
+  - az
+version: 3
+final_space: true

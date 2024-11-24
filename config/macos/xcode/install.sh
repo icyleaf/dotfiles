@@ -3,7 +3,6 @@
 # xcode
 
 source functions/_lib.sh
-ensure_macos
 
 xcode_theme_name="Dracula.xccolortheme"
 xcode_theme_path="${HOME:-~}/Library/Developer/Xcode/UserData/FontAndColorThemes"

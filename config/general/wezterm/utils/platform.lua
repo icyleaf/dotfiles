@@ -4,6 +4,10 @@ local function is_found(str, pattern)
   return string.find(str, pattern) ~= nil
 end
 
+local function is_armed()
+  return is_found(wezterm.target_triple, 'aarch64') or is_found(wezterm.target_triple, 'arm64')
+end
+
 ---@alias PlatformType 'windows' | 'linux' | 'mac'
 
 ---@return {os: PlatformType, is_win: boolean, is_linux: boolean, is_mac: boolean}
@@ -28,6 +32,7 @@ local function platform()
     is_win = is_win,
     is_linux = is_linux,
     is_mac = is_mac,
+    is_armed = is_armed(),
   }
 end
 
