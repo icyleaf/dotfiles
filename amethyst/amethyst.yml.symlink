@@ -30,6 +30,10 @@ relaunch-amethyst:
   mod: mod2
   key: z
 
+toggle-float:
+  mod: mod2
+  key: f
+
 # true if menu bar icon should be hidden (default false).
 hide-menu-bar-icon: false
 
@@ -46,6 +50,10 @@ floating:
   - AubreeCloud.mini-swatch
   - io.balena.etcher
   - io.sideloadly.sideloadly
+  - com.apple.iphonesimulator
+  - id: org.jkiss.dbeaver.core.product
+    windows:
+      - 'Rename Database'
 
 # true to insert new windows into the first position and false to insert new windows into the last position (default false).
 new-windows-to-main: false
