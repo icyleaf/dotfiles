@@ -3,7 +3,6 @@
 # 复制 karabiner-Elements 的配置文件
 
 source functions/_lib.sh
-ensure_macos
 
 karabiner_install_path="${HOME:-~}/.config/karabiner"
 

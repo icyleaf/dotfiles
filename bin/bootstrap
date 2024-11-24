@@ -6,7 +6,8 @@ source functions/_lib.sh
 source functions/load-cli-parser.sh
 
 setup_gitconfig () {
-  if ! [ -f git/gitconfig.local.symlink ]; then
+  local local_gitconfig=config/general/git/gitconfig.local.symlink
+  if ! [ -f "$local_gitconfig" ]; then
     info 'setup gitconfig'
 
     git_credential='cache'
@@ -19,28 +20,27 @@ setup_gitconfig () {
     user ' - What is your git author email?'
     read -e git_authoremail
 
-    sed -e "s/AUTHORNAME/$git_authorname/g" -e "s/AUTHOREMAIL/$git_authoremail/g" -e "s/GIT_CREDENTIAL_HELPER/$git_credential/g" git/gitconfig.local.symlink.example > git/gitconfig.local.symlink
+    sed -e "s/AUTHORNAME/$git_authorname/g" -e "s/AUTHOREMAIL/$git_authoremail/g" -e "s/GIT_CREDENTIAL_HELPER/$git_credential/g" "${local_gitconfig}.example" > $local_gitconfig
 
     success 'gitconfig'
   fi
 }
 
 install_dotfiles () {
-  info 'Installing dotfiles'
-
-  for src in $(find -H "$ROOTPATH" -maxdepth 2 -name '*.symlink' -not -path '*.git*'); do
+  local dotfile_path=$1
+  for src in $(find -H "$dotfile_path" -maxdepth 2 -name '*.symlink' -not -path '*.git*'); do
     dst="${HOME:-~}/.$(basename "${src%.*}")"
     link_file "$src" "$dst"
   done
-  success 'dotfiles done'
-  echo
 }
 
 run_installer() {
-  for installer in $(find . -name install.sh | sort); do
-    info "Running installer: $installer"
+  local install_path=$1
+  for installer in $(find "$install_path" -name install.sh | sort); do
+    local installer_name=$(basename $(dirname $installer))
+    info "Running installer: $installer_name"
     $installer
-    success "Installer done: $installer"
+    success "Installer done: $installer_name"
     echo
   done
 }
@@ -57,10 +57,14 @@ if [ "$ONLY_LINK_FILES" == "false" ]; then
   setup_gitconfig
 fi
 
-install_dotfiles
+info "Installing dotfiles ... $(os_name)"
+install_dotfiles "${ROOTPATH}/config/general"
+install_dotfiles "${ROOTPATH}/config/$(os_name)"
+success 'dotfiles done'
+echo
 
 if [ "$ONLY_LINK_FILES" == "false" ]; then
-  run_installer
+  run_installer "${ROOTPATH}/config/$(os_name)"
   setup_macos
 fi
 
