@@ -8,7 +8,7 @@ source functions/load-cli-parser.sh
 setup_gitconfig () {
   local local_gitconfig=config/general/git/gitconfig.local.symlink
   if ! [ -f "$local_gitconfig" ]; then
-    info 'setup gitconfig'
+    info 'setup git user information'
 
     git_credential='cache'
     if [ "$(uname -s)" == "Darwin" ]; then
@@ -21,8 +21,8 @@ setup_gitconfig () {
     read -e git_authoremail
 
     sed -e "s/AUTHORNAME/$git_authorname/g" -e "s/AUTHOREMAIL/$git_authoremail/g" -e "s/GIT_CREDENTIAL_HELPER/$git_credential/g" "${local_gitconfig}.example" > $local_gitconfig
-
-    success 'gitconfig'
+  else
+    success 'configured, skipped'
   fi
 }
 
@@ -34,14 +34,22 @@ install_dotfiles () {
   done
 }
 
+# install_shares () {
+#   local dotfile_path=$1
+#   local dst_rootpath="${HOME:-~}/.local/share"
+#   mkdir -p $dst_rootpath
+#   for src in $(find -H "$dotfile_path" -maxdepth 1 -type d -not -path '*.git*' -not -path "$dotfile_path"); do
+#     dst="${dst_rootpath}/$(basename "$src")"
+#     link_file "$src" "$dst"
+#   done
+# }
+
 run_installer() {
   local install_path=$1
   for installer in $(find "$install_path" -name install.sh | sort); do
     local installer_name=$(basename $(dirname $installer))
-    info "Running installer: $installer_name"
+    info "Running $installer_name installer"
     $installer
-    success "Installer done: $installer_name"
-    echo
   done
 }
 
@@ -54,18 +62,24 @@ setup_macos() {
 #############################
 
 if [ "$ONLY_LINK_FILES" == "false" ]; then
+  title "configuring git config ..."
   setup_gitconfig
 fi
 
-info "Installing dotfiles ... $(os_name)"
+title "installing dotfiles ..."
+info "linking symlinks to $HOME/"
 install_dotfiles "${ROOTPATH}/config/general"
 install_dotfiles "${ROOTPATH}/config/$(os_name)"
-success 'dotfiles done'
-echo
+
+# info "linking symlinks to $HOME/share"
+# install_shares "${ROOTPATH}/share/linux"
 
 if [ "$ONLY_LINK_FILES" == "false" ]; then
+  title "running customize installer ..."
   run_installer "${ROOTPATH}/config/general"
   run_installer "${ROOTPATH}/config/$(os_name)"
+
+  title "configuring macos settings ..."
   setup_macos
 fi
 

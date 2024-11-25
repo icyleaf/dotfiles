@@ -130,24 +130,55 @@ ask_for_sudo() {
   done &> /dev/null &
 }
 
+if [[ -t 1 ]]
+then
+  tty_escape() { printf "\033[%sm" "$1"; }
+else
+  tty_escape() { :; }
+fi
+tty_mkbold() { tty_escape "1;$1"; }
+tty_underline="$(tty_escape "4;39")"
+tty_green="$(tty_mkbold 32)"
+tty_blue="$(tty_mkbold 34)"
+tty_red="$(tty_mkbold 31)"
+tty_cyan="$(tty_mkbold 36)"
+ttt_yellow="$(tty_mkbold 33)"
+tty_bold="$(tty_mkbold 39)"
+tty_reset="$(tty_escape 0)"
+
+shell_join() {
+  local arg
+  printf "%s" "$1"
+  shift
+  for arg in "$@"
+  do
+    printf " "
+    printf "%s" "${arg// /\ }"
+  done
+}
+
+title() {
+  printf "${tty_blue}==>${tty_bold} %s${tty_reset}\n" "$(shell_join "$@")"
+}
+
 info () {
-  printf "\r  [ \033[00;34m..\033[0m ] $1\n"
+  printf "[ ${tty_blue}..${tty_reset} ] $1\n"
 }
 
 user () {
-  printf "\r  [ \033[0;33m??\033[0m ] $1\n"
+  printf "[ ${tty_cyan}??${tty_reset} ] $1\n"
 }
 
 success () {
-  printf "\r\033[2K  [ \033[00;32mOK\033[0m ] $1\n"
+  printf "[ ${tty_green}OK${tty_reset} ] $1\n"
 }
 
 warn () {
-  printf "\r\033[2K  [\033[0;36mWARN\033[0m] $1\n"
+  printf "[${ttt_yellow}WARN${tty_reset}] $1\n"
 }
 
 fail () {
-  printf "\r\033[2K  [\033[0;31mFAIL\033[0m] $1\n"
+  printf "[${tty_red}FAIL${tty_reset}] $1\n"
   echo ''
   exit
 }

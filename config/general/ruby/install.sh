@@ -5,21 +5,16 @@ source functions/_lib.sh
 
 ruby_version=3.3.5
 
-info "Detect mise"
 if ! test $(which mise); then
   fail "abort, mise not installed"
-else
-  success "mise existed"
 fi
 
-info "Install Ruby $ruby_version"
 if [ -z "$(ruby -v | grep $ruby_version)" ]; then
+  info "Install Ruby $ruby_version"
   mise install ruby $ruby_version
 fi
-mise global ruby $ruby_version
-success "Ruby $ruby_version"
+mise global ruby $ruby_version &> /dev/null
 
-info "Install ruby gems"
 for gem in "irbtools" \
   "awesome_print" \
   "mush" \
@@ -31,4 +26,3 @@ for gem in "irbtools" \
     gem install "${gem}" &> /dev/null
   fi
 done
-success "ruby gems"
