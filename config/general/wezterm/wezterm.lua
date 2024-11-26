@@ -8,11 +8,6 @@ return Config:init()
   :append(require('config.general'))
   :append(require('config.launch')).options
 
--- local wezterm = require("wezterm")
--- local config = wezterm.config_builder()
--- local gpu_adapters = require('utils.gpu_adapter')
--- local platform = require('utils.platform')
-
 -- local function resize_pane(key, direction)
 --   return {
 --     key = key,
@@ -49,37 +44,11 @@ return Config:init()
 --   return zoomed .. index .. tab.active_pane.title
 -- end)
 
--- config.color_scheme = "Seti"
--- config.font = wezterm.font("MesloLGS Nerd Font Mono")
--- config.font_size = platform.is_mac and 12 or 18
-
--- config.enable_tab_bar = true
--- config.hide_tab_bar_if_only_one_tab = false
--- -- config.use_fancy_tab_bar = false
--- config.tab_max_width = 25
--- -- config.show_tab_index_in_tab_bar = false
--- config.switch_to_last_active_tab_when_closing_tab = true
-
--- config.window_decorations = "RESIZE"
-
--- config.window_background_opacity = 0.85
--- config.macos_window_background_blur = 10
 
 -- config.window_frame = {
 --   font = wezterm.font({ family = 'MesloLGS Nerd Font Mono', weight = 'Bold' }),
 --   font_size = platform.is_mac and 12 or 18,
 -- }
-
--- -- config.animation_fps = 60
--- -- config.max_fps = 120
--- config.front_end = 'WebGpu'
--- -- config.webgpu_power_preference = 'HighPerformance'
--- -- config.webgpu_preferred_adapter = gpu_adapters:pick_best()
--- if os.getenv("XDG_CURRENT_DESKTOP") == "Hyprland" then
---   config.enable_wayland = false
--- else
---   config.enable_wayland = true
--- end
 
 -- -- config.debug_key_events = true
 -- config.leader = { key = "j", mods = "CTRL|SHIFT", timeout_milliseconds = 1000 }

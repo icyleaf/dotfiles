@@ -1,5 +1,7 @@
 local wezterm = require('wezterm')
 local gpu_adapters = require('utils.gpu_adapter')
+local platform = require('utils.platform')
+local fonts = require('utils.fonts')
 
 -- A slightly altered version of catppucchin mocha
 local mocha = {
@@ -107,7 +109,8 @@ return {
   webgpu_preferred_adapter = gpu_adapters:pick_best(),
 
   -- color scheme
-  colors = colors,
+  -- colors = colors,
+  color_scheme = 'Seti',
 
   -- background
   -- background = {
@@ -131,23 +134,29 @@ return {
   -- tab bar
   enable_tab_bar = true,
   hide_tab_bar_if_only_one_tab = false,
-  use_fancy_tab_bar = false,
+  use_fancy_tab_bar = true,
   tab_max_width = 25,
   show_tab_index_in_tab_bar = true,
   switch_to_last_active_tab_when_closing_tab = true,
+  inactive_pane_hsb = {
+    hue = 1.0,
+    saturation = 1.0,
+    brightness = 1.0
+  },
 
   -- window
-  -- window_padding = {
-  --   left = 0,
-  --   right = 0,
-  --   top = 10,
-  --   bottom = 7.5,
-  -- },
+  window_decorations = "RESIZE",
   window_close_confirmation = 'NeverPrompt',
+  window_background_opacity = 0.9,
+  macos_window_background_blur = 10,
+  native_macos_fullscreen_mode = false,
   window_frame = {
     active_titlebar_bg = '#090909',
-    -- font = fonts.font,
-    -- font_size = fonts.font_size,
+    font = wezterm.font({
+      family = fonts.window_frame.family,
+      weight = fonts.window_frame.weight,
+    }),
+    font_size = fonts.window_frame.size,
   },
   inactive_pane_hsb = {
     saturation = 0.9,
