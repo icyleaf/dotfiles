@@ -31,11 +31,11 @@ return {
   tab_max_width = 25,
   show_tab_index_in_tab_bar = true,
   switch_to_last_active_tab_when_closing_tab = true,
-  inactive_pane_hsb = {
-    hue = 1.0,
-    saturation = 1.0,
-    brightness = 1.0
-  },
+  -- inactive_pane_hsb = {
+  --   hue = 1.0,
+  --   saturation = 1.0,
+  --   brightness = 1.0
+  -- },
 
   -- window
   adjust_window_size_when_changing_font_size = false,
