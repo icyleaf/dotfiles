@@ -52,6 +52,11 @@ local keys = {
   { key = 'LeftArrow',  mods = mod.SUPER,     action = act.SendString '\x1bOH' },
   { key = 'RightArrow', mods = mod.SUPER,     action = act.SendString '\x1bOF' },
   { key = 'Backspace',  mods = mod.SUPER,     action = act.SendString '\x15' },
+  -- { key = 'LeftArrow',  mods = mod.SUPER,     action = wezterm.action.SendKey({ mods = "CTRL", key = "a" }) },
+  -- { key = 'RightArrow', mods = mod.SUPER,     action = wezterm.action.SendKey({ mods = "CTRL", key = "e" }) },
+  -- { key = 'Backspace',  mods = mod.SUPER,     action = wezterm.action.SendKey({ mods = "CTRL", key = "u" }) },
+  { key = 'LeftArrow',  mods = mod.SUPER_REV, action = wezterm.action.SendKey({ mods = "ALT", key = "b" }) },
+  { key = 'RightArrow', mods = mod.SUPER_REV, action = wezterm.action.SendKey({ mods = "ALT", key = "f" }) },
 
   -- copy/paste --
   { key = 'c',          mods = 'CTRL|SHIFT',  action = act.CopyTo('Clipboard') },
@@ -154,7 +159,6 @@ local keys = {
     mods = mod.SUPER_REV,
     action = act.PaneSelect({ alphabet = '1234567890', mode = 'SwapWithActiveKeepFocus' }),
   },
-
   -- key-tables --
   -- resizes fonts
   {

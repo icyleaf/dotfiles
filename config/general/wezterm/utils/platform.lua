@@ -15,6 +15,7 @@ local function platform()
   local is_win = is_found(wezterm.target_triple, 'windows')
   local is_linux = is_found(wezterm.target_triple, 'linux')
   local is_mac = is_found(wezterm.target_triple, 'apple')
+  local is_wayland = os.getenv("XDG_CURRENT_DESKTOP") == "Hyprland" and true or false
   local os
 
   if is_win then
@@ -33,6 +34,7 @@ local function platform()
     is_linux = is_linux,
     is_mac = is_mac,
     is_armed = is_armed(),
+    is_wayland = is_wayland,
   }
 end
 
