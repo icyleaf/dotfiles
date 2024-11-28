@@ -53,6 +53,7 @@ cells
   :add_segment('separator', ' ' .. ICON_SEPARATOR .. '  ', colors.separator)
   :add_segment('battery_icon', '', colors.battery)
   :add_segment('battery_text', '', colors.battery, attr(attr.intensity('Bold')))
+  :add_segment('end_close', '  ', colors.separator)
 
 ---@return string, string
 local function battery_info()
@@ -81,7 +82,7 @@ M.setup = function()
 
     window:set_right_status(
       wezterm.format(
-        cells:render({ 'date_icon', 'date_text', 'separator', 'battery_icon', 'battery_text' })
+        cells:render({ 'date_icon', 'date_text', 'separator', 'battery_icon', 'battery_text', 'end_close' })
       )
     )
   end)

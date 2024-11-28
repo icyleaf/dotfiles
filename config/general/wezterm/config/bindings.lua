@@ -55,8 +55,8 @@ local keys = {
   -- { key = 'LeftArrow',  mods = mod.SUPER,     action = wezterm.action.SendKey({ mods = "CTRL", key = "a" }) },
   -- { key = 'RightArrow', mods = mod.SUPER,     action = wezterm.action.SendKey({ mods = "CTRL", key = "e" }) },
   -- { key = 'Backspace',  mods = mod.SUPER,     action = wezterm.action.SendKey({ mods = "CTRL", key = "u" }) },
-  { key = 'LeftArrow',  mods = mod.SUPER_REV, action = wezterm.action.SendKey({ mods = "ALT", key = "b" }) },
-  { key = 'RightArrow', mods = mod.SUPER_REV, action = wezterm.action.SendKey({ mods = "ALT", key = "f" }) },
+  -- { key = 'LeftArrow',  mods = mod.SUPER_REV, action = wezterm.action.SendKey({ mods = "ALT", key = "b" }) },
+  -- { key = 'RightArrow', mods = mod.SUPER_REV, action = wezterm.action.SendKey({ mods = "ALT", key = "f" }) },
 
   -- copy/paste --
   { key = 'c',          mods = 'CTRL|SHIFT',  action = act.CopyTo('Clipboard') },
@@ -65,7 +65,7 @@ local keys = {
   -- tabs --
   -- tabs: spawn+close
   { key = 't',          mods = mod.SUPER,     action = act.SpawnTab('DefaultDomain') },
-  { key = 't',          mods = mod.SUPER_REV, action = act.SpawnTab({ DomainName = 'WSL:Ubuntu' }) },
+  -- { key = 't',          mods = mod.SUPER_REV, action = act.SpawnTab({ DomainName = 'WSL:Ubuntu' }) },
   { key = 'w',          mods = mod.SUPER_REV, action = act.CloseCurrentTab({ confirm = false }) },
 
   -- tabs: navigation
