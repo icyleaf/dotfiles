@@ -3,13 +3,16 @@
 # vim
 source functions/_lib.sh
 
-spacevim_path="${HOME:-~}/.SpaceVim"
-spacevim_url="https://spacevim.org/install.sh"
-
-info "Installing SpaceVim `pwd`"
-if ! [ -d "$spacevim_path" ]; then
-  curl -sLf $spacevim_url | bash
-  success "spacvim"
-else
-  success "skipped, SpaceVim was installed `pwd`"
-fi
+if test $(command -v nvim); then
+  nvim_path="${HOME:-~}/.config/nvim"
+  if ! [ -d "$spacevim_path" ]; then
+    git clone https://github.com/LazyVim/starter $nvim_path
+  fi
+  success "LazyVim"
+elif test $(command -v vim); then
+  spacevim_path="${HOME:-~}/.SpaceVim"
+  if ! [ -d "$spacevim_path" ]; then
+    curl -sLf https://spacevim.org/install.sh | bash
+  fi
+  success "SpaceVim"
+end
