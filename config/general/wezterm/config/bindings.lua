@@ -1,6 +1,6 @@
 local wezterm = require('wezterm')
 local platform = require('utils.platform')
--- local backdrops = require('utils.backdrops')
+local tables = require('utils.table')
 local act = wezterm.action
 
 local mod = {}
@@ -47,20 +47,6 @@ local keys = {
       end),
     }),
   },
-
-  -- cursor movement --
-  { key = 'LeftArrow',  mods = mod.SUPER,     action = act.SendString '\x1bOH' },
-  { key = 'RightArrow', mods = mod.SUPER,     action = act.SendString '\x1bOF' },
-  { key = 'Backspace',  mods = mod.SUPER,     action = act.SendString '\x15' },
-  -- { key = 'LeftArrow',  mods = mod.SUPER,     action = wezterm.action.SendKey({ mods = "CTRL", key = "a" }) },
-  -- { key = 'RightArrow', mods = mod.SUPER,     action = wezterm.action.SendKey({ mods = "CTRL", key = "e" }) },
-  -- { key = 'Backspace',  mods = mod.SUPER,     action = wezterm.action.SendKey({ mods = "CTRL", key = "u" }) },
-  -- { key = 'LeftArrow',  mods = mod.SUPER_REV, action = wezterm.action.SendKey({ mods = "ALT", key = "b" }) },
-  -- { key = 'RightArrow', mods = mod.SUPER_REV, action = wezterm.action.SendKey({ mods = "ALT", key = "f" }) },
-
-  -- copy/paste --
-  { key = 'c',          mods = 'CTRL|SHIFT',  action = act.CopyTo('Clipboard') },
-  { key = 'v',          mods = 'CTRL|SHIFT',  action = act.PasteFrom('Clipboard') },
 
   -- tabs --
   -- tabs: spawn+close
@@ -182,6 +168,31 @@ local keys = {
   },
 }
 
+local macos_keys = {
+  -- copy/paste --
+  { key = 'c',          mods = mod.SUPER,  action = act.CopyTo('Clipboard') },
+  { key = 'v',          mods = mod.SUPER,  action = act.PasteFrom('Clipboard') },
+
+  -- quite application
+  { key = 'q',          mods = mod.SUPER,  action = act.QuitApplication }
+}
+
+local linux_keys = {
+  -- copy/paste --
+  { key = 'c',          mods = 'CTRL|SHIFT',  action = act.CopyTo('Clipboard') },
+  { key = 'v',          mods = 'CTRL|SHIFT',  action = act.PasteFrom('Clipboard') },
+
+  -- cursor movement --
+  { key = 'LeftArrow',  mods = mod.SUPER,     action = act.SendString '\x1bOH' },
+  { key = 'RightArrow', mods = mod.SUPER,     action = act.SendString '\x1bOF' },
+  { key = 'Backspace',  mods = mod.SUPER,     action = act.SendString '\x15' },
+  -- { key = 'LeftArrow',  mods = mod.SUPER,     action = wezterm.action.SendKey({ mods = "CTRL", key = "a" }) },
+  -- { key = 'RightArrow', mods = mod.SUPER,     action = wezterm.action.SendKey({ mods = "CTRL", key = "e" }) },
+  -- { key = 'Backspace',  mods = mod.SUPER,     action = wezterm.action.SendKey({ mods = "CTRL", key = "u" }) },
+  -- { key = 'LeftArrow',  mods = mod.SUPER_REV, action = wezterm.action.SendKey({ mods = "ALT", key = "b" }) },
+  -- { key = 'RightArrow', mods = mod.SUPER_REV, action = wezterm.action.SendKey({ mods = "ALT", key = "f" }) },
+}
+
 -- stylua: ignore
 local key_tables = {
   resize_font = {
@@ -209,6 +220,12 @@ local mouse_bindings = {
     action = act.OpenLinkAtMouseCursor,
   },
 }
+
+if platform.is_mac then
+  tables.merge_config(keys, macos_keys)
+else
+  tables.merge_config(keys, linux_keys)
+end
 
 for i = 1, 8 do
   -- SUPER + number to activate that tab

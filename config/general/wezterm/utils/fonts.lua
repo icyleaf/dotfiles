@@ -15,6 +15,7 @@ return {
     size = font_size
   },
   fallback = {
+    'JetBrainsMono Nerd Font',
     'Source Code Pro',
     '霞鹜文楷等宽',
     'Maple Mono SC NF',
