@@ -146,8 +146,13 @@ export EDITOR=hx
 export GPG_TTY=$(tty)
 
 # Android SDK 路径（Android Studio）
-export REPO_OS_OVERRIDE=macosx
-export ANDROID_SDK_ROOT="$HOME/Library/Android/sdk"
-export PATH="${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin:${ANDROID_SDK_ROOT}/platform-tools:${ANDROID_SDK_ROOT}/tools/bin:/usr/local/sbin:$PATH"
+if [ "$(uname -s)" = "Linux" ]; then
+  export ANDROID_HOME="$HOME/Android/Sdk"
+else
+  export REPO_OS_OVERRIDE=macosx
+  export ANDROID_HOME="$HOME/Library/Android/sdk"
+fi
+
+export PATH="${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/tools/bin:/usr/local/sbin:$PATH"
 
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
