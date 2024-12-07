@@ -197,8 +197,11 @@ local linux_keys = {
 local key_tables = {
   resize_font = {
     { key = 'k',      action = act.IncreaseFontSize },
+    { key = '=',      action = act.IncreaseFontSize },
     { key = 'j',      action = act.DecreaseFontSize },
+    { key = '-',      action = act.DecreaseFontSize },
     { key = 'r',      action = act.ResetFontSize },
+    { key = '0',      action = act.ResetFontSize },
     { key = 'Escape', action = 'PopKeyTable' },
     { key = 'q',      action = 'PopKeyTable' },
   },
@@ -238,7 +241,7 @@ end
 
 return {
   disable_default_key_bindings = true,
-  leader = { key = 'Space', mods = mod.SUPER_REV },
+  leader = { key = 'a', mods = mod.SUPER_REV },
   keys = keys,
   key_tables = key_tables,
   mouse_bindings = mouse_bindings,
