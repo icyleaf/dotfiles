@@ -2,6 +2,7 @@ local wezterm = require('wezterm')
 local gpu_adapters = require('utils.gpu_adapter')
 local platform = require('utils.platform')
 local fonts = require('utils.fonts')
+local backdrops = require('utils.backdrops')
 
 return {
   enable_wayland = platform.is_wayland,
@@ -19,7 +20,34 @@ return {
   cursor_blink_rate = 650,
 
   -- color scheme
+  -- color_scheme = 'zenbones',
   color_scheme = 'Seti',
+
+  -- background
+  -- background = backdrops:initial_options(false), -- set to true if you want wezterm to start on focus mode
+  -- background = {
+  --   {
+  --     source = {
+  --       File = '/Users/icyleaf/.config/wezterm/backdrops/1004186-simple-background-long-hair-anime-anime-girls-glasses-artwork-black-hair-hair-Ilya-Kuvshinov-mouth-Person-eye-hairstyle-mangaka.jpg',
+  --     },
+  --     horizontal_align = 'Right',
+  --     vertical_align = 'Bottom',
+  --     -- height = '120%',
+  --     -- width = '120%',
+  --     -- vertical_offset = '-10%',
+  --     -- horizontal_offset = '-10%',
+  --     width = '100%',
+  --     height = '100%',
+  --     repeat_y_size = '100%',
+  --     vertical_align = 'Bottom',
+  --     hsb = {
+  --       hue = 1.0,
+  --       saturation = 0.65,
+  --       brightness = 1,
+  --     },
+  --     opacity = 1,
+  --   }
+  -- },
 
   -- scrollbar
   enable_scroll_bar = true,
@@ -41,8 +69,8 @@ return {
   adjust_window_size_when_changing_font_size = false,
   window_decorations = platform.is_mac and "RESIZE" or "NONE",
   window_close_confirmation = 'NeverPrompt',
-  window_background_opacity = 0.9,
-  macos_window_background_blur = 10,
+  window_background_opacity = 0.75,
+  macos_window_background_blur = 8,
   native_macos_fullscreen_mode = false,
   window_frame = {
     active_titlebar_bg = '#090909',
