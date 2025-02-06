@@ -72,8 +72,8 @@ blocks:
       display_mode: files
       fetch_package_manager: false
       home_enabled: false
-    template: "\ue718 "
-    foreground: p:green
+    template: "\ue718 {{ .Full }} "
+    foreground: green
     background: transparent
     type: node
     style: plain
