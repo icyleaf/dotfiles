@@ -19,6 +19,11 @@ alias sshig="ssh -o StrictHostKeychecking=no -o UserKnownHostsFile=/dev/null"
 
 
 # linux only
+if (( $+commands[wl-copy] )); then
+  alias pbcopy='wl-copy'
+  alias pbpaste='wl-paste'
+fi
+
 if (( $+commands[xsel] )); then
   alias pbcopy='xsel --clipboard --input'
   alias pbpaste='xsel --clipboard --output'
