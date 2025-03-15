@@ -5,6 +5,8 @@
 **/git/gitconfig.local.symlink
 **/vscode/syncLocalSettings.json
 
+**/fcitx5/conf/cached_layouts
+
 ssh/
 **/zsh/local.zsh
 
