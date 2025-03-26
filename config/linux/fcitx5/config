@@ -11,7 +11,7 @@ EnumerateSkipFirst=False
 ModifierOnlyKeyTimeout=250
 
 [Hotkey/TriggerKeys]
-0=Control+Super+space
+0=Control+space
 
 [Hotkey/AltTriggerKeys]
 0=Shift_L
