@@ -156,3 +156,6 @@ fi
 export PATH="${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/tools/bin:/usr/local/sbin:$PATH"
 
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:/home/icyleaf/.lmstudio/bin"
