@@ -133,6 +133,9 @@ fi
 # alias
 source $ZINIT_CUSTOM_HOME/alias.zsh
 
+# force bindkey to use emacs mode
+bindkey -e
+
 # Compilation flags
 export ARCHFLAGS="-arch $(uname -m)"
 
@@ -140,7 +143,7 @@ export ARCHFLAGS="-arch $(uname -m)"
 export LANG=en_US.UTF-8
 
 # Preferred editor for local and remote sessions
-export EDITOR=hx
+export EDITOR=neovim
 
 # gpg
 export GPG_TTY=$(tty)
