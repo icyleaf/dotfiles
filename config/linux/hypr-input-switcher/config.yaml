@@ -1,0 +1,67 @@
+version: 2
+description: Hyprland Input Method Switcher Configuration
+input_methods:
+  english: keyboard-us
+  chinese: rime
+  japanese: rime
+default_input_method: english
+client_rules:
+  - class: firefox
+    title: ""
+    input_method: chinese
+  - class: google-chrome
+    input_method: chinese
+  - class: chromium
+    input_method: chinese
+  - class: wechat
+    input_method: chinese
+  - class: code
+    input_method: english
+  - class: "n(?)vim"
+    input_method: english
+  - class: kitty
+    input_method: english
+  - class: org.wezfurlong.wezterm
+    input_method: english
+  - class: "^(org.telegram.desktop)$"
+    input_method: chinese
+  - class: vesktop
+    input_method: chinese
+fcitx5:
+  enabled: true
+  rime_input_method: rime
+rime_schemas:
+  chinese: rime_frost
+  japanese: jaroomaji
+notifications:
+  enabled: false
+  duration: 2000
+  show_on_switch: true
+  show_app_name: true
+  # Notification method configuration
+  methods:
+    - notify-send # libnotify (GNOME, KDE, etc.)
+    - hyprctl # Hyprland native notifications
+    - dunstify # Dunst notification daemon
+    - swaync-client # Sway notification center
+    - mako # Mako (Sway/Wayland)
+  # Optional: force specific method
+  force_method: "" # Leave empty for auto-detection based on methods order
+  # Optional: disable specific methods
+  disabled_methods: []
+display_names:
+  english: English
+  chinese: 中文
+  japanese: 日本語
+
+icons:
+  # Style: Flag emojis
+  english: "🇺🇸" # US flag
+  chinese: "🇨🇳" # Chinese flag
+  japanese: "🇯🇵" # Japanese flag
+
+
+  # Alternative style: Letter symbols
+  # english: "A"     # Simple letter
+  # chinese: "中"    # Chinese character
+  # japanese: "あ"   # Hiragana character
