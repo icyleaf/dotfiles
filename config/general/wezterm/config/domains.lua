@@ -22,5 +22,7 @@ return {
       default_prog = { 'zsh', '-l' },
     },
   },
-  default_gui_startup_args = {"connect", "unix"},
+
+  -- ref: https://github.com/wezterm/wezterm/issues/1299#issuecomment-993770970
+  default_gui_startup_args = {"connect", "unix", "ssh"},
 }

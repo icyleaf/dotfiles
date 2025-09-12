@@ -26,6 +26,11 @@
   clone = clone --recursive URL
   count = !git --no-pager shortlog -sn
   whoami = "! git var -l | grep '^GIT_.*_IDENT'"
+  rv = "remote -v"
+  co = checkout
+  br = branch
+  ci = commit
+  st = status
 [log]
   date = local
 [diff]

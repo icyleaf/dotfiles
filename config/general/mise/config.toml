@@ -2,3 +2,4 @@
 node = "22.13.1"
 rust = "stable"
 ruby = "3.3.7"
+go = "1.24.1"
