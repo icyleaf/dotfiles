@@ -6,7 +6,11 @@ return {
   ssh_domains = ssh_domains,
 
   -- ref: https://wezfurlong.org/wezterm/multiplexing.html#unix-domains
-  unix_domains = {},
+  unix_domains = {
+    {
+      name = "unix",
+    }
+  },
 
   -- ref: https://wezfurlong.org/wezterm/config/lua/WslDomain.html
   wsl_domains = {
@@ -18,4 +22,5 @@ return {
       default_prog = { 'zsh', '-l' },
     },
   },
+  default_gui_startup_args = {"connect", "unix"},
 }

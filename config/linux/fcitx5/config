@@ -45,7 +45,7 @@ ModifierOnlyKeyTimeout=250
 
 [Behavior]
 # Active By Default
-ActiveByDefault=False
+ActiveByDefault=True
 # Reset state on Focus In
 resetStateWhenFocusIn=No
 # Share Input State
@@ -61,7 +61,7 @@ CompactInputMethodInformation=True
 # Show first input method information
 ShowFirstInputMethodInformation=True
 # Default page size
-DefaultPageSize=5
+DefaultPageSize=9
 # Override Xkb Option
 OverrideXkbOption=False
 # Custom Xkb Option

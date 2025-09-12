@@ -17,7 +17,12 @@ if ! [ -d "$share_path/themes" ]; then
 fi
 
 # install rime chinese input
-rime_path="$share_path/rime"
-if ! [ -d "$rime_path" ]; then
-  git clone https://github.com/gaboolic/rime-frost.git "$rime_path"
+rime_plum_path="$share_path/rime-plum"
+if ! [ -d "$rime_plum_path" ]; then
+  git clone --depth 1 https://github.com/rime/plum.git "$rime_plum_path"
 fi
+
+# # install recipes from plum
+# export rime_frondend=fcitx5-rime
+# echo "Installing Rime recipes from plum..."
+# "$rime_plum_path/rime-install ${DIRPATH}/plum-packages.conf"
