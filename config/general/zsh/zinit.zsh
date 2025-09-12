@@ -135,6 +135,7 @@ source $ZINIT_CUSTOM_HOME/alias.zsh
 
 # force bindkey to use emacs mode
 bindkey -e
+bindkey '^H' delete-char
 
 # Compilation flags
 export ARCHFLAGS="-arch $(uname -m)"
@@ -143,7 +144,7 @@ export ARCHFLAGS="-arch $(uname -m)"
 export LANG=en_US.UTF-8
 
 # Preferred editor for local and remote sessions
-export EDITOR=neovim
+export EDITOR=nvim
 
 # gpg
 export GPG_TTY=$(tty)
@@ -160,5 +161,14 @@ export PATH="${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-t
 
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 
-# Added by LM Studio CLI (lms)
-export PATH="$PATH:/home/icyleaf/.lmstudio/bin"
+# pnpm
+export PNPM_HOME="/home/icyleaf/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
+alias keploy='sudo -E env PATH="$PATH" keploy'
+
+
+export PATH="$HOME/.local/share/omarchy/bin:$HOME/.local/bin:$PATH"

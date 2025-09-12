@@ -1,13 +1,14 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json
-
+version: 3
 palette:
   black: "#262B44"
-  blue: "#4B95E9"
+  blue: "#3fb2eb"
   grey: "#9F9F9F"
   orange: "#F07623"
   os: "#ACB0BE"
   white: "#E0DEF4"
-  yellow: "#F3AE35"
+  yellow: "#edce45"
+  red: "#c9303b"
 secondary_prompt:
   template: "❯❯ "
   foreground: magenta
@@ -39,13 +40,30 @@ blocks:
     background: transparent
     type: path
     style: plain
+  # - properties:
+  #     branch_icon: "\ue725 "
+  #     commit_icon: "@"
+  #     fetch_status: true
+  #   template: " {{ .HEAD }}{{ if or (.Working.Changed) (.Staging.Changed) }}*{{ end }} <cyan>{{ if gt .Behind 0 }}⇣{{ end }}{{ if gt .Ahead 0 }}⇡{{ end }}</>"
+  #   foreground: p:grey
+  #   background: transparent
+  #   type: git
+  #   style: plain
   - properties:
+      # branch_ahead_icon: "\u2191"
+      # branch_behind_icon: "\u2193"
+      # branch_gone: "\u2262"
+      # branch_icon: "\ue725 "
       branch_icon: ""
-      cache_duration: none
       commit_icon: "@"
       fetch_status: true
-    template: " {{ .HEAD }}{{ if or (.Working.Changed) (.Staging.Changed) }}*{{ end }} <cyan>{{ if gt .Behind 0 }}⇣{{ end }}{{ if gt .Ahead 0 }}⇡{{ end }}</>"
-    foreground: p:grey
+      fetch_upstream_icon: true
+      # mapped_branches:
+      #   feat/*: "🚀 "
+      #   bugfix/*: "🐛 "
+      #   "*": "📦 "
+    template: " {{ .UpstreamIcon }} {{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus}}{{ end }}{{ if .Working.Changed }}  {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }}  {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }}  {{ .StashCount }}{{ end }}"
+    foreground: p:yellow
     background: transparent
     type: git
     style: plain
@@ -97,7 +115,7 @@ blocks:
     style: plain
   - properties:
       cache_duration: none
-    template: " <p:blue><b>{{ .CurrentDate | date \"15:04:05\" }}</b></>"
+    template: " <p:grey><b>{{ .CurrentDate | date \"15:04:05\" }}</b></>"
     foreground: p:white
     background: transparent
     type: time
@@ -106,7 +124,7 @@ blocks:
       cache_duration: none
       threshold: 5000
     template: " {{ .FormattedMs }}"
-    foreground: yellow
+    foreground: p:red
     background: transparent
     type: executiontime
     style: plain
@@ -146,5 +164,28 @@ tooltips:
   style: diamond
   tips:
   - az
-version: 3
+- powerline_symbol: 
+  foreground: "#ffffff"
+  background: "#662d91"
+  template: "{{ .Stack }}{{if .User }} :: {{ .User }}@{{ end }}{{ if .URL }}{{
+    .URL }}{{ end }}"
+  type: pulumi
+  style: diamond
+  tips:
+  - pulumi
+- type: text
+  tips:
+    - hello
+  style: plain
+  foreground: red
+  template: "hello"
+- type: docker
+  style: powerline
+  powerline_symbol: 
+  foreground: "#000000"
+  background: "#0B59E7"
+  template: "  {{ .Context }} "
+  tips:
+    - docker
+
 final_space: true
