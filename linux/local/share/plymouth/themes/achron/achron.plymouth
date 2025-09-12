@@ -1,0 +1,9 @@
+[Plymouth Theme]
+Name=Achron
+Description=Achron splash screen.
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/achron
+ScriptFile=/usr/share/plymouth/themes/achron/achron.script
+ConsoleLogBackgroundColor=0x1a1b26
