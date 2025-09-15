@@ -12,7 +12,9 @@
     "cpu",
     "memory",
     "custom/cpuinfo",
-    "custom/gpuinfo"
+    "custom/gpuinfo",
+    "custom/updates",
+    "privacy"
   ],
   "modules-center": [
     "custom/monitors",
@@ -21,12 +23,12 @@
     "custom/update"
   ],
   "modules-right": [
-    "group/tray-expander",
-    "custom/updates",
+    "tray",
     "bluetooth",
     "network",
     "pulseaudio",
     "battery",
+    "custom/notification",
     "idle_inhibitor",
     "clock"
   ],
@@ -83,21 +85,19 @@
   "custom/updates": {
     "exec": "~/.local/lib/hyde/systemupdate.sh",
     "return-type": "json",
-    "format": "{}",
+    "format": " {} ",
     "on-click": "hyprctl dispatch exec '~/.local/lib/hyde/systemupdate.sh up'",
     "interval": 86400, // once every day
     "tooltip": true,
     "signal": 20
   },
-
-
-  "custom/update": {
-    "format": "",
-    "exec": "omarchy-update-available",
-    "on-click": "omarchy-launch-floating-terminal-with-presentation omarchy-update",
-    "tooltip-format": "Omarchy update available",
-    "interval": 3600
-  },
+  // "custom/update": {
+  //   "format": "",
+  //   "exec": "omarchy-update-available",
+  //   "on-click": "omarchy-launch-floating-terminal-with-presentation omarchy-update",
+  //   "tooltip-format": "Omarchy update available",
+  //   "interval": 3600
+  // },
 
   "cpu": {
     "interval": 10,
@@ -105,7 +105,7 @@
     "rotate": 0,
     "format-alt": "{icon0}{icon1}{icon2}{icon3}",
     "format-icons": ["▁", "▂", "▃", "▄", "▅", "▆", "▇", "█"],
-    "on-click": "wezterm start --no-auto-connect --class=btop -- btop"
+    // "on-click": "wezterm start --no-auto-connect --class=btop -- btop"
   },
   "memory": {
     "states": {
@@ -140,10 +140,15 @@
     }
   },
   "clock": {
-    "format": "{:%H:%M 󰃭 %d·%m·%y %a} ",
+    "format": " {:%H:%M 󰃭 %y-%m-%d %a (%Z)}",
     "rotate": 0,
-    "format-alt": "{:%H:%M} ",
-    "tooltip-format": "<span>{calendar}</span>",
+    "format-alt": " {:%H:%M}",
+    "timezones": [
+      "Asia/Shanghai",
+      "Asia/Tokyo",
+      "Etc/UTC"
+    ],
+    "tooltip-format": "<span>{tz_list}{calendar}</span>",
     "calendar": {
       "mode": "month",
       "mode-mon-col": 3,
@@ -164,17 +169,16 @@
     }
   },
   "network": {
-    "format-icons": ["󰤯", "󰤟", "󰤢", "󰤥", "󰤨"],
-    "format": "{icon}",
-    "format-wifi": "{icon}",
-    "format-ethernet": "󰀂",
-    "format-disconnected": "󰖪",
-    "tooltip-format-wifi": "{essid} ({frequency} GHz)\n⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes}",
-    "tooltip-format-ethernet": "⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes}",
+    "tooltip": true,
+    "format-wifi": " ",
+    "format-ethernet": "󰈀 ",
+    "tooltip-format": "Network: <big><b>{essid}</b></big>\nSignal strength: <b>{signaldBm}dBm ({signalStrength}%)</b>\nFrequency: <b>{frequency}MHz</b>\nInterface: <b>{ifname}</b>\nIP: <b>{ipaddr}/{cidr}</b>\nGateway: <b>{gwaddr}</b>\nNetmask: <b>{netmask}</b>",
+    "format-linked": "󰈀 {ifname} (No IP)",
+    "format-disconnected": "󰖪 ",
     "tooltip-format-disconnected": "Disconnected",
-    "interval": 3,
-    "spacing": 1,
-    "on-click": "wezterm start --no-auto-connect --class=Impala -- impala"
+    "format-alt": "<span foreground='#99ffdd'> {bandwidthDownBytes}</span> <span foreground='#ffcc66'> {bandwidthUpBytes}</span>",
+    "interval": 1,
+    // "on-click": "kitty --class Impala --title 'network - impala' impala" // "wezterm start --no-auto-connect --class=Impala -- impala"
   },
   "battery": {
     "format": "{capacity}% {icon}",
@@ -195,6 +199,23 @@
       "critical": 10
     }
   },
+  "privacy": {
+    "icon-size": 10,
+    "icon-spacing": 5,
+    "transition-duration": 250,
+    "modules": [
+      {
+        "type": "screenshare",
+        "tooltip": true,
+        "tooltip-icon-size": 24
+      },
+      {
+        "type": "audio-in",
+        "tooltip": true,
+        "tooltip-icon-size": 24
+      }
+    ]
+    },
   "bluetooth": {
     "format": "",
     "format-disabled": "󰂲",
@@ -228,5 +249,25 @@
   "tray": {
     "icon-size": 12,
     "spacing": 12
+  },
+  "custom/notification": {
+    "tooltip": false,
+    "format": " {icon} ",
+    "format-icons": {
+      "notification": "<span foreground='red'><sup></sup></span>",
+      "none": "",
+      "dnd-notification": "<span foreground='red'><sup></sup></span>",
+      "dnd-none": "",
+      "inhibited-notification": "<span foreground='red'><sup></sup></span>",
+      "inhibited-none": "",
+      "dnd-inhibited-notification": "<span foreground='red'><sup></sup></span>",
+      "dnd-inhibited-none": ""
+    },
+    "return-type": "json",
+    "exec-if": "which swaync-client",
+    "exec": "swaync-client -swb",
+    "on-click": "swaync-client -t -sw",
+    "on-click-right": "swaync-client -d -sw",
+    "escape": true
   }
 }
