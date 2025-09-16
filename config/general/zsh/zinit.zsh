@@ -123,7 +123,6 @@ if (( $+commands[terraform] )); then
 fi
 
 ## local plugins$ZINIT_CUSTOM_HOME
-. "${ZINIT_CUSTOM_HOME}/plugins/limactl.plugin.zsh"
 . "${ZINIT_CUSTOM_HOME}/plugins/gpg.plugin.zsh"
 . "${ZINIT_CUSTOM_HOME}/plugins/eza.plugin.zsh"
 . "${ZINIT_CUSTOM_HOME}/plugins/homebrew.plugin.zsh"
