@@ -11,6 +11,8 @@
   font-size: 12px;
 }
 
+window.eDP-1 * { font-size: 14px; }
+
 .modules-left {
   margin-left: 8px;
 }
