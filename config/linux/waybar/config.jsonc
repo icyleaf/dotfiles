@@ -23,14 +23,16 @@
     "custom/update"
   ],
   "modules-right": [
+    "custom/notification",
+    // "group/tray-expander",
     "tray",
     "bluetooth",
     "network",
     "pulseaudio",
-    "battery",
-    "custom/notification",
+    "backlight",
     "idle_inhibitor",
-    "clock"
+    "clock",
+    "battery"
   ],
   "custom/monitors": {
     "exec": "~/.config/waybar/scripts/hypr-monitor-json.sh",
@@ -280,5 +282,14 @@
     "on-click": "swaync-client -t -sw",
     "on-click-right": "swaync-client -d -sw",
     "escape": true
+  },
+  "backlight": {
+    "device": "intel_backlight",
+    "format": "{icon}",
+    "format-icons": ["", "", "", "", "", "", "", "", ""],
+    "tooltip-format": "{icon} {percent}%",
+    "on-scroll-up": "~/.config/waybar/scripts/brightnesscontrol.sh i 1",
+    "on-scroll-down": "~/.config/waybar/scripts/brightnesscontrol.sh d 1",
+    "min-length": 3
   }
 }

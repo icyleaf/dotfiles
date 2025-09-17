@@ -40,9 +40,8 @@ window.eDP-1 * { font-size: 14px; }
 #pulseaudio,
 #custom-omarchy,
 #custom-update {
-  color: #ffffff;
   min-width: 12px;
-  margin: 0 7.5px;
+  margin: 0 4px;
 }
 
 #custom-expand-icon {
