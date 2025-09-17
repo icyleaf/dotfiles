@@ -177,7 +177,7 @@
     "format-disconnected": "󰖪 ",
     "tooltip-format-disconnected": "Disconnected",
     "format-alt": "<span foreground='#99ffdd'> {bandwidthDownBytes}</span> <span foreground='#ffcc66'> {bandwidthUpBytes}</span>",
-    "interval": 1,
+    "interval": 1
     // "on-click": "kitty --class Impala --title 'network - impala' impala" // "wezterm start --no-auto-connect --class=Impala -- impala"
   },
   "battery": {
@@ -219,18 +219,29 @@
   "bluetooth": {
     "format": "",
     "format-disabled": "󰂲",
-    "format-connected": "",
-    "tooltip-format": "Devices connected: {num_connections}",
+    "format-connected": " {num_connections}",
+    "format-icons": ["󰥇", "󰤾", "󰤿", "󰥀", "󰥁", "󰥂", "󰥃", "󰥄", "󰥅", "󰥆", "󰥈"],
+    "tooltip-format": "{controller_alias}\n{num_connections} connected",
+    "tooltip-format-connected": "{controller_alias}\n{num_connections} connected\n\n{device_enumerate}",
+    "tooltip-format-enumerate-connected": "{device_alias}",
+    "tooltip-format-enumerate-connected-battery": "{device_alias}\t{icon} {device_battery_percentage}%",
     "on-click": "blueberry"
   },
   "pulseaudio": {
     "format": "{icon}",
-    "on-click": "wezterm start --class=Wiremix -- wiremix",
+    // "on-click": "kitty --class=Wiremix wiremix",
+    "on-click": "pavucontrol -t 3",
     "on-click-right": "pamixer -t",
-    "tooltip-format": "Playing at {volume}%",
+    "tooltip-format": "{icon} {desc} // {volume}%",
     "scroll-step": 5,
     "format-muted": "󰝟",
     "format-icons": {
+      "headphone": "",
+      "hands-free": "",
+      "headset": "",
+      "phone": "",
+      "portable": "",
+      "car": "",
       "default": ["", "", ""]
     }
   },
