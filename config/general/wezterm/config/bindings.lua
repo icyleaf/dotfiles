@@ -224,6 +224,21 @@ local mouse_bindings = {
   },
 }
 
+-- Scroll up/down will scroll up/down by three line on Linux
+if platform.is_linux then
+  table.insert(mouse_bindings, {
+    event = { Down = { streak = 1, button = { WheelUp = 1 } } },
+    mods = 'NONE',
+    action = act.ScrollByLine(-1),
+  })
+  table.insert(mouse_bindings, {
+    event = { Down = { streak = 1, button = { WheelDown = 1 } } },
+    mods = 'NONE',
+    action = act.ScrollByLine(1),
+  })
+end
+
+
 if platform.is_mac then
   tables.merge_config(keys, macos_keys)
 else
