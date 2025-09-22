@@ -33,3 +33,8 @@ if (( $+commands[xclip] )); then
   alias pbcopy='xclip -selection clipboard'
   alias pbpaste='xclip -selection clipboard -o'
 fi
+
+
+[[ "$TERM" == "xterm-kitty" ]] && alias ssh="TERM=xterm-256color ssh"
+
+
