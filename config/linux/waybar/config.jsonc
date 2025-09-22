@@ -14,6 +14,7 @@
     "custom/cpuinfo",
     "custom/gpuinfo",
     "custom/updates",
+    "custom/omarchy-update",
     "privacy"
   ],
   "modules-center": [
@@ -21,8 +22,9 @@
     "hyprland/workspaces",
     "wlr/taskbar",
     "custom/update"
-  ],
+],
   "modules-right": [
+    "custom/screenrecording-indicator",
     "custom/notification",
     // "group/tray-expander",
     "tray",
@@ -76,13 +78,33 @@
     "tooltip-format-deactivated": "Caffeine Mode Inactive"
   },
   "hyprland/workspaces": {
-    "disable-scroll": false,
-    "all-outputs": true,
-    "active-only": false,
     "on-click": "activate",
-    "on-scroll-up": "hyprctl dispatch workspace -1",
-    "on-scroll-down": "hyprctl dispatch workspace +1",
-    "persistent-workspaces": {}
+    "format": "{icon}",
+    "format-icons": {
+      "default": "",
+      "1": "1",
+      "2": "2",
+      "3": "3",
+      "4": "4",
+      "5": "5",
+      "6": "6",
+      "7": "7",
+      "8": "8",
+      "9": "9",
+      "active": "󱓻"
+    },
+    "persistent-workspaces": {
+      "1": [],
+      "2": [],
+      "3": [],
+      "4": [],
+      "5": []
+    }
+  },
+  "custom/omarchy": {
+    "format": "<span font='omarchy'>\ue900</span>",
+    "on-click": "omarchy-menu",
+    "tooltip-format": "Omarchy Menu\n\nSuper + Alt + Space"
   },
   "custom/updates": {
     "exec": "~/.local/lib/hyde/systemupdate.sh",
@@ -93,20 +115,21 @@
     "tooltip": true,
     "signal": 20
   },
-  // "custom/update": {
-  //   "format": "",
-  //   "exec": "omarchy-update-available",
-  //   "on-click": "omarchy-launch-floating-terminal-with-presentation omarchy-update",
-  //   "tooltip-format": "Omarchy update available",
-  //   "interval": 3600
-  // },
+  "custom/omarchy-update": {
+    "format": "",
+    "exec": "omarchy-update-available",
+    "on-click": "omarchy-launch-floating-terminal-with-presentation omarchy-update",
+    "tooltip-format": "Omarchy update available",
+    "signal": 7,
+    "interval": 3600
+  },
 
   "cpu": {
     "interval": 10,
     "format": "󰍛 {usage}%",
     "rotate": 0,
     "format-alt": "{icon0}{icon1}{icon2}{icon3}",
-    "format-icons": ["▁", "▂", "▃", "▄", "▅", "▆", "▇", "█"],
+    "format-icons": ["▁", "▂", "▃", "▄", "▅", "▆", "▇", "█"]
     // "on-click": "wezterm start --no-auto-connect --class=btop -- btop"
   },
   "memory": {
@@ -142,9 +165,8 @@
     }
   },
   "clock": {
-    "format": " {:%H:%M 󰃭 %y-%m-%d %a (%Z)}",
-    "rotate": 0,
-    "format-alt": " {:%H:%M}",
+    "format": "⏱ {:%H:%M}",
+    "format-alt": "⏱ {:%H:%M 󰃭 %y-%m-%d %a (%Z)}",
     "timezones": [
       "Asia/Shanghai",
       "Asia/Tokyo",
@@ -291,5 +313,11 @@
     "on-scroll-up": "~/.config/waybar/scripts/brightnesscontrol.sh i 1",
     "on-scroll-down": "~/.config/waybar/scripts/brightnesscontrol.sh d 1",
     "min-length": 3
+  },
+  "custom/screenrecording-indicator": {
+    "on-click": "omarchy-cmd-screenrecord",
+    "exec": "$OMARCHY_PATH/default/waybar/indicators/screen-recording.sh",
+    "signal": 8,
+    "return-type": "json"
   }
 }
