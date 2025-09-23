@@ -22,7 +22,7 @@
     "hyprland/workspaces",
     "wlr/taskbar",
     "custom/update"
-],
+  ],
   "modules-right": [
     "custom/screenrecording-indicator",
     "custom/notification",
@@ -78,28 +78,17 @@
     "tooltip-format-deactivated": "Caffeine Mode Inactive"
   },
   "hyprland/workspaces": {
+    "disable-scroll": false,
     "on-click": "activate",
+    "all-outputs": true,
+    "active-only": false,
+    // "on-scroll-up": "hyprctl dispatch workspace e+1",
+    // "on-scroll-down": "hyprctl dispatch workspace e-1",
     "format": "{icon}",
     "format-icons": {
-      "default": "",
-      "1": "1",
-      "2": "2",
-      "3": "3",
-      "4": "4",
-      "5": "5",
-      "6": "6",
-      "7": "7",
-      "8": "8",
-      "9": "9",
       "active": "󱓻"
     },
-    "persistent-workspaces": {
-      "1": [],
-      "2": [],
-      "3": [],
-      "4": [],
-      "5": []
-    }
+    "persistent-workspaces": {}
   },
   "custom/omarchy": {
     "format": "<span font='omarchy'>\ue900</span>",
