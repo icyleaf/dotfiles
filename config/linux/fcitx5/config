@@ -8,7 +8,7 @@ EnumerateBackwardKeys=
 # Skip first input method while enumerating
 EnumerateSkipFirst=False
 # Time limit in milliseconds for triggering modifier key shortcuts
-ModifierOnlyKeyTimeout=250
+ModifierOnlyKeyTimeout=241
 
 [Hotkey/TriggerKeys]
 0=Control+space
