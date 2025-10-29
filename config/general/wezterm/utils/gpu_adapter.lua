@@ -1,3 +1,4 @@
+-- https://github.com/KevinSilvester/wezterm-config?tab=readme-ov-file
 local wezterm = require('wezterm')
 local platform = require('utils.platform')
 

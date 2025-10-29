@@ -6,11 +6,13 @@ local backdrops = require('utils.backdrops')
 
 return {
   enable_wayland = platform.is_wayland,
-  animation_fps = 60,
   max_fps = 60,
-  front_end = 'WebGpu',
-  webgpu_power_preference = 'HighPerformance',
-  webgpu_preferred_adapter = gpu_adapters:pick_best(),
+
+  -- FIXME: wezterm crash on gpu rendering
+  -- front_end = 'WebGpu', ---@type 'WebGpu' | 'OpenGL' | 'Software'
+  -- webgpu_power_preference = 'HighPerformance',
+  -- webgpu_preferred_adapter = gpu_adapters:pick_best(),
+  -- webgpu_preferred_adapter = gpu_adapters:pick_manual('Vulkan'),
 
   -- workaround: wayland scaling issue (depends on monitor and DE)
   -- ref: https://github.com/wezterm/wezterm/issues/7156
@@ -27,14 +29,14 @@ return {
   color_scheme = 'Seti',
 
   -- scrollbar
-  enable_scroll_bar = false,
+  enable_scroll_bar = true,
 
   -- tab bar
   enable_tab_bar = true,
   hide_tab_bar_if_only_one_tab = false,
   use_fancy_tab_bar = true,
   tab_max_width = 25,
-  show_tab_index_in_tab_bar = true,
+  show_tab_index_in_tab_bar = false,
   switch_to_last_active_tab_when_closing_tab = true,
   -- inactive_pane_hsb = {
   --   hue = 1.0,
