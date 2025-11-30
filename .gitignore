@@ -11,3 +11,6 @@ ssh/
 **/zsh/local.zsh
 
 .tool-versions
+
+# omarchy backup files
+*.bak.*
