@@ -31,7 +31,8 @@
     "bluetooth",
     "network",
     "pulseaudio",
-    "backlight",
+    // "backlight",
+    "custom/brightness",
     "idle_inhibitor",
     "clock",
     "battery"
@@ -304,5 +305,15 @@
     "exec": "$OMARCHY_PATH/default/waybar/indicators/screen-recording.sh",
     "signal": 8,
     "return-type": "json"
+  },
+  "custom/brightness": {
+    "format": "☀{}%",
+    "signal": 8,
+    "exec": "~/.config/waybar/scripts/brightness-per-monitor.sh get",
+    "on-scroll-up": "~/.config/waybar/scripts/brightness-per-monitor.sh up",
+    "on-scroll-down": "~/.config/waybar/scripts/brightness-per-monitor.sh down",
+    "on-click": "~/.config/waybar/scripts/brightness-per-monitor.sh left_click",
+    "on-click-right": "~/.config/waybar/scripts/brightness-per-monitor.sh right_click",
+    "tooltip-format": "Monitor Brightness\\nScroll: adjust\\nLeft click: 100%\\nRight click: 0%"
   }
 }
