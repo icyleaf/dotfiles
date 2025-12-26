@@ -28,7 +28,8 @@
   ],
   "modules-right": [
     "custom/screenrecording-indicator",
-    "idle_inhibitor",
+    // "idle_inhibitor",
+    "custom/hypridle",
     "custom/notification",
     // "group/tray-expander",
     "tray",

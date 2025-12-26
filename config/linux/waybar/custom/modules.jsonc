@@ -31,14 +31,21 @@
     "max-length": 1000,
     "on-click": "gpuinfo.sh --toggle"
   },
-  "idle_inhibitor": {
-    "format": "{icon}",
-    "format-icons": {
-      "activated": " 󰅶 ",
-      "deactivated": " 󰛊 "
-    },
-    "tooltip-format-activated": "Caffeine Mode Active",
-    "tooltip-format-deactivated": "Caffeine Mode Inactive"
+  // "idle_inhibitor": {
+  //   "format": "{icon}",
+  //   "format-icons": {
+  //     "activated": " 󰅶 ",
+  //     "deactivated": " 󰛊 "
+  //   },
+  //   "tooltip-format-activated": "Caffeine Mode Active",
+  //   "tooltip-format-deactivated": "Caffeine Mode Inactive"
+  // },
+  "custom/hypridle": {
+    "format": "{}",
+    "exec": "pgrep -x hypridle > /dev/null && echo '󰅶 ' || echo '󰛊 '",
+    "interval": 2,
+    "on-click": "omarchy-toggle-idle",
+    "tooltip": false
   },
   "hyprland/workspaces": {
     "disable-scroll": false,
