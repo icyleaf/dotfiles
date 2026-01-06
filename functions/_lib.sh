@@ -44,6 +44,14 @@ ensure_linux () {
   fi
 }
 
+is_silicon_macos () {
+  if [[ "$(uname -m)" == "arm64" ]]; then
+    return 0
+  else
+    return 1
+  fi
+}
+
 link_file () {
   local src=$1 dst=$2
 
