@@ -11,12 +11,11 @@ end
 
 # General tools
 brew 'zsh'
-brew 'neovim'
 brew 'git'
 brew 'tig'
 brew 'mosh'
 brew 'btop'
-brew 'helix'
+brew 'neovim'
 brew 'gnupg'
 brew 'zoxide'
 brew 'eza'
@@ -63,21 +62,24 @@ if macos?
 
   # Development Tools
   brew 'terminal-notifier'
-  brew 'postgresql@16'
+  brew 'postgresql@18'
   brew 'imagemagick'
   cask 'mitmproxy'
+  # cask 'orbstack'
 
   # Tweaks
   brew 'pinentry-mac'
   brew 'mas'
+  brew 'mole'
+  cask 'input-source-pro'
+  cask 'alt-tab'
 
   # macOS Apps
   cask 'raycast'
   cask 'google-chrome'
   cask 'iterm2'
-  cask 'the-unarchiver'
-  cask 'hiddenbar'
-  # cask 'jordanbaird-ice' # requires sonama
+  cask 'squirrel-app'
+  # cask 'the-unarchiver'
   cask 'visual-studio-code'
   cask 'karabiner-elements'
   cask 'appcleaner'
@@ -86,10 +88,15 @@ if macos?
   # cask 'android-studio'
   cask 'synology-drive'
 
+  # Menu bar tools
+  cask 'topnotch'
+  cask 'itsycal'
+  cask 'hiddenbar'
+  cask 'jordanbaird-ice' # requires sonama
+
   # macOS QuickLook Extensions
   cask 'provisionql'
   cask 'qlcolorcode'
-  cask 'quicklook-json'
 
   # macOS non-ascii fonts for terminal
   cask 'font-meslo-lg-nerd-font'
