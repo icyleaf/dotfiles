@@ -21,22 +21,6 @@ install_pinentry_mac () {
   configure_gpg_agent_file "$pinentry_path"
 }
 
-install_pinentry_touchid () {
-  local pinentry_path=$(command -v pinentry-touchid)
-  if test ! "$pinentry_path"; then
-    if test ! $(which brew); then
-      fail "brew was not installed, run brew/install.sh to install first."
-    fi
-
-    brew install gnupg pinentry-mac pinentry-touchid
-  fi
-
-  echo "Disabled gpg store passphrase in keychain"
-  defaults write org.gpgtools.common DisableKeychain -bool yes
-
-  configure_gpg_agent_file $pinentry_path
-}
-
 install_pinentry_tty () {
   configure_gpg_agent_file $(command -v pinentry-tty)
 }
@@ -85,19 +69,16 @@ configure_macos_pinentry () {
   local path=""
   user "Which pinentry binary do you want to use?\n\
         1 pinentry-mac\n\
-        2 pinentry-touchid\n\
-        3 back to top menu\n\
-        4 skip this step"
+        2 back to top menu\n\
+        3 skip this step"
   read -n 1 path
   echo ""
   case "$path" in
     1)
       install_pinentry_mac;;
     2)
-      install_pinentry_touchid;;
-    3)
       choose_pinentry_binary;;
-    4)
+    3)
       ;;
     *)
       warn "Incorrect operation, try again!"
@@ -175,5 +156,6 @@ choose_pinentry_binary () {
   fi
 }
 
+mkdir -p $gnupg_dst
 link_file "${DIRPATH}/gpg.conf" "$gnupg_dst/gpg.conf"
 choose_pinentry_binary
