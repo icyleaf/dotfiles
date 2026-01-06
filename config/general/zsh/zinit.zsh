@@ -122,12 +122,14 @@ if (( $+commands[terraform] )); then
   zinit light icyleaf/zsh-terraform
 fi
 
-## local plugins$ZINIT_CUSTOM_HOME
+## local plugins
 . "${ZINIT_CUSTOM_HOME}/plugins/gpg.plugin.zsh"
 . "${ZINIT_CUSTOM_HOME}/plugins/eza.plugin.zsh"
 . "${ZINIT_CUSTOM_HOME}/plugins/homebrew.plugin.zsh"
 . "${ZINIT_CUSTOM_HOME}/plugins/mise.plugin.zsh"
 . "${ZINIT_CUSTOM_HOME}/plugins/atuin.plugin.zsh"
+. "${ZINIT_CUSTOM_HOME}/plugins/androidstudio.plugin.zsh"
+. "${ZINIT_CUSTOM_HOME}/plugins/omarchy.plugin.zsh"
 
 # alias
 source $ZINIT_CUSTOM_HOME/alias.zsh
@@ -148,18 +150,6 @@ export EDITOR=nvim
 # gpg
 export GPG_TTY=$(tty)
 
-# Android SDK 路径（Android Studio）
-if [ "$(uname -s)" = "Linux" ]; then
-  export ANDROID_HOME="$HOME/Android/Sdk"
-else
-  export REPO_OS_OVERRIDE=macosx
-  export ANDROID_HOME="$HOME/Library/Android/sdk"
-fi
-
-export PATH="${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/tools/bin:/usr/local/sbin:$PATH"
-
-export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
-
 # pnpm
 export PNPM_HOME="/home/icyleaf/.local/share/pnpm"
 case ":$PATH:" in
@@ -168,6 +158,3 @@ case ":$PATH:" in
 esac
 # pnpm end
 alias keploy='sudo -E env PATH="$PATH" keploy'
-
-
-export PATH="$HOME/.local/share/omarchy/bin:$HOME/.local/bin:$PATH"
