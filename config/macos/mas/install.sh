@@ -17,7 +17,7 @@ function login () {
   esac
 }
 
-info " > Installing Apps"
+info " > Installing MacOS apps"
 
 if test ! $(which mas); then
   fail "mas was not installed, run brew/install.sh to install first."
@@ -36,7 +36,7 @@ for app in "PastePal" \
   "DaisyDisk"; do
 
   if [ -z "$(ls /Applications | grep -i "$app")" ]; then
-    mas lucky "$app"
+    mas lucky "$app" || echo "Failed to install $app"
   else
     echo "$app was installed"
   fi
