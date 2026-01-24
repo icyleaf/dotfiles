@@ -149,12 +149,3 @@ export EDITOR=nvim
 
 # gpg
 export GPG_TTY=$(tty)
-
-# pnpm
-export PNPM_HOME="/home/icyleaf/.local/share/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
-# pnpm end
-alias keploy='sudo -E env PATH="$PATH" keploy'

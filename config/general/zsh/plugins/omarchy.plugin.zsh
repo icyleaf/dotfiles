@@ -1,4 +1,4 @@
-if test ! "$(os_name)" = "linux"; then
+if test ! "$(uname -s)" = "Linux"; then
   exit 0
 fi
 
