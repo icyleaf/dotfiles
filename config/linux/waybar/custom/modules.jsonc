@@ -42,7 +42,7 @@
   // },
   "custom/hypridle": {
     "format": "{}",
-    "exec": "pgrep -x hypridle > /dev/null && echo '󰅶 ' || echo '󰛊 '",
+    "exec": "pgrep -x hypridle > /dev/null && echo '󰛊 ' || echo '󰅶 '",
     "interval": 2,
     "on-click": "omarchy-toggle-idle",
     "tooltip": false

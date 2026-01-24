@@ -34,7 +34,7 @@
     // "group/tray-expander",
     "tray",
     // "bluetooth",
-    "network",
+    // "network",
     "pulseaudio",
     // "backlight",
     "custom/brightness",

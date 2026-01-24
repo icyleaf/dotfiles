@@ -34,8 +34,6 @@ bind / command-prompt "splitw 'exec ri -T %% | less'"
 
 # tmux plugins manager
 set -g @plugin 'tmux-plugins/tpm'
-
-## tmux suggest default options
 set -g @plugin 'tmux-plugins/tmux-sensible'
 
 ## tmux theme

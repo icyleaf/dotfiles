@@ -30,6 +30,11 @@ window.eDP-1 * { font-size: 14px; }
   opacity: 0.5;
 }
 
+#tray menu {
+  background-color: #000000;
+  color: #ffffff;
+}
+
 #cpu,
 #tray,
 #network,
