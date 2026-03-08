@@ -185,6 +185,9 @@ for icon in "com.apple.siri.launcher" \
             "com.apple.Music" \
             "com.apple.podcasts" \
             "com.apple.MobileSMS" \
+            "com.apple.apps.launcher" \
+            "com.apple.mobilephone" \
+            "com.apple.games" \
             "com.apple.systempreferences"; do
     remove_dock_icon "${icon}" &> /dev/null
 done
@@ -324,9 +327,6 @@ defaults write com.apple.dt.Xcode IDECommandClickNavigates -bool true
 # Tweaks                                                                      #
 ###############################################################################
 
-# Enable any source to download and open app
-sudo spctl --master-disable || echo 'In System Settings --> Privacy & Security Page --> Scroll Down to bottom --> Select "Allow Application From" --> Select "Anywhere" (the option will now appear) --> Type Password'
-
 for app in "Activity Monitor" \
     "Calendar" \
     "Dock" \
@@ -340,5 +340,8 @@ for app in "Activity Monitor" \
     "iCal"; do
     killall "${app}" &> /dev/null
 done
+
+# Enable any source to download and open app
+sudo spctl --master-disable || echo 'In System Settings --> Privacy & Security Page --> Scroll Down to bottom --> Select "Allow Application From" --> Select "Anywhere" (the option will now appear) --> Type Password'
 
 success 'Note that some of these changes require a logout/restart to take effect.'
