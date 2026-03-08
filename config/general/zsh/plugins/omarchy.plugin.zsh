@@ -1,5 +1,5 @@
 if test ! "$(uname -s)" = "Linux"; then
-  exit 0
+  return
 fi
 
 export PATH="$HOME/.local/share/omarchy/bin:$HOME/.local/bin:$PATH"
