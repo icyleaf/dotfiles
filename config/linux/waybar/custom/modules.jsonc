@@ -62,10 +62,10 @@
     "tooltip-format": "Omarchy Menu\n\nSuper + Alt + Space"
   },
   "custom/updates": {
-    "exec": "~/.local/lib/hyde/systemupdate.sh",
+    "exec": "~/.config/waybar/scripts/systemupdate.sh",
     "return-type": "json",
     "format": " {} ",
-    "on-click": "hyprctl dispatch exec '~/.local/lib/hyde/systemupdate.sh up'",
+    "on-click": "hyprctl dispatch exec '~/.config/waybar/scripts/systemupdate.sh up'",
     "interval": 86400, // once every day
     "tooltip": true,
     "signal": 20
@@ -120,8 +120,8 @@
     }
   },
   "clock": {
-    "format": "⏱ {:%H:%M}",
-    "format-alt": "⏱ {:%H:%M 󰃭 %y-%m-%d %a (%Z)}",
+    "format": "⏱ {:%m-%d %H:%M}",
+    "format-alt": "⏱ {:%F %H:%M %a (%Z)}",
     "timezones": [
       "Asia/Shanghai",
       "Asia/Tokyo",
