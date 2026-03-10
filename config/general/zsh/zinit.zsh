@@ -132,6 +132,11 @@ fi
 . "${ZINIT_CUSTOM_HOME}/plugins/omarchy.plugin.zsh"
 . "${ZINIT_CUSTOM_HOME}/plugins/openclaw.plugin.zsh"
 
+## functions
+fpath+="${ZINIT_CUSTOM_HOME}/functions"
+autoload -Uz tdl
+autoload -Uz load_bw_password
+
 # alias
 source $ZINIT_CUSTOM_HOME/alias.zsh
 
