@@ -23,6 +23,5 @@ if ! [ -d "$rime_plum_path" ]; then
 fi
 
 # # install recipes from plum
-# export rime_frondend=fcitx5-rime
-# echo "Installing Rime recipes from plum..."
-# "$rime_plum_path/rime-install ${DIRPATH}/plum-packages.conf"
+echo "Installing Rime recipes from plum..."
+rime_frondend=fcitx5-rime "$rime_plum_path/rime-install ${DIRPATH}/plum-packages.conf"
