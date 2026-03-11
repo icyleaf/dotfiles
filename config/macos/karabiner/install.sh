@@ -6,5 +6,7 @@ source functions/_lib.sh
 
 karabiner_install_path="${HOME:-~}/.config/karabiner"
 
+mkdir -p "${karabiner_install_path}/assets/complex_modifications"
+
 link_file "${DIRPATH}/assets/complex_modifications/60-keyboard.json" "${karabiner_install_path}/assets/complex_modifications/60-keyboard.json"
 link_file "${DIRPATH}/karabiner.json" "${karabiner_install_path}/karabiner.json"
