@@ -130,6 +130,7 @@ fi
 . "${ZINIT_CUSTOM_HOME}/plugins/atuin.plugin.zsh"
 . "${ZINIT_CUSTOM_HOME}/plugins/androidstudio.plugin.zsh"
 . "${ZINIT_CUSTOM_HOME}/plugins/omarchy.plugin.zsh"
+. "${ZINIT_CUSTOM_HOME}/plugins/openclaw.plugin.zsh"
 
 # alias
 source $ZINIT_CUSTOM_HOME/alias.zsh
