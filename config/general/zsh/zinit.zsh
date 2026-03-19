@@ -131,6 +131,7 @@ fi
 . "${ZINIT_CUSTOM_HOME}/plugins/androidstudio.plugin.zsh"
 . "${ZINIT_CUSTOM_HOME}/plugins/omarchy.plugin.zsh"
 . "${ZINIT_CUSTOM_HOME}/plugins/openclaw.plugin.zsh"
+. "${ZINIT_CUSTOM_HOME}/plugins/zellij.plugin.zsh"
 
 ## functions
 fpath+="${ZINIT_CUSTOM_HOME}/functions"
