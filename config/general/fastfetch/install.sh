@@ -4,7 +4,6 @@
 
 source functions/_lib.sh
 
-source_path="config"
 dest_path="${HOME:-~}/.config/fastfetch"
 
-link_file "${DIRPATH}/${source_path}" "$dest_path"
+link_file "${DIRPATH}" "$dest_path"
