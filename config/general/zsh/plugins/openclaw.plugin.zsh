@@ -6,4 +6,6 @@ autoload -Uz compinit
 compinit
 
 # OpenClaw Completion
-source "/Users/icyleaf/.openclaw/completions/openclaw.zsh"
+if [[ -f "$HOME/.openclaw/completions/openclaw.zsh" ]]; then
+  source "$HOME/.openclaw/completions/openclaw.zsh"
+fi
