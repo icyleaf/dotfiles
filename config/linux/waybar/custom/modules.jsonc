@@ -120,14 +120,15 @@
     }
   },
   "clock": {
-    "format": "⏱ {:%m-%d %H:%M}",
+    "format": "⏱ {:%m-%d %H:%M (%Z)}",
     "format-alt": "⏱ {:%F %H:%M %a (%Z)}",
     "timezones": [
-      "Asia/Shanghai",
+      "",
       "Asia/Tokyo",
+      "Asia/Shanghai",
       "Etc/UTC"
     ],
-    "tooltip-format": "<span>{tz_list}{calendar}</span>",
+    "tooltip-format": "<span>{calendar}\n\n{tz_list}</span>",
     "calendar": {
       "mode": "month",
       "mode-mon-col": 3,
