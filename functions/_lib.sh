@@ -60,30 +60,45 @@ link_file () {
 
   if [ -f "$dst" -o -d "$dst" -o -L "$dst" ]; then
     if [ "$overwrite_all" == "false" ] && [ "$backup_all" == "false" ] && [ "$skip_all" == "false" ]; then
-      local currentSrc="$(readlink $dst)"
-      if [ "$currentSrc" == "$src" ]; then
-        skip=true;
+      local canonicalDst="$(readlink -f "$dst" 2>/dev/null || true)"
+      local canonicalSrc="$(readlink -f "$src" 2>/dev/null || true)"
+      if [ "$canonicalDst" == "$canonicalSrc" ]; then
+        skip=true
       else
-        user "File already exists: $dst (${src#$ROOTPATH/}), what do you want to do?\n\
-        [s]kip, [S]kip all, [o]verwrite, [O]verwrite all, [b]ackup, [B]ackup all?"
+        while true; do
+          user "File already exists: $dst (${src#$ROOTPATH/}), what do you want to do?\n\
+          [s]kip, [S]kip all, [o]verwrite, [O]verwrite all, [b]ackup, [B]ackup all, [d]iff?"
 
-        read -n 1 action
-        case "$action" in
-          o)
-            overwrite=true;;
-          O)
-            overwrite_all=true;;
-          b)
-            backup=true;;
-          B)
-            backup_all=true;;
-          s)
-            skip=true;;
-          S)
-            skip_all=true;;
-          *)
-            ;;
-        esac
+          read -n 1 action
+          echo ""
+          case "$action" in
+            o)
+              overwrite=true; break;;
+            O)
+              overwrite_all=true; break;;
+            b)
+              backup=true; break;;
+            B)
+              backup_all=true; break;;
+            s)
+              skip=true; break;;
+            S)
+              skip_all=true; break;;
+            d|D)
+              local pager="cat"
+              if command -v less >/dev/null; then
+                pager="less -R"
+              fi
+              if [ -d "$dst" ]; then
+                diff -ruN --color=always "$dst" "$src" | $pager || true
+              else
+                diff -u --color=always "$dst" "$src" | $pager || true
+              fi
+              ;;
+            *)
+              ;;
+          esac
+        done
       fi
     fi
 
