@@ -32,35 +32,22 @@ window.eDP-1 * {
   opacity: 0.5;
 }
 
-#tray menu {
-  background-color: #000000;
-  color: #ffffff;
-}
-
-/* #cpu,
 #tray,
-#network,
+#cpu,
 #battery,
+#network,
 #bluetooth,
 #pulseaudio,
-#custom-update #custom-brightness,
-#custom-omarchy-update,
-#custom-screenrecording-indicator {
+#custom-omarchy,
+#custom-screenrecording-indicator,
+#custom-orbit,
+#custom-update {
   min-width: 12px;
   margin: 0 7.5px;
 }
 
-#custom-orbit {
-  margin: 0 10px;
-}
-
 #custom-expand-icon {
   margin-right: 7px;
-} */
-
-#custom-orbit-right {
-  margin: 0 10px;
-  padding: 0 5px;
 }
 
 tooltip {
