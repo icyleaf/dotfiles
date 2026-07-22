@@ -27,6 +27,8 @@ run_onchange_install-brew.sh.tmpl
 {{ end }}
 
 # Ignore legacy files and directories
+config/**
+functions/**
 bin/**
 docs/**
 .scratch/**

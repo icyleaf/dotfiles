@@ -2,6 +2,9 @@
 **/brew/*.lock.json
 **/gnupg/gpg-agent.conf
 
+__pycache__/
+*.pyc
+
 **/git/gitconfig.local.symlink
 **/vscode/syncLocalSettings.json
 
