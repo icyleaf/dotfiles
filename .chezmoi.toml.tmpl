@@ -4,6 +4,10 @@
 [data]
     os = {{ .chezmoi.os | quote }}
     
+    # Git configuration
+    git_name = {{ promptStringOnce . "git_name" "What is your git author name?" | quote }}
+    git_email = {{ promptStringOnce . "git_email" "What is your git author email?" | quote }}
+    
     # Ask if it is a headless setup (no GUI)
     {{- $headless := false -}}
     {{- if stdinIsATTY -}}

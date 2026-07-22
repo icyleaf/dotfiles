@@ -1,0 +1,60 @@
+# Xcode project
+*\*.xcodeproj
+!*.xcodeproj/project.pbxproj
+*\project.xcworkspace
+*\xcuserdata
+
+build/*.*
+*\*.pbxuser
+*\*.mode1v3
+*\*.mode2v3
+*\*.perspectivev3
+*\target/*
+*\.DS_Store
+*\profile
+
+# Xcode workspace
+*\*.xcworkspace
+
+# Eclipse android project
+*\bin
+*\gen
+
+# e textediotr project config file
+*\.eprj
+
+# Eclipse project config file and folders
+*\.project
+*\.settings
+*\.buildpath
+
+# netbeans project config folders
+*\nbproject
+
+# PHPStorm project config folders
+*\.idea
+
+# fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
+
+# the Other SCM files
+*\.svn
+*\.hg
+
+# VS Code
+.history
+.vscode
+
+# Ruby
+main.rb
+
+
+# Crystal
+main.cr
+
+# Others
+*.pyc
+.avoscloud/

@@ -1,0 +1,77 @@
+[user]
+    name = {{ .git_name | quote }}
+    email = {{ .git_email | quote }}
+
+[credential]
+    helper = {{ if eq .chezmoi.os "darwin" }}"osxkeychain"{{ else }}"cache"{{ end }}
+
+[include]
+    path = ~/.gitconfig.local
+
+[init]
+    defaultBranch = main
+
+[core]
+    excludesfile = ~/.gitignore
+    attributesfile = ~/.gitattributes
+    editor = vim
+    pager = tig
+
+[push]
+    default = simple
+    autoSetupRemote = true
+
+[pull]
+    rebase = true
+
+[pager]
+    branch = false
+
+[color]
+    pager = off
+
+[alias]
+    clone = clone --recursive URL
+    count = !git --no-pager shortlog -sn
+    whoami = "! git var -l | grep '^GIT_.*_IDENT'"
+    rv = "remote -v"
+    co = checkout
+    br = branch
+    ci = commit
+    st = status
+
+[log]
+    date = local
+
+[diff]
+    rename = copy
+    tool = vscode
+
+[status]
+    color = auto
+
+[difftool "vscode"]
+    cmd = code --wait --diff $LOCAL $REMOTE
+
+[difftool "ks"]
+    cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
+
+[difftool "kdiff3"]
+    cmd = kdiff3
+
+[merge]
+    tool = vscode
+    ff = false
+
+[mergetool "vscode"]
+    cmd = "code --wait $MERGED"
+
+[mergetool "ks"]
+    cmd = ksdiff --merge --output \"$MERGED\" --base \"$BASE\" -- \"$LOCAL\" --snapshot \"$REMOTE\" --snapshot
+    trustExitCode = true
+
+[mergetool "kdiff3"]
+    cmd = kdiff3
+
+[rebase]
+    autoStash = true
