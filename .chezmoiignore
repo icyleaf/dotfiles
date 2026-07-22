@@ -16,9 +16,14 @@
 
 {{ if ne .chezmoi.os "darwin" }}
 # Ignore macOS specific configurations on non-macOS hosts
+.Brewfile
+.amethyst.yml
+Library/**
 .config/iterm2/**
 .config/karabiner/**
 .config/linearmouse/**
+.config/raycast/**
+run_onchange_install-brew.sh.tmpl
 {{ end }}
 
 # Ignore legacy files and directories

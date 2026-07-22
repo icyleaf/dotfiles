@@ -97,23 +97,39 @@ assert_exists "${TEST_HOME}/.config/zsh/alias.zsh"
 assert_exists "${TEST_HOME}/.config/fastfetch/config.jsonc"
 assert_exists "${TEST_HOME}/.config/fastfetch/logo/wolf.txt"
 
-# Ticket 3 Assertions: Linux Configurations
-assert_exists "${TEST_HOME}/.config/btop"
-assert_exists "${TEST_HOME}/.config/chrome-flags.conf"
-assert_exists "${TEST_HOME}/.config/fcitx5"
-assert_exists "${TEST_HOME}/.config/hypr"
-assert_exists "${TEST_HOME}/.config/kitty"
-assert_exists "${TEST_HOME}/.config/swaync"
-assert_exists "${TEST_HOME}/.config/walker"
-assert_exists "${TEST_HOME}/.config/waybar"
+# Platform Specific Assertions
+if [ "$(uname)" = "Darwin" ]; then
+  echo "Running macOS asset assertions..."
+  assert_exists "${TEST_HOME}/.Brewfile"
+  assert_exists "${TEST_HOME}/.amethyst.yml"
+  assert_exists "${TEST_HOME}/Library/Preferences/com.lujjjh.LinearMouse.plist"
+  assert_exists "${TEST_HOME}/Library/Preferences/com.googlecode.iterm2.plist"
+  assert_exists "${TEST_HOME}/Library/Application Support/Alfred/exact_Alfred.alfredpreferences"
+  assert_exists "${TEST_HOME}/.config/karabiner/karabiner.json"
+  assert_exists "${TEST_HOME}/.config/iterm2/themes"
+  assert_exists "${TEST_HOME}/.config/raycast"
+else
+  echo "Running Linux asset assertions..."
+  assert_exists "${TEST_HOME}/.config/btop"
+  assert_exists "${TEST_HOME}/.config/chrome-flags.conf"
+  assert_exists "${TEST_HOME}/.config/fcitx5"
+  assert_exists "${TEST_HOME}/.config/hypr"
+  assert_exists "${TEST_HOME}/.config/kitty"
+  assert_exists "${TEST_HOME}/.config/swaync"
+  assert_exists "${TEST_HOME}/.config/walker"
+  assert_exists "${TEST_HOME}/.config/waybar"
 
-# Ticket 3 Assertions: Executable scripts in ~/.local/bin/
-assert_exists "${TEST_HOME}/.local/bin/pm.sh"
-assert_executable "${TEST_HOME}/.local/bin/pm.sh"
-assert_exists "${TEST_HOME}/.local/bin/walker-bw"
-assert_executable "${TEST_HOME}/.local/bin/walker-bw"
-assert_exists "${TEST_HOME}/.local/bin/systemupdate.sh"
-assert_executable "${TEST_HOME}/.local/bin/systemupdate.sh"
+  # Ticket 3 Assertions: Executable scripts in ~/.local/bin/
+  assert_exists "${TEST_HOME}/.local/bin/pm.sh"
+  assert_executable "${TEST_HOME}/.local/bin/pm.sh"
+  assert_exists "${TEST_HOME}/.local/bin/walker-bw"
+  assert_executable "${TEST_HOME}/.local/bin/walker-bw"
+  assert_exists "${TEST_HOME}/.local/bin/systemupdate.sh"
+  assert_executable "${TEST_HOME}/.local/bin/systemupdate.sh"
+
+  # Ticket 3 Assertions: Plymouth theme copy via run-onchange
+  assert_exists "${TEST_HOME}/usr/share/plymouth/themes/achron/achron.plymouth"
+fi
 
 # 5. Assertions on generated content
 if ! grep -q "name = \"Test Author\"" "${TEST_HOME}/.gitconfig"; then
@@ -133,9 +149,6 @@ fi
 assert_exists "${TEST_HOME}/.local/share/zinit/zinit.git/zinit.zsh"
 assert_exists "${TEST_HOME}/.tmux/plugins/tpm/tpm"
 assert_exists "${TEST_HOME}/.config/nvim/lua/config/lazy.lua"
-
-# Ticket 3 Assertions: Plymouth theme copy via run-onchange
-assert_exists "${TEST_HOME}/usr/share/plymouth/themes/achron/achron.plymouth"
 
 echo "PASS: All configurations and installers migrated and verified successfully!"
 exit 0

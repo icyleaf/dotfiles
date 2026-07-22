@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+#
+# Install Homebrew packages via Brewfile (run-onchange)
+
+set -euo pipefail
+
+# Brewfile hash: {{ include "dot_Brewfile" | sha256sum }}
+
+# Determine if we have brew installed
+if ! command -v brew &>/dev/null; then
+  echo "Installing Homebrew..."
+  # If we are on macOS
+  if [[ "$(uname)" == "Darwin" ]]; then
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  else
+    echo "Skipping Homebrew installation on non-macOS platform."
+    exit 0
+  fi
+fi
+
+# Run brew bundle
+echo "Installing Brewfile bundle..."
+brew bundle --global --no-upgrade --verbose
+echo "Brewfile bundle installed successfully."
