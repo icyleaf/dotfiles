@@ -5,11 +5,13 @@
   border: none;
   border-radius: 0;
   min-height: 0;
-  font-family: 'CaskaydiaMono Nerd Font';
+  font-family: "CaskaydiaMono Nerd Font";
   font-size: 12px;
 }
 
-window.eDP-1 * { font-size: 14px; }
+window.eDP-1 * {
+  font-size: 14px;
+}
 
 .modules-left {
   margin-left: 8px;
@@ -35,22 +37,30 @@ window.eDP-1 * { font-size: 14px; }
   color: #ffffff;
 }
 
-#cpu,
+/* #cpu,
 #tray,
 #network,
 #battery,
 #bluetooth,
 #pulseaudio,
-#custom-update
-#custom-brightness,
+#custom-update #custom-brightness,
 #custom-omarchy-update,
 #custom-screenrecording-indicator {
   min-width: 12px;
   margin: 0 7.5px;
 }
 
+#custom-orbit {
+  margin: 0 10px;
+}
+
 #custom-expand-icon {
   margin-right: 7px;
+} */
+
+#custom-orbit-right {
+  margin: 0 10px;
+  padding: 0 5px;
 }
 
 tooltip {

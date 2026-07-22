@@ -4,7 +4,7 @@
     "return-type": "json",
     "interval": 1,
     "format": "  {}",
-    "tooltip": true
+    "tooltip": true,
   },
   "custom/cpuinfo": {
     "exec": "~/.config/waybar/scripts/cpuinfo.sh",
@@ -12,7 +12,7 @@
     "format": " {}",
     "interval": 5, // once every 5 seconds
     "tooltip": true,
-    "max-length": 1000
+    "max-length": 1000,
   },
   "custom/gpuinfo#amd": {
     "exec": "~/.config/waybar/scripts/gpuinfo.sh --use amd ",
@@ -20,7 +20,7 @@
     "format": " {}",
     "interval": 5, // once every 5 seconds
     "tooltip": true,
-    "max-length": 1000
+    "max-length": 1000,
   },
   "custom/gpuinfo": {
     "exec": "~/.config/waybar/scripts/gpuinfo.sh",
@@ -29,7 +29,7 @@
     "interval": 5, // once every 5 seconds
     "tooltip": true,
     "max-length": 1000,
-    "on-click": "gpuinfo.sh --toggle"
+    "on-click": "gpuinfo.sh --toggle",
   },
   // "idle_inhibitor": {
   //   "format": "{icon}",
@@ -45,7 +45,7 @@
     "exec": "pgrep -x hypridle > /dev/null && echo '󰛊 ' || echo '󰅶 '",
     "interval": 2,
     "on-click": "omarchy-toggle-idle",
-    "tooltip": false
+    "tooltip": false,
   },
   "hyprland/workspaces": {
     "disable-scroll": false,
@@ -54,12 +54,12 @@
     "active-only": false,
     // "on-scroll-up": "hyprctl dispatch workspace e+1",
     // "on-scroll-down": "hyprctl dispatch workspace e-1",
-    "persistent-workspaces": {}
+    "persistent-workspaces": {},
   },
   "custom/omarchy": {
     "format": "<span font='omarchy'>\ue900</span>",
     "on-click": "omarchy-menu",
-    "tooltip-format": "Omarchy Menu\n\nSuper + Alt + Space"
+    "tooltip-format": "Omarchy Menu\n\nSuper + Alt + Space",
   },
   "custom/updates": {
     "exec": "~/.config/waybar/scripts/systemupdate.sh",
@@ -68,7 +68,7 @@
     "on-click": "hyprctl dispatch exec '~/.config/waybar/scripts/systemupdate.sh up'",
     "interval": 86400, // once every day
     "tooltip": true,
-    "signal": 20
+    "signal": 20,
   },
   "custom/omarchy-update": {
     "format": "",
@@ -76,7 +76,7 @@
     "on-click": "omarchy-launch-floating-terminal-with-presentation omarchy-update",
     "tooltip-format": "Omarchy update available",
     "signal": 7,
-    "interval": 3600
+    "interval": 3600,
   },
 
   "cpu": {
@@ -84,14 +84,14 @@
     "format": "󰍛 {usage}%",
     "rotate": 0,
     "format-alt": "{icon0}{icon1}{icon2}{icon3}",
-    "format-icons": ["▁", "▂", "▃", "▄", "▅", "▆", "▇", "█"]
+    "format-icons": ["▁", "▂", "▃", "▄", "▅", "▆", "▇", "█"],
     // "on-click": "wezterm start --no-auto-connect --class=btop -- btop"
   },
   "memory": {
     "states": {
       "c": 90, // critical
       "h": 60, // high
-      "m": 30 // medium
+      "m": 30, // medium
     },
     "interval": 30,
     "format": "󰾆 {used}GB",
@@ -102,7 +102,7 @@
     "format-alt": "󰾆 {percentage}%",
     "max-length": 10,
     "tooltip": true,
-    "tooltip-format": "󰾆 {percentage}%\n {used:0.1f}GB/{total:0.1f}GB"
+    "tooltip-format": "󰾆 {percentage}%\n {used:0.1f}GB/{total:0.1f}GB",
   },
   "wlr/taskbar": {
     "format": "{icon}",
@@ -116,18 +116,13 @@
     "ignore-list": ["Alacritty"],
     "app_ids-mapping": {
       "firefoxdeveloperedition": "firefox-developer-edition",
-      "jetbrains-datagrip": "DataGrip"
-    }
+      "jetbrains-datagrip": "DataGrip",
+    },
   },
   "clock": {
     "format": "⏱ {:%m-%d %H:%M (%Z)}",
     "format-alt": "⏱ {:%F %H:%M %a (%Z)}",
-    "timezones": [
-      "",
-      "Asia/Tokyo",
-      "Asia/Shanghai",
-      "Etc/UTC"
-    ],
+    "timezones": ["", "Asia/Tokyo", "Asia/Shanghai", "Etc/UTC"],
     "tooltip-format": "<span>{calendar}\n\n{tz_list}</span>",
     "calendar": {
       "mode": "month",
@@ -137,16 +132,16 @@
       "format": {
         "months": "<span color='#ffead3'><b>{}</b></span>",
         "weekdays": "<span color='#ffcc66'><b>{}</b></span>",
-        "today": "<span color='#ff6699'><b>{}</b></span>"
-      }
+        "today": "<span color='#ff6699'><b>{}</b></span>",
+      },
     },
     "actions": {
       "on-click-right": "mode",
       "on-click-forward": "tz_up",
       "on-click-backward": "tz_down",
       "on-scroll-up": "shift_up",
-      "on-scroll-down": "shift_down"
-    }
+      "on-scroll-down": "shift_down",
+    },
   },
   "network": {
     "tooltip": true,
@@ -157,7 +152,7 @@
     "format-disconnected": "󰖪 ",
     "tooltip-format-disconnected": "Disconnected",
     "format-alt": "<span foreground='#99ffdd'> {bandwidthDownBytes}</span> <span foreground='#ffcc66'> {bandwidthUpBytes}</span>",
-    "interval": 1
+    "interval": 1,
     // "on-click": "kitty --class Impala --title 'network - impala' impala" // "wezterm start --no-auto-connect --class=Impala -- impala"
   },
   "battery": {
@@ -167,7 +162,7 @@
     "format-plugged": "",
     "format-icons": {
       "charging": ["󰢜", "󰂆", "󰂇", "󰂈", "󰢝", "󰂉", "󰢞", "󰂊", "󰂋", "󰂅"],
-      "default": ["󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"]
+      "default": ["󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"],
     },
     "format-full": "󰂅",
     "tooltip-format-discharging": "{power:>1.0f}W↓ {capacity}%",
@@ -176,8 +171,8 @@
     "on-click": "omarchy-menu power",
     "states": {
       "warning": 20,
-      "critical": 10
-    }
+      "critical": 10,
+    },
   },
   "privacy": {
     "icon-size": 10,
@@ -187,15 +182,15 @@
       {
         "type": "screenshare",
         "tooltip": true,
-        "tooltip-icon-size": 24
+        "tooltip-icon-size": 24,
       },
       {
         "type": "audio-in",
         "tooltip": true,
-        "tooltip-icon-size": 24
-      }
-    ]
-    },
+        "tooltip-icon-size": 24,
+      },
+    ],
+  },
   "bluetooth": {
     "format": "",
     "format-disabled": "󰂲",
@@ -205,7 +200,7 @@
     "tooltip-format-connected": "{controller_alias}\n{num_connections} connected\n\n{device_enumerate}",
     "tooltip-format-enumerate-connected": "{device_alias}",
     "tooltip-format-enumerate-connected-battery": "{device_alias}\t{icon} {device_battery_percentage}%",
-    "on-click": "blueberry"
+    "on-click": "blueberry",
   },
   "pulseaudio": {
     "format": "{icon}  {volume}%",
@@ -221,24 +216,24 @@
       "phone": "",
       "portable": "",
       "car": "",
-      "default": ["", "", ""]
-    }
+      "default": ["", "", ""],
+    },
   },
   "group/tray-expander": {
     "orientation": "inherit",
     "drawer": {
       "transition-duration": 600,
-      "children-class": "tray-group-item"
+      "children-class": "tray-group-item",
     },
-    "modules": ["custom/expand-icon", "tray"]
+    "modules": ["custom/expand-icon", "tray"],
   },
   "custom/expand-icon": {
     "format": " ",
-    "tooltip": false
+    "tooltip": false,
   },
   "tray": {
     "icon-size": 12,
-    "spacing": 12
+    "spacing": 12,
   },
   "custom/notification": {
     "tooltip": false,
@@ -251,14 +246,14 @@
       "inhibited-notification": "<span foreground='red'><sup></sup></span>",
       "inhibited-none": "",
       "dnd-inhibited-notification": "<span foreground='red'><sup></sup></span>",
-      "dnd-inhibited-none": ""
+      "dnd-inhibited-none": "",
     },
     "return-type": "json",
     "exec-if": "which swaync-client",
     "exec": "swaync-client -swb",
     "on-click": "swaync-client -t -sw",
     "on-click-right": "swaync-client -d -sw",
-    "escape": true
+    "escape": true,
   },
   "backlight": {
     "device": "intel_backlight",
@@ -267,13 +262,13 @@
     "tooltip-format": "{icon} {percent}%",
     "on-scroll-up": "~/.config/waybar/scripts/brightnesscontrol.sh i 1",
     "on-scroll-down": "~/.config/waybar/scripts/brightnesscontrol.sh d 1",
-    "min-length": 3
+    "min-length": 3,
   },
   "custom/screenrecording-indicator": {
     "on-click": "omarchy-cmd-screenrecord",
     "exec": "$OMARCHY_PATH/default/waybar/indicators/screen-recording.sh",
     "signal": 8,
-    "return-type": "json"
+    "return-type": "json",
   },
   "custom/brightness": {
     "format": "☀{}%",
@@ -283,6 +278,13 @@
     "on-scroll-down": "~/.config/waybar/scripts/brightness-per-monitor.sh down",
     "on-click": "~/.config/waybar/scripts/brightness-per-monitor.sh left_click",
     "on-click-right": "~/.config/waybar/scripts/brightness-per-monitor.sh right_click",
-    "tooltip-format": "Monitor Brightness\\nScroll: adjust\\nLeft click: 100%\\nRight click: 0%"
-  }
+    "tooltip-format": "Monitor Brightness\\nScroll: adjust\\nLeft click: 100%\\nRight click: 0%",
+  },
+  "custom/orbit": {
+    "exec": "orbit waybar-status",
+    "return-type": "json",
+    "interval": 10,
+    "on-click": "orbit toggle top-right",
+    "format": "󱗿",
+  },
 }

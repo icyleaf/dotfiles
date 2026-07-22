@@ -1,7 +1,5 @@
 {
-  "include": [
-    "$HOME/.config/waybar/custom/modules.jsonc"
-  ],
+  "include": ["$HOME/.config/waybar/custom/modules.jsonc"],
   "reload_style_on_change": true,
   "layer": "top",
   "output": ["*"],
@@ -18,15 +16,16 @@
     "custom/gpuinfo",
     "custom/updates",
     "custom/omarchy-update",
-    "privacy"
+    "privacy",
   ],
   "modules-center": [
     "custom/monitors",
     "hyprland/workspaces",
     "wlr/taskbar",
-    "custom/update"
+    "custom/update",
   ],
   "modules-right": [
+    "custom/orbit",
     "custom/screenrecording-indicator",
     // "idle_inhibitor",
     "custom/hypridle",
@@ -39,6 +38,6 @@
     // "backlight",
     "custom/brightness",
     "clock",
-    "battery"
-  ]
+    "battery",
+  ],
 }
