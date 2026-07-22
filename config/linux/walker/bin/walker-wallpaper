@@ -7,7 +7,7 @@ WALL_DIR="$HOME/.config/omarchy/current/theme/backgrounds/"
 THUMB_DIR="$HOME/.cache/wallthumbs"
 mkdir -p "$THUMB_DIR"
 
-# Generate Rofi entries from existing thumbnails
+# Generate Walker entries from existing thumbnails
 entries=""
 while IFS= read -r img; do
     name="$(basename "$img")"

@@ -30,7 +30,8 @@ menu() {
 #? handle pasting
 paste_string() {
     if ! command -v wtype >/dev/null; then exit 0; fi
-    ignore_paste_file="$HYDE_STATE_HOME/ignore.paste"
+    ignore_paste_file="${XDG_STATE_HOME:-$HOME/.local/state}/walker/ignore.paste"
+    mkdir -p "$(dirname "$ignore_paste_file")" 2>/dev/null
 
     if [[ ! -e "${ignore_paste_file}" ]]; then
         cat <<EOF >"${ignore_paste_file}"
