@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# define a variable for the wallpaper directory, directory fetch from hyprland config
+
+WALL_DIR="$HOME/.config/omarchy/current/theme/backgrounds/"
+THUMB_DIR="$HOME/.cache/wallthumbs"
+mkdir -p "$THUMB_DIR"
+
+# Generate Rofi entries from existing thumbnails
+entries=""
+while IFS= read -r img; do
+    name="$(basename "$img")"
+    hash="$(sha1sum <<< "$img" | awk '{print $1}')"
+    thumb="$THUMB_DIR/$hash.jpg"
+
+    entries+="$name\x00icon\x1f$thumb\n"
+done < <(find "$WALL_DIR" -type f \( -iname '*.jpg' -o -iname '*.png' -o -iname '*.jpeg' \))
+
+
+echo -e "$entries" | walker --dmenu

@@ -1,0 +1,189 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Walker plugin for BitWarden-cli
+NAME="$(basename "$0")"
+VERSION="0.1"
+DEFAULT_CLEAR=5
+BW_HASH=
+
+# Options
+CLEAR=$DEFAULT_CLEAR # Clear password after N seconds (0 to disable)
+SHOW_PASSWORD=no # Show part of the password in the notification
+AUTO_LOCK=900 # 15 minutes, default for bitwarden apps
+
+# Holds the available items in memory
+ITEMS=
+CACHE_FILE=/tmp/bwmenu/logins.gpg
+
+# Stores which command will be used to emulate keyboard type
+AUTOTYPE_MODE=
+# Stores the argument need by xdotool to clear the modifiers (shift, control, alt, ...) first
+CLEAR_MODIFIERS=
+
+# Stores which command will be used to deal with clipboards
+CLIPBOARD_MODE=
+
+# Specify what happens when pressing Enter on an item.
+# Defaults to copy_password, can be changed to (auto_type all) or (auto_type password)
+ENTER_CMD=copy_password
+
+# Item type classification
+TYPE_LOGIN=1
+TYPE_NOTE=2
+TYPE_CARD=3
+TYPE_IDENTITY=4
+
+# Populated in parse_cli_arguments
+WALKER_OPTIONS=()
+DEDUP_MARK="(+)"
+
+menu() {
+  local prompt="$1"
+  local options="$2"
+  local extra="$3"
+  local preselect="$4"
+
+  read -r -a args <<<"$extra"
+
+  if [[ -n "$preselect" ]]; then
+    local index
+    index=$(echo -e "$options" | grep -nxF "$preselect" | cut -d: -f1)
+    if [[ -n "$index" ]]; then
+      args+=("-a" "$index")
+    fi
+  fi
+
+  echo -e "$options" | walker --dmenu -p "$prompt…" "${args[@]}"
+}
+
+
+#? handle pasting
+paste_string() {
+    if ! command -v wtype >/dev/null; then exit 0; fi
+    ignore_paste_file="$HYDE_STATE_HOME/ignore.paste"
+
+    if [[ ! -e "${ignore_paste_file}" ]]; then
+        cat <<EOF >"${ignore_paste_file}"
+kitty
+org.kde.konsole
+terminator
+XTerm
+Alacritty
+xterm-256color
+EOF
+    fi
+
+    ignore_class=$(echo "$@" | awk -F'--ignore=' '{print $2}')
+    [ -n "${ignore_class}" ] && echo "${ignore_class}" >>"${ignore_paste_file}" && print_prompt -y "[ignore]" "'$ignore_class'" && exit 0
+    class=$(hyprctl -j activewindow | jq -r '.initialClass')
+    if ! grep -q "${class}" "${ignore_paste_file}"; then
+        hyprctl -q dispatch exec 'wtype -M ctrl V -m ctrl'
+    fi
+}
+
+# process clipboard selections for multi-select mode
+process_selections() {
+    if [ true != "${del_mode}" ]; then
+        # Read the entire input into an array
+        mapfile -t lines #! Not POSIX compliant
+        # Get the total number of lines
+        total_lines=${#lines[@]}
+
+        # handle special commands
+        if [[ "${lines[0]}" = ":d:e:l:e:t:e:"* ]]; then
+            "${0}" --delete
+            return
+        elif [[ "${lines[0]}" = ":w:i:p:e:"* ]]; then
+            "${0}" --wipe
+            return
+        elif [[ "${lines[0]}" = ":b:a:r:"* ]] || [[ "${lines[0]}" = *":c:o:p:y:"* ]]; then
+            "${0}" --copy
+            return
+        elif [[ "${lines[0]}" = ":f:a:v:"* ]]; then
+            "${0}" --favorites
+            return
+        elif [[ "${lines[0]}" = ":o:p:t:"* ]]; then
+            "${0}"
+            return
+        fi
+
+        # process regular clipboard items
+        local output=""
+        # Iterate over each line in the array
+        for ((i = 0; i < total_lines; i++)); do
+            local line="${lines[$i]}"
+            local decoded_line
+            decoded_line="$(echo -e "$line\t" | cliphist decode)"
+            if [ $i -lt $((total_lines - 1)) ]; then
+                printf -v output '%s%s\n' "$output" "$decoded_line"
+            else
+                printf -v output '%s%s' "$output" "$decoded_line"
+            fi
+        done
+        echo -n "$output"
+    else
+        # handle delete mode
+        while IFS= read -r line; do
+            if [[ "${line}" = ":w:i:p:e:"* ]]; then
+                "${0}" --wipe
+                break
+            elif [[ "${line}" = ":b:a:r:"* ]]; then
+                "${0}" --delete
+                break
+            elif [ -n "$line" ]; then
+                cliphist delete <<<"${line}"
+                notify-send "Deleted" "${line}"
+            fi
+        done
+        exit 0
+    fi
+}
+
+ask_password() {
+  [ -f "$CACHE_FILE" ] && rm $CACHE_FILE
+  mpw=$(menu "Bitwarden Master Password" "")
+  if ! out="$(bw --raw --nointeraction unlock "$mpw" 2>&1)"; then
+    exit_error 1 "Could not unlock vault: $out"
+  fi
+  echo "$out"
+}
+
+get_session_key() {
+  if [ $AUTO_LOCK -eq 0 ]; then
+    keyctl purge user bw_session &>/dev/null
+    BW_HASH=$(ask_password)
+  else
+    if ! key_id=$(keyctl request user bw_session 2>/dev/null); then
+      session=$(ask_password) || exit $?
+      key_id=$(echo "$session" | keyctl padd user bw_session @u)
+    fi
+
+    if [ $AUTO_LOCK -gt 0 ]; then
+      keyctl timeout "$key_id" $AUTO_LOCK
+    fi
+    BW_HASH=$(keyctl pipe "$key_id")
+  fi
+}
+
+# go_to_menu() {
+#   case "${1,,}" in
+#   *history*) show_history ;;
+#   *delete*) delete_items ;;
+#   *favorites*) view_favorites ;;
+#   esac
+# }
+
+# # main function
+# show_main_menu() {
+#   go_to_menu "$(menu "Searching" "󰀻  History\n  Favorites\n󰭌  Delete")"
+# }
+
+# # run main function
+# if [[ -n "$1" ]]; then
+#   go_to_menu "$1"
+# else
+#   show_main_menu
+# fi
+
+get_session_key
