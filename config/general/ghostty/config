@@ -1,0 +1,48 @@
+# Ghostty Configuration — Cross-Platform
+# Active preset: cyberpunk-dev
+# Managed via gconfig | Supports Linux and macOS
+
+# Dynamic theme colors (omarchy theme system)
+config-file = ?"~/.config/omarchy/current/theme/ghostty.conf"
+
+# Cyberpunk Dev Preset — Tokyo Night + Fira Code
+# For: Modern web dev, React/TypeScript, futuristic coding
+
+theme = TokyoNight
+
+font-family = "JetBrainsMono Nerd Font"
+font-size = 11
+font-thicken = true
+font-feature = +calt,+liga
+
+grapheme-width-method = unicode
+
+window-padding-x = 8
+window-padding-y = 8
+
+cursor-style = bar
+cursor-opacity = 0.9
+
+minimum-contrast = 1.2
+
+selection-background = #364a82
+
+# Mouse
+copy-on-select = clipboard
+mouse-scroll-multiplier = 0.95
+
+# Window
+confirm-close-surface = false
+resize-overlay = never
+
+# Cursor blink
+cursor-style-blink = false
+
+# Shell integration
+shell-integration-features = no-cursor,ssh-env
+
+# Platform-specific settings (auto-detected by gconfig setup)
+config-file = ?"~/.config/ghostty/platform/current.conf"
+
+# Keybinds (auto-detected by gconfig setup)
+config-file = ?"~/.config/ghostty/keybinds/current.conf"
