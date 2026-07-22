@@ -119,21 +119,40 @@ choose_pinentry_binary () {
   local action=
   local overwrite= backup= skip=
   if [ -f "$gnupg_agent_config_path" ]; then
-    user "File already exists: $gnupg_agent_config_path, what do you want to do?\n\
-    [s]kip, [o]verwrite, [b]ackup?"
+    local canonicalDst="$(readlink -f "$gnupg_agent_config_path" 2>/dev/null || true)"
+    local canonicalSrc="$(readlink -f "${DIRPATH}/${gnupg_name}" 2>/dev/null || true)"
+    if [ -n "$canonicalSrc" ] && [ "$canonicalDst" == "$canonicalSrc" ]; then
+      skip=true
+    else
+      while true; do
+        user "File already exists: $gnupg_agent_config_path, what do you want to do?\n\
+        [s]kip, [o]verwrite, [b]ackup, [d]iff?"
 
-    read -n 1 action
-
-    case "$action" in
-      o|O )
-        overwrite=true;;
-      b|B )
-        backup=true;;
-      s|S )
-        skip=true;;
-      * )
-        ;;
-    esac
+        read -n 1 action
+        echo ""
+        case "$action" in
+          o|O )
+            overwrite=true; break;;
+          b|B )
+            backup=true; break;;
+          s|S )
+            skip=true; break;;
+          d|D )
+            local pager="cat"
+            if command -v less >/dev/null; then
+              pager="less -R"
+            fi
+            local diff_target="${DIRPATH}/gpg-agent.example.conf"
+            if [ -f "${DIRPATH}/${gnupg_name}" ]; then
+              diff_target="${DIRPATH}/${gnupg_name}"
+            fi
+            diff -u --color=always "$gnupg_agent_config_path" "$diff_target" | $pager || true
+            ;;
+          * )
+            ;;
+        esac
+      done
+    fi
   fi
 
   if [ "$backup" == "true" ]; then
