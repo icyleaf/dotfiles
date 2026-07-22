@@ -156,3 +156,7 @@ export EDITOR=nvim
 
 # gpg
 export GPG_TTY=$(tty)
+
+
+# Added by Antigravity CLI installer
+export PATH="/home/icyleaf/.local/bin:$PATH"
