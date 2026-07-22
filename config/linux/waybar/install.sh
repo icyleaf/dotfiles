@@ -11,3 +11,8 @@ link_file "${DIRPATH}/config.jsonc" "${dest_path}/config.jsonc"
 link_file "${DIRPATH}/style.css" "${dest_path}/style.css"
 link_file "${DIRPATH}/scripts" "${dest_path}/scripts"
 link_file "${DIRPATH}/custom" "${dest_path}/custom"
+
+# Link systemupdate.sh to ~/.local/bin
+bin_dest="${HOME:-~}/.local/bin"
+mkdir -p "$bin_dest" 2> /dev/null
+link_file "${DIRPATH}/scripts/systemupdate.sh" "${bin_dest}/systemupdate.sh"
