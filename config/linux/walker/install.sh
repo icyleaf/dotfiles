@@ -11,8 +11,9 @@ link_file "${DIRPATH}/config.toml" "${dest_path}/config.toml"
 link_file "${DIRPATH}/themes" "${dest_path}/themes"
 
 # Link walker custom scripts to ~/.local/bin
-bin_dest="${HOME:-~}/.local/bin"
-mkdir -p "$bin_dest" 2> /dev/null
+ensure_local_bin
 for script in "${DIRPATH}"/bin/walker-*; do
-  link_file "$script" "${bin_dest}/$(basename "$script")"
+  if [[ -f "$script" ]]; then
+    link_file "$script" "${LOCAL_BIN_DIR}/$(basename "$script")"
+  fi
 done

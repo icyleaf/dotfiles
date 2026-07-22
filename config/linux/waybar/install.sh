@@ -13,6 +13,5 @@ link_file "${DIRPATH}/scripts" "${dest_path}/scripts"
 link_file "${DIRPATH}/custom" "${dest_path}/custom"
 
 # Link systemupdate.sh to ~/.local/bin
-bin_dest="${HOME:-~}/.local/bin"
-mkdir -p "$bin_dest" 2> /dev/null
-link_file "${DIRPATH}/scripts/systemupdate.sh" "${bin_dest}/systemupdate.sh"
+ensure_local_bin
+link_file "${DIRPATH}/scripts/systemupdate.sh" "${LOCAL_BIN_DIR}/systemupdate.sh"

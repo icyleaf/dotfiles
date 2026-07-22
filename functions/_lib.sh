@@ -194,3 +194,8 @@ fail () {
 tips () {
   printf "\r  \033[0;36m$1\033[0m\n"
 }
+
+LOCAL_BIN_DIR="${HOME:-~}/.local/bin"
+ensure_local_bin() {
+  mkdir -p "$LOCAL_BIN_DIR" 2>/dev/null
+}
