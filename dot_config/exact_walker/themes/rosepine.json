@@ -1,0 +1,100 @@
+{
+  "ui": {
+    "anchors": {
+      "bottom": true,
+      "left": true,
+      "right": true,
+      "top": true
+    },
+    "window": {
+      "h_align": "fill",
+      "v_align": "fill",
+      "box": {
+        "orientation": "vertical",
+        "h_align": "center",
+        "spacing": 0,
+        "revert": false,
+        "margins": {
+          "top": 250
+        },
+        "bar": {
+          "name": "bar",
+          "orientation": "horizontal",
+          "position": "start",
+          "h_align": "center",
+          "h_expand": true,
+          "spacing": 16,
+          "entry": {
+            "h_align": "start",
+            "h_expand": false,
+            "icon": {
+              "v_align": "start",
+              "v_expand": false,
+              "h_expand": false,
+              "h_align": "start",
+              "height": -1,
+              "width": -1,
+              "hide": false,
+              "opacity": 1,
+              "margins": {
+                "bottom": 0,
+                "start": 0,
+                "end": 0,
+                "top": 0
+              },
+              "icon_size": "large",
+              "pixel_size": -1,
+              "theme": ""
+            },
+            "label": {
+              "v_align": "fill",
+              "v_expand": true,
+              "y_align": 0.5,
+              "margins": {
+                "start": 4
+              }
+            }
+          }
+        },
+        "scroll": {
+          "overlay_scrolling": true,
+          "list": {
+            "always_show": true,
+            "width": 700,
+            "max_width": 700,
+            "min_width": 700,
+            "min_height": 80,
+            "max_height": 380,
+            "item": {
+              "spacing": 12,
+              "activation_label": {
+                "h_align": "end",
+                "h_expand": true,
+                "justify": "right",
+                "x_align": 1
+              },
+              "text": {
+                "h_align": "fill",
+                "h_expand": true,
+                "revert": false,
+                "label": {
+                  "wrap": false
+                }
+              }
+            }
+          }
+        },
+        "search": {
+          "input": {
+            "h_align": "fill",
+            "h_expand": true,
+            "icons": false
+          },
+          "spinner": {
+            "hide": true
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,203 @@
+#!/usr/bin/env bash
+
+# define paths and files
+cache_dir="${HOME}/.cache/cliphist"
+favorites_file="${cache_dir}/cliphist_favorites"
+del_mode=false
+
+mkdir -p "$cache_dir"
+
+menu() {
+  local prompt="$1"
+  local options="$2"
+  local extra="$3"
+  local preselect="$4"
+
+  read -r -a args <<<"$extra"
+
+  if [[ -n "$preselect" ]]; then
+    local index
+    index=$(echo -e "$options" | grep -nxF "$preselect" | cut -d: -f1)
+    if [[ -n "$index" ]]; then
+      args+=("-a" "$index")
+    fi
+  fi
+
+  echo -e "$options" | walker --dmenu -p "$prompt…" "${args[@]}"
+}
+
+
+#? handle pasting
+paste_string() {
+    if ! command -v wtype >/dev/null; then exit 0; fi
+    ignore_paste_file="${XDG_STATE_HOME:-$HOME/.local/state}/walker/ignore.paste"
+    mkdir -p "$(dirname "$ignore_paste_file")" 2>/dev/null
+
+    if [[ ! -e "${ignore_paste_file}" ]]; then
+        cat <<EOF >"${ignore_paste_file}"
+kitty
+org.kde.konsole
+terminator
+XTerm
+Alacritty
+xterm-256color
+EOF
+    fi
+
+    ignore_class=$(echo "$@" | awk -F'--ignore=' '{print $2}')
+    [ -n "${ignore_class}" ] && echo "${ignore_class}" >>"${ignore_paste_file}" && print_prompt -y "[ignore]" "'$ignore_class'" && exit 0
+    class=$(hyprctl -j activewindow | jq -r '.initialClass')
+    if ! grep -q "${class}" "${ignore_paste_file}"; then
+        hyprctl -q dispatch exec 'wtype -M ctrl V -m ctrl'
+    fi
+}
+
+# process clipboard selections for multi-select mode
+process_selections() {
+    if [ true != "${del_mode}" ]; then
+        # Read the entire input into an array
+        mapfile -t lines #! Not POSIX compliant
+        # Get the total number of lines
+        total_lines=${#lines[@]}
+
+        # handle special commands
+        if [[ "${lines[0]}" = ":d:e:l:e:t:e:"* ]]; then
+            "${0}" --delete
+            return
+        elif [[ "${lines[0]}" = ":w:i:p:e:"* ]]; then
+            "${0}" --wipe
+            return
+        elif [[ "${lines[0]}" = ":b:a:r:"* ]] || [[ "${lines[0]}" = *":c:o:p:y:"* ]]; then
+            "${0}" --copy
+            return
+        elif [[ "${lines[0]}" = ":f:a:v:"* ]]; then
+            "${0}" --favorites
+            return
+        elif [[ "${lines[0]}" = ":o:p:t:"* ]]; then
+            "${0}"
+            return
+        fi
+
+        # process regular clipboard items
+        local output=""
+        # Iterate over each line in the array
+        for ((i = 0; i < total_lines; i++)); do
+            local line="${lines[$i]}"
+            local decoded_line
+            decoded_line="$(echo -e "$line\t" | cliphist decode)"
+            if [ $i -lt $((total_lines - 1)) ]; then
+                printf -v output '%s%s\n' "$output" "$decoded_line"
+            else
+                printf -v output '%s%s' "$output" "$decoded_line"
+            fi
+        done
+        echo -n "$output"
+    else
+        # handle delete mode
+        while IFS= read -r line; do
+            if [[ "${line}" = ":w:i:p:e:"* ]]; then
+                "${0}" --wipe
+                break
+            elif [[ "${line}" = ":b:a:r:"* ]]; then
+                "${0}" --delete
+                break
+            elif [ -n "$line" ]; then
+                cliphist delete <<<"${line}"
+                notify-send "Deleted" "${line}"
+            fi
+        done
+        exit 0
+    fi
+}
+
+# check if content is binary and handle accordingly
+check_content() {
+    local line
+    read -r line
+    if [[ ${line} == *"[[ binary data"* ]]; then
+        cliphist decode <<<"$line" | wl-copy
+        local img_idx
+        img_idx=$(awk -F '\t' '{print $1}' <<<"$line")
+        local temp_preview="${cache_dir}/pastebin-preview_${img_idx}"
+        wl-paste >"${temp_preview}"
+        notify-send -a "Pastebin:" "Preview: ${img_idx}" -i "${temp_preview}" -t 2000
+        return 1
+    fi
+}
+
+
+# delete items from clipboard history
+delete_items() {
+    local history
+    history=$(cliphist list)
+    local selected_items
+    selected_items=$(echo -e "$history" | dmenu -i -p "Select items to delete:")
+
+    if [ -n "$selected_items" ]; then
+        echo "$selected_items" | while IFS= read -r line; do
+            cliphist delete <<<"$line"
+        done
+    fi
+}
+
+# view favorites
+view_favorites() {
+  if [ ! -f "$favorites_file" ] || [ ! -s "$favorites_file" ]; then
+    notify-send "No favorites."
+    return
+  fi
+
+  local favorites
+  favorites=$(cat "$favorites_file" | base64 --decode | tr '\n' ' ')
+  local selected_favorite
+  selected_favorite=$(echo -e "$favorites" | dmenu -i -p "View Favorites:")
+
+  if [ -n "$selected_favorite" ]; then
+    echo "$selected_favorite" | wl-copy
+    notify-send "Copied to clipboard."
+  fi
+}
+
+
+# show clipboard history and copy selected item
+show_history() {
+  local history
+  history=$(cliphist list)
+
+  local selected_item
+  selected_item=$(menu "Clipboard History:" "$history" "--label 2 --preselect 3")
+
+  [ -n "${selected_item}" ] || exit 0
+
+  # go_to_menu "$selected_items"
+
+  if echo -e "${selected_item}" | check_content; then
+    process_selections <<<"${selected_item}" | wl-copy
+    paste_string "${@}"
+    echo -e "${selected_item}\t" | cliphist delete
+  else
+    # binary content - handled by check_content
+    paste_string "${@}"
+    exit 0
+  fi
+}
+
+go_to_menu() {
+  case "${1,,}" in
+  *history*) show_history ;;
+  *delete*) delete_items ;;
+  *favorites*) view_favorites ;;
+  esac
+}
+
+# main function
+show_main_menu() {
+  go_to_menu "$(menu "Searching" "󰀻  History\n  Favorites\n󰭌  Delete")"
+}
+
+# run main function
+if [[ -n "$1" ]]; then
+  go_to_menu "$1"
+else
+  show_main_menu
+fi

@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+#
+# Install plymouth theme via Chezmoi (run-onchange)
+
+set -euo pipefail
+
+# Plymouth themes hash:
+# {{ output "find" (printf "%s/config/linux/plymouth/themes" .chezmoi.sourceDir) "-type" "f" "-exec" "sha256sum" "{}" "+" | sha256sum }}
+
+hostname={{ .chezmoi.hostname | quote }}
+theme_name="$hostname"
+src_theme_path="{{ .chezmoi.sourceDir }}/config/linux/plymouth/themes/${theme_name}"
+
+if [[ ! -d "$src_theme_path" ]]; then
+  # Fallback to achron theme if hostname-specific theme is not found
+  src_theme_path="{{ .chezmoi.sourceDir }}/config/linux/plymouth/themes/achron"
+  theme_name="achron"
+fi
+
+echo "Installing plymouth theme ${theme_name}...${src_theme_path}"
+
+if [[ -d "$src_theme_path" ]]; then
+  echo "Installing plymouth theme ... ${theme_name}"
+  sudo mkdir -p "/usr/share/plymouth/themes"
+  sudo cp -rf "$src_theme_path" "/usr/share/plymouth/themes/"
+
+  echo "Setting plymouth theme ${theme_name} as default..."
+  if command -v plymouth-set-default-theme &>/dev/null; then
+    sudo plymouth-set-default-theme "$theme_name"
+  else
+    echo "Mocked set theme to ${theme_name}"
+  fi
+
+  echo "plymouth theme ${theme_name} installed successfully."
+fi

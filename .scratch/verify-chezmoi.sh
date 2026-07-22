@@ -17,7 +17,33 @@ fi
 # Setup a clean test HOME directory to verify default resolution (non-tautological)
 TEST_HOME="/tmp/dotfiles-test-home"
 rm -rf "${TEST_HOME}"
+mkdir -p "${TEST_HOME}/.local/bin"
 mkdir -p "${TEST_HOME}/.local/share"
+
+# Create a mock sudo executable to redirect system paths and avoid password prompts
+MOCK_SUDO="${TEST_HOME}/.local/bin/sudo"
+cat << 'EOF' > "${MOCK_SUDO}"
+#!/usr/bin/env bash
+# Mock sudo: simply execute command, redirecting /usr/share/plymouth/themes to test sandbox
+args=()
+for arg in "$@"; do
+  if [[ "$arg" == "/usr/share/plymouth/themes"* ]]; then
+    args+=("/tmp/dotfiles-test-home${arg}")
+  else
+    args+=("$arg")
+  fi
+done
+exec "${args[@]}"
+EOF
+chmod +x "${MOCK_SUDO}"
+
+# Create a mock plymouth-set-default-theme executable to prevent permission errors
+MOCK_PLYMOUTH="${TEST_HOME}/.local/bin/plymouth-set-default-theme"
+cat << 'EOF' > "${MOCK_PLYMOUTH}"
+#!/usr/bin/env bash
+echo "Mocked setting default plymouth theme to $1"
+EOF
+chmod +x "${MOCK_PLYMOUTH}"
 
 # Symlink the repository to ~/.local/share/chezmoi as a real deployment would
 ln -sf "${REPO_DIR}" "${TEST_HOME}/.local/share/chezmoi"
@@ -42,12 +68,20 @@ HOME="${TEST_HOME}" "${CHEZMOI_BIN}" --source "${REPO_DIR}" --config "${TEST_HOM
 
 # 3. Run chezmoi apply to deploy files to the test HOME
 echo "Running chezmoi apply..."
-HOME="${TEST_HOME}" "${CHEZMOI_BIN}" --source "${REPO_DIR}" --config "${TEST_HOME}/chezmoi.toml" --destination "${TEST_HOME}" apply --force
+# Prepend mock sudo bin to PATH so Chezmoi scripts use it
+PATH="${TEST_HOME}/.local/bin:${PATH}" HOME="${TEST_HOME}" "${CHEZMOI_BIN}" --source "${REPO_DIR}" --config "${TEST_HOME}/chezmoi.toml" --destination "${TEST_HOME}" apply --force
 
 # 4. Assertions on deployed configuration files
 assert_exists() {
   if [ ! -e "$1" ]; then
     echo "FAIL: expected file/folder $1 does not exist"
+    exit 1
+  fi
+}
+
+assert_executable() {
+  if [ ! -x "$1" ]; then
+    echo "FAIL: expected file $1 to be executable"
     exit 1
   fi
 }
@@ -62,6 +96,24 @@ assert_exists "${TEST_HOME}/.config/zsh/common.zsh"
 assert_exists "${TEST_HOME}/.config/zsh/alias.zsh"
 assert_exists "${TEST_HOME}/.config/fastfetch/config.jsonc"
 assert_exists "${TEST_HOME}/.config/fastfetch/logo/wolf.txt"
+
+# Ticket 3 Assertions: Linux Configurations
+assert_exists "${TEST_HOME}/.config/btop"
+assert_exists "${TEST_HOME}/.config/chrome-flags.conf"
+assert_exists "${TEST_HOME}/.config/fcitx5"
+assert_exists "${TEST_HOME}/.config/hypr"
+assert_exists "${TEST_HOME}/.config/kitty"
+assert_exists "${TEST_HOME}/.config/swaync"
+assert_exists "${TEST_HOME}/.config/walker"
+assert_exists "${TEST_HOME}/.config/waybar"
+
+# Ticket 3 Assertions: Executable scripts in ~/.local/bin/
+assert_exists "${TEST_HOME}/.local/bin/pm.sh"
+assert_executable "${TEST_HOME}/.local/bin/pm.sh"
+assert_exists "${TEST_HOME}/.local/bin/walker-bw"
+assert_executable "${TEST_HOME}/.local/bin/walker-bw"
+assert_exists "${TEST_HOME}/.local/bin/systemupdate.sh"
+assert_executable "${TEST_HOME}/.local/bin/systemupdate.sh"
 
 # 5. Assertions on generated content
 if ! grep -q "name = \"Test Author\"" "${TEST_HOME}/.gitconfig"; then
@@ -82,5 +134,8 @@ assert_exists "${TEST_HOME}/.local/share/zinit/zinit.git/zinit.zsh"
 assert_exists "${TEST_HOME}/.tmux/plugins/tpm/tpm"
 assert_exists "${TEST_HOME}/.config/nvim/lua/config/lazy.lua"
 
-echo "PASS: All general dotfiles, configurations, and installers migrated and verified successfully!"
+# Ticket 3 Assertions: Plymouth theme copy via run-onchange
+assert_exists "${TEST_HOME}/usr/share/plymouth/themes/achron/achron.plymouth"
+
+echo "PASS: All configurations and installers migrated and verified successfully!"
 exit 0

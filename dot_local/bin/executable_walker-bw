@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Walker plugin for BitWarden-cli
+NAME="$(basename "$0")"
+VERSION="0.1"
+DEFAULT_CLEAR=5
+BW_HASH=
+
+# Options
+CLEAR=$DEFAULT_CLEAR # Clear password after N seconds (0 to disable)
+SHOW_PASSWORD=no # Show part of the password in the notification
+AUTO_LOCK=900 # 15 minutes, default for bitwarden apps
+
+ITEMS=
+CACHE_FILE=/tmp/bwmenu/logins.gpg
+
+AUTOTYPE_MODE=
+CLEAR_MODIFIERS=
+CLIPBOARD_MODE=
+ENTER_CMD=copy_password
+
+DEDUP_MARK="(+)"
+
+menu() {
+  local prompt="$1"
+  local options="$2"
+  local extra="$3"
+  local preselect="$4"
+
+  read -r -a args <<<"$extra"
+
+  if [[ -n "$preselect" ]]; then
+    local index
+    index=$(echo -e "$options" | grep -nxF "$preselect" | cut -d: -f1)
+    if [[ -n "$index" ]]; then
+      args+=("-a" "$index")
+    fi
+  fi
+
+  echo -e "$options" | walker --dmenu -p "$prompt…" "${args[@]}"
+}
+
+ask_password() {
+  [ -f "$CACHE_FILE" ] && rm "$CACHE_FILE"
+  mpw=$(menu "Bitwarden Master Password" "")
+  if ! out="$(bw --raw --nointeraction unlock "$mpw" 2>&1)"; then
+    echo "Could not unlock vault: $out" >&2
+    exit 1
+  fi
+  echo "$out"
+}
+
+get_session_key() {
+  if [ $AUTO_LOCK -eq 0 ]; then
+    keyctl purge user bw_session &>/dev/null
+    BW_HASH=$(ask_password)
+  else
+    if ! key_id=$(keyctl request user bw_session 2>/dev/null); then
+      session=$(ask_password) || exit $?
+      key_id=$(echo "$session" | keyctl padd user bw_session @u)
+    fi
+
+    if [ $AUTO_LOCK -gt 0 ]; then
+      keyctl timeout "$key_id" $AUTO_LOCK
+    fi
+    BW_HASH=$(keyctl pipe "$key_id")
+  fi
+}
+
+get_session_key
