@@ -9,7 +9,7 @@ ROOTPATH=$(readlink -f "${DIRPATH}/../../..")
 # get hostname
 hostname=$(hostname)
 
-src_theme_path="${ROOTPATH}/linux/local/share/plymouth/themes/${hostname}"
+src_theme_path="${DIRPATH}/themes/${hostname}"
 dest_theme_path="/usr/share/plymouth/themes/${hostname}"
 
 echo "Installing plymouth theme ${hostname}...${src_theme_path}"
