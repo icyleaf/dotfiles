@@ -16,7 +16,6 @@ if [[ ! -d "$src_theme_path" ]]; then
   theme_name="achron"
 fi
 
-dest_theme_path="/usr/share/plymouth/themes/${theme_name}"
 
 echo "Installing plymouth theme ${theme_name}...${src_theme_path}"
 

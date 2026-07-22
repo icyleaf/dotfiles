@@ -15,5 +15,3 @@ ssh/
 # omarchy backup files
 *.bak.*
 
-# local scratch files
-.scratch/
