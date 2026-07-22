@@ -1,8 +1,11 @@
 ensure_macos () {
   if test ! "$(uname)" = "Darwin"; then
-    return
+    return 1
   fi
+  return 0
 }
+
+ensure_macos || return
 
 is_silicon_macos () {
   if [[ "$(uname -m)" == "arm64" ]]; then
@@ -11,8 +14,6 @@ is_silicon_macos () {
     return 1
   fi
 }
-
-ensure_macos
 
 zinit wait lucid for \
   atclone"touch music spotify _security" atpull"%atclone" 'OMZP::macos'

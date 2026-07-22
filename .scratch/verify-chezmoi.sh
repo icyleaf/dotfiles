@@ -60,6 +60,8 @@ assert_exists "${TEST_HOME}/.tmux.conf"
 assert_exists "${TEST_HOME}/.zshrc"
 assert_exists "${TEST_HOME}/.config/zsh/common.zsh"
 assert_exists "${TEST_HOME}/.config/zsh/alias.zsh"
+assert_exists "${TEST_HOME}/.config/fastfetch/config.jsonc"
+assert_exists "${TEST_HOME}/.config/fastfetch/logo/wolf.txt"
 
 # 5. Assertions on generated content
 if ! grep -q "name = \"Test Author\"" "${TEST_HOME}/.gitconfig"; then
@@ -78,6 +80,7 @@ fi
 # 6. Assertions on lifecycle script executions
 assert_exists "${TEST_HOME}/.local/share/zinit/zinit.git/zinit.zsh"
 assert_exists "${TEST_HOME}/.tmux/plugins/tpm/tpm"
+assert_exists "${TEST_HOME}/.config/nvim/lua/config/lazy.lua"
 
 echo "PASS: All general dotfiles, configurations, and installers migrated and verified successfully!"
 exit 0
