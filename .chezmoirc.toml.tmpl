@@ -3,7 +3,6 @@
 # Detect operating system and machine variables
 [data]
     os = {{ .chezmoi.os | quote }}
-    hostname = {{ .chezmoi.hostname | quote }}
     
     # Ask if it is a headless setup (no GUI)
     {{- $headless := false -}}
