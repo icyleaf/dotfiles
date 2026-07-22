@@ -139,6 +139,14 @@ else
   assert_exists "${TEST_HOME}/.config/walker"
   assert_exists "${TEST_HOME}/.config/waybar"
 
+  # Config script executable assertions
+  assert_executable "${TEST_HOME}/.config/hypr/scripts/workspace-switch.sh"
+  assert_executable "${TEST_HOME}/.config/waybar/scripts/brightnesscontrol.sh"
+  assert_executable "${TEST_HOME}/.config/waybar/scripts/volumecontrol.sh"
+  assert_executable "${TEST_HOME}/.config/waybar/scripts/cpuinfo.sh"
+  assert_executable "${TEST_HOME}/.config/waybar/scripts/gpuinfo.sh"
+  assert_executable "${TEST_HOME}/.config/waybar/scripts/amdgpu.py"
+
   # Ticket 3 Assertions: Executable scripts in ~/.local/bin/
   assert_exists "${TEST_HOME}/.local/bin/pm.sh"
   assert_executable "${TEST_HOME}/.local/bin/pm.sh"
