@@ -14,6 +14,26 @@ if [ ! -f "${CHEZMOI_BIN}" ]; then
   exit 1
 fi
 
+assert_not_exists() {
+  if [ -e "$1" ]; then
+    echo "FAIL: legacy file/folder $1 still exists"
+    exit 1
+  fi
+}
+
+echo "Verifying legacy configurations cleanup..."
+assert_not_exists "${REPO_DIR}/config"
+assert_not_exists "${REPO_DIR}/functions"
+assert_not_exists "${REPO_DIR}/bin/bootstrap"
+assert_not_exists "${REPO_DIR}/bin/decrypt"
+assert_not_exists "${REPO_DIR}/bin/encrypt"
+
+if [ ! -d "${REPO_DIR}/assets/plymouth" ]; then
+  echo "FAIL: assets/plymouth folder not found"
+  exit 1
+fi
+
+
 # Setup a clean test HOME directory to verify default resolution (non-tautological)
 TEST_HOME="/tmp/dotfiles-test-home"
 rm -rf "${TEST_HOME}"

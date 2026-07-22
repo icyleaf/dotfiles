@@ -1,5 +1,0 @@
-{
-  "include": [
-    "$HOME/.config/waybar/custom/icyleaf.jsonc"
-  ]
-}
