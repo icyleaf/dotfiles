@@ -1,0 +1,32 @@
+# Ignore files by OS
+
+{{ if ne .chezmoi.os "linux" }}
+# Ignore Linux specific configurations on non-Linux hosts
+.config/hypr/**
+.config/waybar/**
+.config/walker/**
+.config/swaync/**
+.config/fcitx5/**
+.config/btop/**
+.config/chrome-flags.conf
+.local/bin/pm.sh
+.local/bin/walker-*
+.local/bin/systemupdate.sh
+{{ end }}
+
+{{ if ne .chezmoi.os "darwin" }}
+# Ignore macOS specific configurations on non-macOS hosts
+.config/iterm2/**
+.config/karabiner/**
+.config/linnearmouse/**
+{{ end }}
+
+# Ignore legacy files and directories
+config/**
+functions/**
+bin/**
+docs/**
+.scratch/**
+AGENTS.md
+README.md
+LICENSE

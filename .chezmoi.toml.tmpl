@@ -1,0 +1,13 @@
+# Chezmoi configuration template
+
+# Detect operating system and machine variables
+[data]
+    os = {{ .chezmoi.os | quote }}
+    hostname = {{ .chezmoi.hostname | quote }}
+    
+    # Ask if it is a headless setup (no GUI)
+    {{- $headless := false -}}
+    {{- if stdinIsATTY -}}
+    {{-   $headless = promptBoolOnce . "headless" "Is this a headless machine (no GUI)?" false -}}
+    {{- end }}
+    headless = {{ $headless }}
