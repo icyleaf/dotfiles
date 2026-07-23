@@ -207,5 +207,15 @@ while IFS= read -r -d '' age_file; do
   assert_not_exists_in_home "${age_file}"
 done < <(find "${TEST_HOME}" -name '*.age' -print0 2>/dev/null)
 
+# Ticket 2 Assertions: Secret deployment script
+echo "Running secret deployment assertions..."
+# Custom profile: local.zsh scaffold must always be present
+assert_exists "${TEST_HOME}/.config/zsh/local.zsh"
+assert_file_mode 600 "${TEST_HOME}/.config/zsh/local.zsh"
+# SSH dir must have correct permissions if it exists
+if [ -d "${TEST_HOME}/.ssh" ]; then
+  assert_file_mode 700 "${TEST_HOME}/.ssh"
+fi
+
 echo "PASS: All configurations and installers migrated and verified successfully!"
 exit 0
