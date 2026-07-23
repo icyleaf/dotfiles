@@ -6,7 +6,7 @@ Declarative dotfiles managed by [Chezmoi](https://chezmoi.io). Targets macOS and
 
 ## Glossary
 
-**Chezmoi Source Directory** — `~/.dotfiles/`. The single source of truth. All files follow Chezmoi naming conventions (`dot_`, `executable_`, `encrypted_`, `exact_`, `private_`, `run_once_`, `run_onchange_`).
+**Chezmoi Source Directory** — `~/.dotfiles/`. The single source of truth. All files follow Chezmoi naming conventions (`dot_`, `executable_`, `encrypted_`, `exact_`, `private_`, `run_once_`, `run_onchange_`, `run_before_once_`).
 
 **Secret Profile** — a named, per-device collection of secrets: environment variables (deployed as `~/.config/zsh/local.zsh`) and any device-specific SSH private keys. Identified by a string key (`machine_profile`). Lives under `secrets/profiles/<name>/` in the Chezmoi source directory.
 

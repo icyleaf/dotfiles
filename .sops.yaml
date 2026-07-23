@@ -5,7 +5,7 @@ creation_rules:
   # Secret Profiles: environment variables and SSH private keys per device
   # Encrypt with: age -r <pubkey> -o secrets/profiles/<profile>/local.zsh.age <plaintext>
   # Decrypt with: age -d -i ~/.local/share/age/default-key.txt <file>.age
-  - path_regex: secrets/(base|profiles)/.+\.age$
+  - path_regex: secrets/.+\.age$
     age: *main
 
   # Legacy: zsh encrypted env files (dotenv-style, use --input-type/--output-type dotenv)
