@@ -79,6 +79,12 @@ cp -R "${REPO_DIR}/.scratch/fixtures/secrets" "${SRC_DIR}/secrets"
 mkdir -p "${SRC_DIR}/secrets/profiles"
 cp -R "${REPO_DIR}/secrets/profiles/custom" "${SRC_DIR}/secrets/profiles/custom"
 
+# Mock the Package Wrapper (pm.sh) in the source directory to prevent installing actual packages on the host
+cat << 'EOF' > "${SRC_DIR}/dot_local/bin/executable_pm.sh"
+#!/usr/bin/env sh
+echo "Mocked pm.sh: $@"
+EOF
+
 # Copy the test age private key to the test identity path
 mkdir -p "${TEST_HOME}/.local/share/age"
 cp "${REPO_DIR}/.scratch/fixtures/test-key.txt" "${TEST_HOME}/.local/share/age/default-key.txt"

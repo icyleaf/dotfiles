@@ -1,0 +1,28 @@
+#!/usr/bin/env sh
+#
+# Install/sync Linux packages using the Package Wrapper (pm.sh)
+#
+# linux-packages.txt hash: {{ include (joinPath .chezmoi.sourceDir "linux-packages.txt") | sha256sum }}
+
+set -eu
+
+PM_SH="{{ .chezmoi.homeDir }}/.local/bin/pm.sh"
+
+if [ -f "${PM_SH}" ]; then
+  {{- if .headless }}
+  echo "Headless machine detected. Syncing base Linux packages only..."
+  # Parse only packages in the base section (up to the # gui marker)
+  PACKAGES=$(sed -n '1,/# gui/p' "{{ joinPath .chezmoi.sourceDir "linux-packages.txt" }}" | grep -vE '^\s*(#|$)')
+  {{- else }}
+  echo "Syncing all Linux packages (including GUI)..."
+  # Parse all packages
+  PACKAGES=$(grep -vE '^\s*(#|$)' "{{ joinPath .chezmoi.sourceDir "linux-packages.txt" }}")
+  {{- end }}
+  
+  if [ -n "${PACKAGES}" ]; then
+    # Convert package list into arguments for pm.sh
+    echo "${PACKAGES}" | xargs "${PM_SH}" install
+  fi
+else
+  echo "Warning: Package Wrapper not found at ${PM_SH}, skipping package installation."
+fi

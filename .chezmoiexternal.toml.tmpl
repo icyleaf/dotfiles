@@ -1,0 +1,13 @@
+[".local/share/zinit/zinit.git"]
+    type = "git-repo"
+    url = "https://github.com/zdharma-continuum/zinit.git"
+
+[".tmux/plugins/tpm"]
+    type = "git-repo"
+    url = "https://github.com/tmux-plugins/tpm.git"
+
+{{- if lookPath "nvim" }}
+[".config/nvim"]
+    type = "git-repo"
+    url = "https://github.com/LazyVim/starter.git"
+{{- end }}

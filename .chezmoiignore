@@ -39,3 +39,12 @@ LICENSE
 
 # Ignore encrypted secrets store — deployed by run_onchange_deploy-secrets.sh.tmpl
 secrets/**
+
+# Ignore non-deployed repository metadata files
+linux-packages.txt
+install.sh
+
+# Ignore Linux packages installer on non-Linux hosts
+{{ if ne .chezmoi.os "linux" }}
+run_onchange_install-packages-linux.sh.tmpl
+{{ end }}

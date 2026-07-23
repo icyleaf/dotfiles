@@ -1,0 +1,23 @@
+# Essential system packages
+git
+zsh
+tmux
+age
+neovim
+fzf
+btop
+fastfetch
+
+# Development tools & shells
+stow
+jq
+rsync
+
+# gui
+# Graphical environment & Terminal (Hyprland stack)
+kitty
+walker
+hyprland
+waybar
+swaync
+fcitx5

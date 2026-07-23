@@ -25,3 +25,11 @@ Declarative dotfiles managed by [Chezmoi](https://chezmoi.io). Targets macOS and
 **run_onchange script** — a Chezmoi lifecycle script prefixed `run_onchange_` that reruns whenever the rendered script body changes. Used to trigger secret re-decryption when encrypted source files are modified.
 
 **Headless** — a machine with no GUI (no Hyprland/Wayland stack). Expressed as `headless = true` in `chezmoi.toml` data. Chezmoi ignores Linux desktop configs on headless machines.
+
+**Declarative Externals** — third-party files or directories (such as zinit, tpm, or lazyvim starter configurations) that Chezmoi pulls directly from external sources (Git repos, archives) via `.chezmoiexternal.toml.tmpl`, eliminating custom cloning scripts.
+
+**Bootstrap Script** — `install.sh` at the repository root. A simple, host-detecting script to install core prerequisites (`git`, `chezmoi`, `age`) on a fresh machine and trigger `chezmoi init`.
+
+**Package Wrapper** — `pm.sh` (deployed as `~/.local/bin/pm.sh`). A cross-platform shell script wrapper that abstracts different host package managers (pacman, yay, apt, brew, etc.) under a unified command interface (`install`, `remove`, etc.).
+
+**Linux Packages List** — `linux-packages.txt` at the repository root. A list of system package names for Linux hosts, excluded from deployment via `.chezmoiignore`, and parsed by a `run_onchange` installer script.
