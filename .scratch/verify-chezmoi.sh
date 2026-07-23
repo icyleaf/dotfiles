@@ -203,12 +203,9 @@ assert_exists "${TEST_HOME}/.config/nvim/lua/config/lazy.lua"
 
 # Ticket 1 Assertions: No raw .age ciphertext files in $HOME
 echo "Running secret infrastructure assertions..."
-age_files=$(find "${TEST_HOME}" -name '*.age' 2>/dev/null | wc -l)
-if [ "${age_files}" -gt 0 ]; then
-  echo "FAIL: found .age ciphertext files in TEST_HOME:"
-  find "${TEST_HOME}" -name '*.age' 2>/dev/null
-  exit 1
-fi
+while IFS= read -r -d '' age_file; do
+  assert_not_exists_in_home "${age_file}"
+done < <(find "${TEST_HOME}" -name '*.age' -print0 2>/dev/null)
 
 echo "PASS: All configurations and installers migrated and verified successfully!"
 exit 0
