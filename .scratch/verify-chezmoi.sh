@@ -65,44 +65,46 @@ echo "Mocked setting default plymouth theme to $1"
 EOF
 chmod +x "${MOCK_PLYMOUTH}"
 
-# Create a mock age executable to bypass decryption requirements in tests
-MOCK_AGE="${TEST_HOME}/.local/bin/age"
-cat << 'EOF' > "${MOCK_AGE}"
-#!/usr/bin/env bash
-if [[ "$*" == *"--decrypt"* ]]; then
-  echo "mocked_decrypted_secret"
-else
-  exec /usr/bin/age "$@"
-fi
-EOF
-chmod +x "${MOCK_AGE}"
+# Setup the source directory by copying files from the repository (instead of symlinking)
+SRC_DIR="${TEST_HOME}/.local/share/chezmoi"
+rm -rf "${SRC_DIR}"
+mkdir -p "${SRC_DIR}"
+# Copy tracked repository files to the source directory, excluding secrets/
+rsync -a --exclude '.git' --exclude 'secrets' "${REPO_DIR}/" "${SRC_DIR}/"
 
-# Symlink the repository to ~/.local/share/chezmoi as a real deployment would
-ln -sf "${REPO_DIR}" "${TEST_HOME}/.local/share/chezmoi"
+# Copy our test fixture secrets to the source directory's secrets/ folder
+cp -R "${REPO_DIR}/.scratch/fixtures/secrets" "${SRC_DIR}/secrets"
 
-# Verify that running chezmoi source-path naturally matches the repository root
+# Copy the custom profile scaffold from the real repository to the test source directory
+mkdir -p "${SRC_DIR}/secrets/profiles"
+cp -R "${REPO_DIR}/secrets/profiles/custom" "${SRC_DIR}/secrets/profiles/custom"
+
+# Copy the test age private key to the test identity path
+mkdir -p "${TEST_HOME}/.local/share/age"
+cp "${REPO_DIR}/.scratch/fixtures/test-key.txt" "${TEST_HOME}/.local/share/age/default-key.txt"
+chmod 600 "${TEST_HOME}/.local/share/age/default-key.txt"
+
+# Verify that running chezmoi source-path matches the source directory
 actual_source=$(HOME="${TEST_HOME}" "${CHEZMOI_BIN}" source-path)
 resolved_source=$(realpath "${actual_source}")
-resolved_repo=$(realpath "${REPO_DIR}")
+resolved_repo=$(realpath "${SRC_DIR}")
 
 if [ "${resolved_source}" != "${resolved_repo}" ]; then
   echo "FAIL: chezmoi source-path (${resolved_source}) does not match expected (${resolved_repo})"
   exit 1
 fi
-echo "PASS: chezmoi source-path matches repository root"
+echo "PASS: chezmoi source-path matches source directory"
 
-# 2. Run chezmoi init with mock inputs
-echo "Running chezmoi init..."
-HOME="${TEST_HOME}" "${CHEZMOI_BIN}" --source "${REPO_DIR}" --config "${TEST_HOME}/chezmoi.toml" --destination "${TEST_HOME}" init \
+# Scenario A: Test apply with a known profile (test-profile)
+echo "Running chezmoi init for test-profile..."
+HOME="${TEST_HOME}" "${CHEZMOI_BIN}" --source "${SRC_DIR}" --config "${TEST_HOME}/chezmoi.toml" --destination "${TEST_HOME}" init \
   --promptString "What is your git author name?=Test Author" \
   --promptString "What is your git author email?=test@example.com" \
   --promptBool "Is this a headless machine (no GUI)?=false" \
-  --promptString "Enter machine profile name=custom"
+  --promptString "Enter machine profile name=test-profile"
 
-# 3. Run chezmoi apply to deploy files to the test HOME
-echo "Running chezmoi apply..."
-# Prepend mock sudo bin to PATH so Chezmoi scripts use it
-PATH="${TEST_HOME}/.local/bin:${PATH}" HOME="${TEST_HOME}" "${CHEZMOI_BIN}" --source "${REPO_DIR}" --config "${TEST_HOME}/chezmoi.toml" --destination "${TEST_HOME}" apply --force
+echo "Running chezmoi apply for test-profile..."
+PATH="${TEST_HOME}/.local/bin:${PATH}" HOME="${TEST_HOME}" "${CHEZMOI_BIN}" --source "${SRC_DIR}" --config "${TEST_HOME}/chezmoi.toml" --destination "${TEST_HOME}" apply --force
 
 # 4. Assertions on deployed configuration files
 assert_exists() {
@@ -213,21 +215,71 @@ assert_exists "${TEST_HOME}/.local/share/zinit/zinit.git/zinit.zsh"
 assert_exists "${TEST_HOME}/.tmux/plugins/tpm/tpm"
 assert_exists "${TEST_HOME}/.config/nvim/lua/config/lazy.lua"
 
-# Ticket 1 Assertions: No raw .age ciphertext files in $HOME
+# Ticket 1 Assertions: No raw .age ciphertext files in $HOME (excluding the chezmoi source directory)
 echo "Running secret infrastructure assertions..."
 while IFS= read -r -d '' age_file; do
   assert_not_exists_in_home "${age_file}"
-done < <(find "${TEST_HOME}" -name '*.age' -print0 2>/dev/null)
+done < <(find "${TEST_HOME}" -path "${TEST_HOME}/.local/share/chezmoi" -prune -o -name '*.age' -print0 2>/dev/null | grep -zv "^\.")
 
-# Issue #17 Assertions: Secret deployment script
-echo "Running secret deployment assertions..."
-# Custom profile: local.zsh scaffold must always be present
+# Issue #17 Assertions: Secret deployment script (Scenario A: Known Profile)
+echo "Running secret deployment assertions (test-profile)..."
+# Base SSH key deployed
+assert_exists "${TEST_HOME}/.ssh/id_ed25519"
+assert_file_mode 600 "${TEST_HOME}/.ssh/id_ed25519"
+# Check base SSH key content matches the decrypted dummy content
+if ! grep -q "dummy_base_ssh_key_content" "${TEST_HOME}/.ssh/id_ed25519"; then
+  echo "FAIL: id_ed25519 content does not match dummy fixture"
+  exit 1
+fi
+
+# Profile specific SSH key deployed
+assert_exists "${TEST_HOME}/.ssh/test_key"
+assert_file_mode 600 "${TEST_HOME}/.ssh/test_key"
+if ! grep -q "dummy_profile_ssh_key_content" "${TEST_HOME}/.ssh/test_key"; then
+  echo "FAIL: test_key content does not match dummy fixture"
+  exit 1
+fi
+
+# SSH directory mode
+assert_file_mode 700 "${TEST_HOME}/.ssh"
+
+# Environment variables deployed
 assert_exists "${TEST_HOME}/.config/zsh/local.zsh"
 assert_file_mode 600 "${TEST_HOME}/.config/zsh/local.zsh"
-# SSH dir must have correct permissions if it exists
-if [ -d "${TEST_HOME}/.ssh" ]; then
-  assert_file_mode 700 "${TEST_HOME}/.ssh"
+if ! grep -q "TEST_ENV_VAR=\"dummy_value\"" "${TEST_HOME}/.config/zsh/local.zsh"; then
+  echo "FAIL: local.zsh content does not match dummy fixture"
+  exit 1
 fi
+
+
+# Scenario B: Custom Profile Fallback
+echo "Running Scenario B: Custom profile fallback..."
+# Clear home directory files except .local to ensure clean apply (deletes chezmoi.toml to force re-prompting)
+find "${TEST_HOME}" -mindepth 1 -maxdepth 1 ! -name ".local" -exec rm -rf {} +
+
+# Re-init for custom profile fallback (using an unknown profile name)
+echo "Running chezmoi init for unknown-profile..."
+HOME="${TEST_HOME}" "${CHEZMOI_BIN}" --source "${SRC_DIR}" --config "${TEST_HOME}/chezmoi.toml" --destination "${TEST_HOME}" init \
+  --promptString "What is your git author name?=Test Author" \
+  --promptString "What is your git author email?=test@example.com" \
+  --promptBool "Is this a headless machine (no GUI)?=false" \
+  --promptString "Enter machine profile name=unknown-profile"
+
+echo "Running chezmoi apply for custom..."
+PATH="${TEST_HOME}/.local/bin:${PATH}" HOME="${TEST_HOME}" "${CHEZMOI_BIN}" --source "${SRC_DIR}" --config "${TEST_HOME}/chezmoi.toml" --destination "${TEST_HOME}" apply --force
+
+echo "Running Scenario B assertions..."
+# Custom profile: local.zsh scaffold must be present
+assert_exists "${TEST_HOME}/.config/zsh/local.zsh"
+assert_file_mode 600 "${TEST_HOME}/.config/zsh/local.zsh"
+if ! grep -q "template for your Secret Profile" "${TEST_HOME}/.config/zsh/local.zsh"; then
+  echo "FAIL: local.zsh does not contain scaffold comment"
+  exit 1
+fi
+
+# test_key should NOT be present under custom profile
+assert_not_exists_in_home "${TEST_HOME}/.ssh/test_key"
+
 
 echo "PASS: All configurations and installers migrated and verified successfully!"
 exit 0
