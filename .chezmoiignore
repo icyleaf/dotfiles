@@ -34,4 +34,8 @@ docs/**
 .scratch/**
 AGENTS.md
 README.md
+CONTEXT.md
 LICENSE
+
+# Ignore encrypted secrets store — deployed by run_onchange_deploy-secrets.sh.tmpl
+secrets/**

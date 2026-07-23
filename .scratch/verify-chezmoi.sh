@@ -84,7 +84,8 @@ echo "Running chezmoi init..."
 HOME="${TEST_HOME}" "${CHEZMOI_BIN}" --source "${REPO_DIR}" --config "${TEST_HOME}/chezmoi.toml" --destination "${TEST_HOME}" init \
   --promptString "What is your git author name?=Test Author" \
   --promptString "What is your git author email?=test@example.com" \
-  --promptBool "Is this a headless machine (no GUI)?=false"
+  --promptBool "Is this a headless machine (no GUI)?=false" \
+  --promptString "Enter machine profile name=custom"
 
 # 3. Run chezmoi apply to deploy files to the test HOME
 echo "Running chezmoi apply..."
@@ -99,9 +100,31 @@ assert_exists() {
   fi
 }
 
+assert_not_exists_in_home() {
+  if [ -e "$1" ]; then
+    echo "FAIL: file/folder should not exist in home: $1"
+    exit 1
+  fi
+}
+
 assert_executable() {
   if [ ! -x "$1" ]; then
     echo "FAIL: expected file $1 to be executable"
+    exit 1
+  fi
+}
+
+assert_file_mode() {
+  local expected_mode="$1"
+  local file="$2"
+  if [ ! -e "$file" ]; then
+    echo "FAIL: file does not exist for mode check: $file"
+    exit 1
+  fi
+  local actual_mode
+  actual_mode=$(stat -c "%a" "$file" 2>/dev/null || stat -f "%OLp" "$file" 2>/dev/null)
+  if [ "$actual_mode" != "$expected_mode" ]; then
+    echo "FAIL: $file has mode $actual_mode, expected $expected_mode"
     exit 1
   fi
 }
@@ -177,6 +200,15 @@ fi
 assert_exists "${TEST_HOME}/.local/share/zinit/zinit.git/zinit.zsh"
 assert_exists "${TEST_HOME}/.tmux/plugins/tpm/tpm"
 assert_exists "${TEST_HOME}/.config/nvim/lua/config/lazy.lua"
+
+# Ticket 1 Assertions: No raw .age ciphertext files in $HOME
+echo "Running secret infrastructure assertions..."
+age_files=$(find "${TEST_HOME}" -name '*.age' 2>/dev/null | wc -l)
+if [ "${age_files}" -gt 0 ]; then
+  echo "FAIL: found .age ciphertext files in TEST_HOME:"
+  find "${TEST_HOME}" -name '*.age' 2>/dev/null
+  exit 1
+fi
 
 echo "PASS: All configurations and installers migrated and verified successfully!"
 exit 0

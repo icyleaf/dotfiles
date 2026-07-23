@@ -1,16 +1,50 @@
 # Chezmoi configuration template
+{{- $hostname := .chezmoi.hostname -}}
 
-# Detect operating system and machine variables
+{{- /* Discover known Secret Profiles by scanning secrets/profiles/
+     Any sub-directory that is not "custom" and doesn't start with "." is a known profile. */ -}}
+{{- $knownProfiles := list -}}
+{{- range (glob (joinPath .chezmoi.sourceDir "secrets" "profiles" "*")) -}}
+{{-   $name := base . -}}
+{{-   if and (ne $name "custom") (not (hasPrefix "." $name)) -}}
+{{-     $knownProfiles = append $knownProfiles $name -}}
+{{-   end -}}
+{{- end -}}
+
+{{- /* Profile Selection:
+     1. hostname matches a known profile → silent auto-select
+     2. hostname unknown + TTY          → interactive prompt listing known profiles
+     3. hostname unknown + no TTY       → default to "custom" */ -}}
+{{- $profile := "" -}}
+{{- if has $hostname $knownProfiles -}}
+{{-   $profile = $hostname -}}
+{{- else if stdinIsATTY -}}
+{{-   writeToStdout (printf "Known profiles: [%s]\n" (join ", " $knownProfiles)) -}}
+{{-   $profile = promptStringOnce . "machine_profile" "Enter machine profile name" $hostname -}}
+{{-   if eq $profile "" -}}
+{{-     $profile = $hostname -}}
+{{-   end -}}
+{{- else -}}
+{{-   $profile = "custom" -}}
+{{- end -}}
+
 [data]
     os = {{ .chezmoi.os | quote }}
-    
+    machine_profile = {{ $profile | quote }}
+
     # Git configuration
     git_name = {{ promptStringOnce . "git_name" "What is your git author name?" | quote }}
     git_email = {{ promptStringOnce . "git_email" "What is your git author email?" | quote }}
-    
+
     # Ask if it is a headless setup (no GUI)
     {{- $headless := false -}}
     {{- if stdinIsATTY -}}
     {{-   $headless = promptBoolOnce . "headless" "Is this a headless machine (no GUI)?" false -}}
     {{- end }}
     headless = {{ $headless }}
+
+encryption = "age"
+
+[age]
+    identity = {{ joinPath .chezmoi.homeDir ".local" "share" "age" "default-key.txt" | quote }}
+    recipient = "age1xnflh7627hgjzzjxlc0c2gt0y27484sgwky9qm2kt7aplk086amsdwkuj0"
