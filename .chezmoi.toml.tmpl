@@ -31,6 +31,7 @@
 [data]
     os = {{ .chezmoi.os | quote }}
     machine_profile = {{ $profile | quote }}
+    age_identity = {{ joinPath .chezmoi.homeDir ".local" "share" "age" "default-key.txt" | quote }}
 
     # Git configuration
     git_name = {{ promptStringOnce . "git_name" "What is your git author name?" | quote }}

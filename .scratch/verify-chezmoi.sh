@@ -207,7 +207,7 @@ while IFS= read -r -d '' age_file; do
   assert_not_exists_in_home "${age_file}"
 done < <(find "${TEST_HOME}" -name '*.age' -print0 2>/dev/null)
 
-# Ticket 2 Assertions: Secret deployment script
+# Issue #17 Assertions: Secret deployment script
 echo "Running secret deployment assertions..."
 # Custom profile: local.zsh scaffold must always be present
 assert_exists "${TEST_HOME}/.config/zsh/local.zsh"
