@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# run_once_setup-age-key.sh.tmpl
+#
+# Generates a shared age key pair at ~/.local/share/age/default-key.txt
+# if it does not already exist.
+
+set -euo pipefail
+
+KEY_DIR="${HOME}/.local/share/age"
+KEY_FILE="${KEY_DIR}/default-key.txt"
+
+if [ ! -f "${KEY_FILE}" ]; then
+  echo "Setting up age private key..."
+  mkdir -p "${KEY_DIR}"
+  chmod 700 "${KEY_DIR}"
+  age-keygen -o "${KEY_FILE}"
+  chmod 600 "${KEY_FILE}"
+  echo "New age private key generated at ${KEY_FILE}"
+  echo "Public key:"
+  age-keygen -y "${KEY_FILE}"
+else
+  echo "Age private key already exists at ${KEY_FILE}"
+fi

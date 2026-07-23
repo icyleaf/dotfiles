@@ -1,54 +1,92 @@
 # icyleaf's dotfiles
 
-基于 [Chezmoi](https://chezmoi.io/) 声明式配置管理器进行构建与管理的个人 dotfiles 仓库。支持跨 macOS 和 Linux (GUI/Headless) 多环境的一键部署与生命周期初始化。
+Personal dotfiles repository built and managed using the [Chezmoi](https://chezmoi.io/) declarative configuration manager. Supports one-key deployment and lifecycle initialization across macOS and Linux (GUI/Headless) environments.
 
-## 安装与快速开始
+## Installation and Quick Start
 
-### 方式一：远程一键安装部署（推荐）
+### Option 1: Remote One-Key Deployment (Recommended)
 
-Chezmoi 支持在不克隆本仓库的情况下直接拉取并应用配置：
+Chezmoi allows you to initialize and apply configuration directly without manually cloning the repository:
 
 ```bash
 sh -c "$(curl -fsLS chezmoi.io/get)" -- init --apply icyleaf
 ```
 
-### 方式二：本地克隆初始化
+### Option 2: Local Clone Initialization
 
-如果您已经手动将本仓库克隆到了本地：
+If you have already cloned this repository locally:
 
 ```bash
-# 进入仓库目录并利用 bin/chezmoi 进行初始化和部署
+# Enter the repository directory and use the local chezmoi binary to initialize and deploy
 cd ~/.dotfiles
 ./bin/chezmoi init --source "$PWD" --apply
 ```
 
 > [!NOTE]
-> 在首次运行 `init` 引导过程中，Chezmoi 会以交互式命令行提示询问您的 Git 姓名、邮箱以及当前是否为无 GUI 的 Headless 终端环境，并根据输入自动渲染生成适配当前平台的配置。
+> During the first `init` process, Chezmoi will interactively prompt for your Git name, email, and whether the current system is a GUI-less Headless environment, and automatically render the configurations accordingly.
 
-## 目录结构说明
+## Directory Structure
 
-- `dot_config/`：对应部署到 `~/.config/` 下的通用和 Linux 专属应用配置（例如 Hyprland, Waybar, Walker 等）。
-- `dot_local/bin/`：部署到 `~/.local/bin/` 下的自定义可执行工具与维护脚本。
-- `Library/`：对应部署到 macOS `~/Library/` 目录下的专用偏好文件（如 Alfred, iTerm2, LinearMouse 等）。
-- `assets/`：存放非 dotfiles 的仓库静态资源，如 Plymouth 主题资产等。
+- `dot_config/`: Generic and Linux-specific application configurations (e.g., Hyprland, Waybar, Walker, etc.) deployed to `~/.config/`.
+- `dot_local/bin/`: Custom executables and maintenance scripts deployed to `~/.local/bin/`.
+- `Library/`: macOS-specific preference files (e.g., Alfred, iTerm2, LinearMouse, etc.) deployed to `~/Library/`.
+- `assets/`: Static non-dotfiles repository assets, such as Plymouth themes.
 
-## 集成测试验证
+## Integration Testing
 
-在修改或提交配置文件前，可以在本地运行集成测试脚本以确保模板渲染及依赖安装生命周期完全正常：
+Before submitting configuration changes, you can run the integration test script locally to ensure template rendering and installation lifecycles function correctly:
 
 ```bash
-# 运行非侵入性沙盒测试
+# Run non-intrusive sandbox testing
 ./.scratch/verify-chezmoi.sh
 ```
 
-## 安全数据加密 (SOPS + Age)
+## Secret Management (Age)
 
-配置中包含的敏感私密数据建议使用 SOPS + Age 进行统一解密与加密操作，具体的加密规则详见 [.sops.yaml](.sops.yaml) 配置文件。
+Sensitive private data (SSH keys, environment variables) is managed using Age encryption via Chezmoi's encryption integration and custom lifecycle hooks.
+
+### Prerequisite
+
+Before running `chezmoi apply` for the first time, you must ensure the shared Age private key is present in your home directory:
 
 ```bash
-# 解密 zsh 环境变量
-sops -d --output-type dotenv dot_config/zsh/local.enc.zsh > dot_config/zsh/local.zsh
-
-# 加密 zsh 环境变量
-sops -d --input-type dotenv dot_config/zsh/local.zsh > dot_config/zsh/local.enc.zsh
+mkdir -p ~/.local/share/age
+cp /path/to/your/backup/default-key.txt ~/.local/share/age/default-key.txt
+chmod 600 ~/.local/share/age/default-key.txt
 ```
+
+If it is not present on the first apply, the bootstrap script `run_once_setup-age-key.sh.tmpl` will automatically generate a new key pair at `~/.local/share/age/default-key.txt`.
+
+### How to Encrypt a New File
+
+All encrypted secrets reside in the `secrets/` directory.
+
+To encrypt a new secret (e.g., a file `foo` in a profile directory):
+
+```bash
+age -r age1r7hzm4zqsyu880e3f8yn97g7d6jqtxaeg8jjk2xpzqv2d9zgkelq00nmxn -o secrets/profiles/<profile_name>/foo.age foo
+```
+
+### How to Edit and Re-encrypt Secrets
+
+To edit an existing encrypted file:
+
+```bash
+# Decrypt, edit, and re-encrypt
+age -d -i ~/.local/share/age/default-key.txt secrets/profiles/<profile_name>/foo.age > /tmp/foo
+nano /tmp/foo
+age -r age1r7hzm4zqsyu880e3f8yn97g7d6jqtxaeg8jjk2xpzqv2d9zgkelq00nmxn -o secrets/profiles/<profile_name>/foo.age /tmp/foo
+rm /tmp/foo
+```
+
+### How to Add a New Secret Profile
+
+1. Create a directory for the new profile:
+   ```bash
+   mkdir -p secrets/profiles/<profile_name>/ssh
+   ```
+2. Encrypt the profile's environment variables:
+   ```bash
+   age -r age1r7hzm4zqsyu880e3f8yn97g7d6jqtxaeg8jjk2xpzqv2d9zgkelq00nmxn -o secrets/profiles/<profile_name>/local.zsh.age local.zsh
+   ```
+3. Commit the encrypted `.age` files (never commit the plaintext versions).

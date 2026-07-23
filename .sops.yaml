@@ -1,6 +1,6 @@
 ---
 keys:
-  - &main age1xnflh7627hgjzzjxlc0c2gt0y27484sgwky9qm2kt7aplk086amsdwkuj0
+  - &main age1r7hzm4zqsyu880e3f8yn97g7d6jqtxaeg8jjk2xpzqv2d9zgkelq00nmxn
 creation_rules:
   # Secret Profiles: environment variables and SSH private keys per device
   # Encrypt with: age -r <pubkey> -o secrets/profiles/<profile>/local.zsh.age <plaintext>

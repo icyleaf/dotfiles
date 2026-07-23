@@ -65,6 +65,18 @@ echo "Mocked setting default plymouth theme to $1"
 EOF
 chmod +x "${MOCK_PLYMOUTH}"
 
+# Create a mock age executable to bypass decryption requirements in tests
+MOCK_AGE="${TEST_HOME}/.local/bin/age"
+cat << 'EOF' > "${MOCK_AGE}"
+#!/usr/bin/env bash
+if [[ "$*" == *"--decrypt"* ]]; then
+  echo "mocked_decrypted_secret"
+else
+  exec /usr/bin/age "$@"
+fi
+EOF
+chmod +x "${MOCK_AGE}"
+
 # Symlink the repository to ~/.local/share/chezmoi as a real deployment would
 ln -sf "${REPO_DIR}" "${TEST_HOME}/.local/share/chezmoi"
 

@@ -3,4 +3,4 @@
 # load_bw_password "GITHUB_TOKEN" "1f731652-ffca-43b1-bd71-ea38075413b4"
 
 ## age
-# export SOPS_AGE_RECIPIENTS=age1xnflh7627hgjzzjxlc0c2gt0y27484sgwky9qm2kt7aplk086amsdwkuj0
+# export SOPS_AGE_RECIPIENTS=age1r7hzm4zqsyu880e3f8yn97g7d6jqtxaeg8jjk2xpzqv2d9zgkelq00nmxn
