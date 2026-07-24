@@ -28,6 +28,8 @@
 {{   $profile = "custom" }}
 {{ end }}
 
+encryption = "age"
+
 [data]
     os = {{ .chezmoi.os | quote }}
     machine_profile = {{ $profile | quote }}
@@ -43,8 +45,6 @@
     {{   $headless = promptBoolOnce . "headless" "Is this a headless machine (no GUI)?" false }}
     {{ end }}
     headless = {{ $headless }}
-
-encryption = "age"
 
 [age]
     identity = {{ joinPath .chezmoi.homeDir ".local" "share" "age" "default-key.txt" | quote }}
