@@ -1,0 +1,12 @@
+[keys]
+prefix = "ctrl+a"
+
+[theme]
+name = "nord"
+auto_switch = false
+
+[ui]
+agent_panel_sort = "spaces"
+
+[ui.toast]
+delivery = "system"

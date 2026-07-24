@@ -53,7 +53,7 @@ floating:
   - com.apple.iphonesimulator
   - id: org.jkiss.dbeaver.core.product
     windows:
-      - 'Rename Database'
+      - "Rename Database"
 
 # true to insert new windows into the first position and false to insert new windows into the last position (default false).
 new-windows-to-main: false
