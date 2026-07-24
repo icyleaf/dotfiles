@@ -20,8 +20,20 @@ if [ -f "${PM_SH}" ]; then
   {{- end }}
   
   if [ -n "${PACKAGES}" ]; then
+    # Detect the package manager to pass the appropriate auto-confirm flag
+    PM=$("${PM_SH}" which)
+    CONFIRM_FLAG=""
+    case "${PM}" in
+      pacman|yay|paru) CONFIRM_FLAG="--noconfirm" ;;
+      apt|dnf|apk|zypper) CONFIRM_FLAG="-y" ;;
+    esac
+
     # Convert package list into arguments for pm.sh
-    echo "${PACKAGES}" | xargs "${PM_SH}" install
+    if [ -n "${CONFIRM_FLAG}" ]; then
+      echo "${PACKAGES}" | xargs "${PM_SH}" install "${CONFIRM_FLAG}"
+    else
+      echo "${PACKAGES}" | xargs "${PM_SH}" install
+    fi
   fi
 else
   echo "Warning: Package Wrapper not found at ${PM_SH}, skipping package installation."
