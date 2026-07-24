@@ -177,7 +177,6 @@ else
   assert_exists "${TEST_HOME}/.config/chrome-flags.conf"
   assert_exists "${TEST_HOME}/.config/fcitx5"
   assert_exists "${TEST_HOME}/.config/hypr"
-  assert_exists "${TEST_HOME}/.config/kitty"
   assert_exists "${TEST_HOME}/.config/swaync"
   assert_exists "${TEST_HOME}/.config/walker"
   assert_exists "${TEST_HOME}/.config/waybar"

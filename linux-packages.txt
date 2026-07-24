@@ -15,7 +15,6 @@ rsync
 
 # gui
 # Graphical environment & Terminal (Hyprland stack)
-kitty
 walker
 hyprland
 waybar
