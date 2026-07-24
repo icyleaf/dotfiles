@@ -44,6 +44,9 @@ secrets/**
 linux-packages.txt
 install.sh
 
+# Ignore vendored third-party source (managed via git submodules, deployed by run_once scripts)
+vendor/**
+
 # Ignore Linux packages installer on non-Linux hosts
 {{ if ne .chezmoi.os "linux" }}
 run_onchange_install-packages-linux.sh.tmpl

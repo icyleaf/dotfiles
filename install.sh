@@ -61,6 +61,9 @@ done
 REPO_DIR="$(cd "$(dirname "$0")" && pwd)"
 if [ -d "${REPO_DIR}/.git" ] && [ -f "${REPO_DIR}/.chezmoiignore" ]; then
   echo "Running from local repository at ${REPO_DIR}."
+  # Ensure git submodules (e.g. vendor/omarchy) are initialised before chezmoi applies
+  echo "Initialising git submodules..."
+  git -C "${REPO_DIR}" submodule update --init --recursive
   chezmoi init --apply --source "${REPO_DIR}"
 else
   echo "Running remotely. Initializing chezmoi from icyleaf/dotfiles repository..."

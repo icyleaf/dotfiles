@@ -44,7 +44,7 @@
     "format": "{}",
     "exec": "pgrep -x hypridle > /dev/null && echo '󰛊 ' || echo '󰅶 '",
     "interval": 2,
-    "on-click": "omarchy-toggle-idle",
+    "on-click": "icy-toggle-idle",
     "tooltip": false,
   },
   "hyprland/workspaces": {
@@ -56,9 +56,9 @@
     // "on-scroll-down": "hyprctl dispatch workspace e-1",
     "persistent-workspaces": {},
   },
-  "custom/omarchy": {
+  "custom/icy-launcher": {
     "format": "<span font='omarchy'>\ue900</span>",
-    "on-click": "omarchy-menu",
+    "on-click": "icy-menu",
     "tooltip-format": "Omarchy Menu\n\nSuper + Alt + Space",
   },
   "custom/updates": {
@@ -70,10 +70,10 @@
     "tooltip": true,
     "signal": 20,
   },
-  "custom/omarchy-update": {
+  "custom/icy-update": {
     "format": "",
-    "exec": "omarchy-update-available",
-    "on-click": "omarchy-launch-floating-terminal-with-presentation omarchy-update",
+    "exec": "icy-update-available",
+    "on-click": "icy-launch-floating-terminal omarchy-update",
     "tooltip-format": "Omarchy update available",
     "signal": 7,
     "interval": 3600,
@@ -168,7 +168,7 @@
     "tooltip-format-discharging": "{power:>1.0f}W↓ {capacity}%",
     "tooltip-format-charging": "{power:>1.0f}W↑ {capacity}%",
     "interval": 5,
-    "on-click": "omarchy-menu power",
+    "on-click": "icy-menu power",
     "states": {
       "warning": 20,
       "critical": 10,
@@ -265,7 +265,7 @@
     "min-length": 3,
   },
   "custom/screenrecording-indicator": {
-    "on-click": "omarchy-cmd-screenrecord",
+    "on-click": "icy-cmd-screenrecord",
     "exec": "$OMARCHY_PATH/default/waybar/indicators/screen-recording.sh",
     "signal": 8,
     "return-type": "json",

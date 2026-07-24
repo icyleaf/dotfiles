@@ -4,3 +4,6 @@
 [submodule "config/general/ghostty/warp"]
 	path = config/general/ghostty/warp
 	url = https://github.com/Arakiss/ghostty-warp
+[submodule "vendor/omarchy"]
+	path = vendor/omarchy
+	url = https://github.com/basecamp/omarchy.git

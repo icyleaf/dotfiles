@@ -33,3 +33,7 @@ Declarative dotfiles managed by [Chezmoi](https://chezmoi.io). Targets macOS and
 **Package Wrapper** — `pm.sh` (deployed as `~/.local/bin/pm.sh`). A cross-platform shell script wrapper that abstracts different host package managers (pacman, yay, apt, brew, etc.) under a unified command interface (`install`, `remove`, etc.).
 
 **Linux Packages List** — `linux-packages.txt` at the repository root. A list of system package names for Linux hosts, excluded from deployment via `.chezmoiignore`, and parsed by a `run_onchange` installer script.
+
+**Vendored Submodule** — git submodules tracked in the `vendor/` directory of the repository root, ignored from home directory deployment but used to package third-party resources (such as Omarchy) directly within the dotfiles repo.
+
+**Middleware Wrapper** — executable scripts located in `dot_local/bin/` (deployed to `~/.local/bin/`) prefixed with `icy-` that act as an abstraction layer between user configs (Hyprland, Waybar) and external tooling (Omarchy), facilitating plug-and-play config swapping.
