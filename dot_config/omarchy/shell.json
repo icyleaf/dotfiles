@@ -11,10 +11,7 @@
     "layout": {
       "left": [
         {
-          "id": "omarchy.menu"
-        },
-        {
-          "id": "icyleaf.multimonitor-workspaces"
+          "id": "icyleaf.workspaces"
         }
       ],
       "center": [
