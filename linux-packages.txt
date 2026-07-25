@@ -20,3 +20,5 @@ hyprland
 waybar
 swaync
 fcitx5
+snapper
+
