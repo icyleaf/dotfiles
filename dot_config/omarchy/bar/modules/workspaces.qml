@@ -36,8 +36,8 @@ BarWidget {
     var offset = monitorId * 10
     var ids = []
     
-    // Default workspaces 1 to 5 for this monitor
-    for (var j = 1; j <= 5; j++) {
+    // Default workspaces 1 to 9 for this monitor
+    for (var j = 1; j <= 9; j++) {
       ids.push(offset + j)
     }
 
