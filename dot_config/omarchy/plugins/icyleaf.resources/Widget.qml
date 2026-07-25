@@ -16,15 +16,16 @@ BarWidget {
   property int memoryTotalKiB: 0
   property int memoryAvailableKiB: 0
   property string cpuModel: ""
-  property string cpuTemperatureDetails: ""
   property real previousIdle: -1
   property real previousTotal: -1
   readonly property int updateInterval: 2000
+  readonly property string displayMode: String(setting("displayMode", "utilization"))
   readonly property real memoryUsedGiB: memoryTotalKiB > 0 ? (memoryTotalKiB - memoryAvailableKiB) / (1024 * 1024) : 0
   readonly property real memoryTotalGiB: memoryTotalKiB > 0 ? memoryTotalKiB / (1024 * 1024) : 0
 
-  readonly property string displayText: utilizationGlyph() + " " + String(cpuPercent).padStart(2, "0") + "%  󰍛 " + String(memoryPercent).padStart(2, "0") + "%"
+  readonly property string displayText: mainGlyph() + " " + mainValueText() + "  󰍛 " + String(memoryPercent).padStart(2, "0") + "%"
   readonly property string tooltipText: buildTooltip()
+  readonly property color displayForeground: usageColor(mainMetricPercent(), mainMetricTemperature())
 
   function refreshStatic() {
     if (!staticProc.running) staticProc.running = true
@@ -45,6 +46,37 @@ BarWidget {
     return "󰾆"
   }
 
+  function mainGlyph() {
+    return displayMode === "temperature" ? temperatureGlyph() : utilizationGlyph()
+  }
+
+  function mainValueText() {
+    if (displayMode === "temperature") return String(cpuTemperature).padStart(2, "0") + "°C"
+    return String(cpuPercent).padStart(2, "0") + "%"
+  }
+
+  function mainMetricPercent() {
+    return displayMode === "temperature" ? 0 : cpuPercent
+  }
+
+  function mainMetricTemperature() {
+    return displayMode === "temperature" ? cpuTemperature : 0
+  }
+
+  function usageColor(percent, temperature) {
+    if (temperature > 0) {
+      if (temperature >= 85) return Color.urgent
+      if (temperature >= 65) return "#ff8c00"
+      if (temperature >= 45) return "#6fb6ff"
+      return Color.foreground
+    }
+
+    if (percent >= 90) return Color.urgent
+    if (percent >= 70) return "#ff8c00"
+    if (percent >= 40) return "#e0b64c"
+    return Color.foreground
+  }
+
   function temperatureGlyph() {
     if (cpuTemperature >= 85) return ""
     if (cpuTemperature >= 65) return ""
@@ -59,11 +91,6 @@ BarWidget {
     var cpuLine = utilizationGlyph() + " Utilization: " + cpuPercent + "%"
     if (cpuTemperature > 0) cpuLine += "   " + temperatureGlyph() + " " + cpuTemperature + "°C"
     lines.push(cpuLine)
-
-    if (cpuTemperatureDetails) {
-      lines.push(temperatureGlyph() + " Temperature:")
-      lines.push("  " + cpuTemperatureDetails.split("\n").join("\n  "))
-    }
 
     if (cpuCurrentMHz > 0 || cpuMaxMHz > 0) {
       var clockLine = " Clock Speed: " + cpuCurrentMHz
@@ -90,7 +117,6 @@ BarWidget {
     var cpuLine = lines.length > 0 ? lines[0].trim() : ""
     var totalMemory = root.memoryTotalKiB
     var availableMemory = root.memoryAvailableKiB
-    var temperatureDetails = []
 
     var cpuMatch = cpuLine.match(/^cpu\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)/)
     if (cpuMatch) {
@@ -129,12 +155,7 @@ BarWidget {
 
       var tempMatch = line.match(/^CPU_TEMP\s+(-?\d+)/)
       if (tempMatch) root.cpuTemperature = Number(tempMatch[1])
-
-      var tempDetailMatch = line.match(/^CPU_TEMP_DETAIL\s+(.+)/)
-      if (tempDetailMatch) temperatureDetails.push(tempDetailMatch[1])
     }
-
-    root.cpuTemperatureDetails = temperatureDetails.join("\n")
 
     if (totalMemory > 0 && availableMemory >= 0) {
       root.memoryTotalKiB = totalMemory
@@ -159,7 +180,7 @@ BarWidget {
 
   Process {
     id: statsProc
-    command: ["bash", "-c", "cat /proc/stat /proc/meminfo; perl -ne 'BEGIN { $sum = 0; $count = 0 } if (/cpu MHz\\s+:\\s+([\\d.]+)/) { $sum += $1; $count++ } END { if ($count > 0) { printf \"CPU_CUR_MHZ %.0f\\n\", $sum / $count } }' /proc/cpuinfo; sensors 2>/dev/null | awk 'BEGIN { first = 1 } /^Package id 0:|^Tctl:|^temp1:/ { detail = $0; sub(/^[[:space:]]+/, \"\", detail); print \"CPU_TEMP_DETAIL \" detail; if (first) { if (match($0, /[+]?[0-9]+(\\.[0-9]+)?/)) { value = substr($0, RSTART, RLENGTH); sub(/^\+/, \"\", value); sub(/\\..*/, \"\", value); print \"CPU_TEMP \" value; first = 0 } } }'"]
+    command: ["bash", "-c", "cat /proc/stat /proc/meminfo; perl -ne 'BEGIN { $sum = 0; $count = 0 } if (/cpu MHz\\s+:\\s+([\\d.]+)/) { $sum += $1; $count++ } END { if ($count > 0) { printf \"CPU_CUR_MHZ %.0f\\n\", $sum / $count } }' /proc/cpuinfo; sensors 2>/dev/null | awk 'BEGIN { first = 1 } /^Package id 0:|^Tctl:|^temp1:/ { if (first) { if (match($0, /[+]?[0-9]+(\\.[0-9]+)?/)) { value = substr($0, RSTART, RLENGTH); sub(/^\\+/, \"\", value); sub(/\\..*/, \"\", value); print \"CPU_TEMP \" value; first = 0 } } }'"]
     stdout: StdioCollector {
       waitForEnd: true
       onStreamFinished: root.updateFromProc(text)
@@ -182,6 +203,7 @@ BarWidget {
     anchors.fill: parent
     bar: root.bar
     text: root.displayText
+    foreground: root.displayForeground
     fontSize: Style.font.caption
     horizontalMargin: 6
     tooltipText: root.tooltipText
