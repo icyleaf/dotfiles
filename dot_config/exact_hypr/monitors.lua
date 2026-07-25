@@ -1,6 +1,8 @@
 -- Personal monitors configuration
 
--- local omarchy_gdk_scale = 2
+-- Omarchy clamshell recovery reads this value for internal display rescale.
+local omarchy_monitor_scale = 1.6
+-- local omarchy_gdk_scale = 1
 -- hl.env("GDK_SCALE", tostring(omarchy_gdk_scale))
 
 -- Internal display / eDP-1 (Noneed changes)
@@ -8,7 +10,7 @@ hl.monitor({
   output = "desc:Tianma Microelectronics Ltd. TL140ADXP24-0",
   mode = "2880x1800@120",
   position = "0x0",
-  scale = 1.6
+  scale = omarchy_monitor_scale
 })
 
 -- ## Home (SET 1)
@@ -68,7 +70,6 @@ hl.monitor({
 hl.monitor({
   output = "desc:YTH HS-140KP",
   mode = "3840x2160@60",
-  -- position = "-1970x0",
   position = "auto-left",
   scale = 2
 })
@@ -76,7 +77,6 @@ hl.monitor({
 hl.monitor({
   output = "desc:Invalid Vendor Codename - RTK UHD demoset-1",
   mode = "3240x2160@60",
-  -- position = "-300x-1080",
   position = "auto-center-up",
   scale = 2
 })
