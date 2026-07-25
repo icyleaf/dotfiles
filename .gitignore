@@ -19,3 +19,12 @@ ssh/
 *.bak.*
 
 .scratch/
+
+# ghostty-wrapper
+dot_config/ghostty/fonts/
+dot_config/ghostty/keybinds/
+dot_config/ghostty/platform/
+dot_config/ghostty/presets/
+dot_config/ghostty/themes/
+dot_config/ghostty/tmux/
+dot_config/ghostty/executable_gconfig
