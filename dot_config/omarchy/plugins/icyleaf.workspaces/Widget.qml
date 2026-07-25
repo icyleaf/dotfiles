@@ -8,22 +8,10 @@ BarWidget {
   id: root
   moduleName: "icyleaf.workspaces"
 
-  readonly property var activeWindow: root.Window.window
+  readonly property var activeMonitor: Hyprland.focusedMonitor.id
+  readonly property var activeWindow: Hyprland.focusedWorkspace
   readonly property var activeScreen: activeWindow ? activeWindow.screen : null
   readonly property string screenName: activeScreen ? activeScreen.name : ""
-
-  function getMonitorId() {
-    var name = root.screenName
-    if (name === "eDP-1") return 0
-    if (name === "DP-1") return 1
-    if (name === "DP-2") return 2
-    // Fallback if monitors mapping is dynamic
-    if (name && name.indexOf("DP-") === 0) {
-      var num = parseInt(name.substring(3))
-      if (!isNaN(num)) return num
-    }
-    return 0
-  }
 
   function workspaceById(id) {
     var values = Hyprland.workspaces.values
@@ -35,12 +23,14 @@ BarWidget {
 
   // Workspaces 1 to 9 default + active ones
   function workspaceIds() {
-    var monitorId = getMonitorId()
+    var monitorId = root.activeMonitor
+    if (monitorId === null || isNaN(monitorId)) return []
+  
     var offset = monitorId * 10
     var ids = []
     
     // Default workspaces 1 to 9 for this monitor
-    for (var j = 1; j <= 9; j++) {
+    for (var j = 1; j <= 10; j++) {
       ids.push(offset + j)
     }
 
@@ -58,7 +48,7 @@ BarWidget {
 
   function focusWorkspace(id) {
     if (!root.bar) return
-    var monitorId = getMonitorId()
+    var monitorId = root.activeMonitor
     var offset = monitorId * 10
     var relativeId = id - offset
     root.bar.run("bash /home/icyleaf/.config/hypr/scripts/workspace-switch.sh switch " + relativeId)
@@ -83,7 +73,7 @@ BarWidget {
       WidgetButton {
         required property int modelData
 
-        readonly property var monitorId: root.getMonitorId()
+        readonly property var monitorId: root.activeMonitor
         readonly property var offset: monitorId * 10
         readonly property var relativeId: modelData - offset
 
