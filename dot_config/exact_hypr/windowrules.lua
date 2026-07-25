@@ -10,7 +10,7 @@ o.window("discord", { workspace = "10" })
 o.window("vesktop", { workspace = "10" })
 
 -- WeChat popups focus fix
-o.window({ class = "wechat", float = true }, { stayfocused = true })
+o.window({ class = "wechat", float = true }, { stay_focused = true })
 
 -- Terminal monitoring tools floats
 o.window({ tag = "terminal", title = "top" }, { float = true })

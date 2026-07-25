@@ -88,6 +88,14 @@ o.bind("SUPER + Z", "Move window", hl.dsp.window.drag(), { mouse = true })
 o.bind("SUPER + X", "Resize window", hl.dsp.window.resize(), { mouse = true })
 
 -- Custom workspaces switching (Independent workspaces per display)
+-- hl.bind(mainMod .. " + S",         hl.dsp.workspace.toggle_special("magic"))
+-- hl.bind(mainMod .. " + SHIFT + S", hl.dsp.window.move({ workspace = "special:magic" }))
+hl.unbind("SUPER + SHIFT + S")
+o.bind("SUPER + SHIFT + S", "Move window to scratchpad", hl.dsp.window.move({ workspace = "special:magic" }))
+-- o.bind("SUPER + ALT + S", "Move window to scratchpad (silent)", hl.dsp.window.movetoworkspace({ workspace = "special", silent = true }))
+o.bind("SUPER + S", "Toggle scratchpad", hl.dsp.workspace.toggle_special({ workspace = "magic" }))
+
+
 for workspace = 1, 10 do
   local key = "code:" .. tostring(workspace + 9)
   hl.unbind("SUPER + " .. key)

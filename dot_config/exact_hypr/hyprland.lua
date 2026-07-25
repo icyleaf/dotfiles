@@ -16,6 +16,7 @@ require("default.hypr.omarchy")
 -- Put your personal overrides in these files. They're loaded after Omarchy's
 -- defaults so package updates can improve the defaults without rewriting your
 -- ~/.config/hypr files.
+require("hypr.envs")
 require("hypr.monitors")
 require("hypr.input")
 require("hypr.bindings")
