@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+#
+# Set up Ghostty Warp vendor symlink.
+# Keeps vendor/ghostty-warp as a git submodule and links the required
+# files and folders into ~/.config/ghostty so Ghostty reads from the
+# user config directory without copying the source tree.
+#
+# To upgrade ghostty-warp:
+#   git submodule update --remote vendor/ghostty-warp
+#   git add vendor/ghostty-warp && git commit -m "chore: bump ghostty-warp to <version>"
+
+set -eu
+
+REPO_DIR="{{ .chezmoi.sourceDir }}"
+VENDOR_DIR="${REPO_DIR}/vendor/ghostty-warp"
+GHOSTTY_DIR="${HOME}/.config/ghostty"
+
+link_path() {
+  src="$1"
+  dest="$2"
+
+  mkdir -p "$(dirname "${dest}")"
+
+  if [ -L "${dest}" ]; then
+    current_target="$(readlink "${dest}")"
+    if [ "${current_target}" = "${src}" ]; then
+      echo "Link already in place: ${dest} -> ${src}"
+      return 0
+    fi
+    rm "${dest}"
+  elif [ -e "${dest}" ]; then
+    backup="${dest}.bak"
+    echo "Backing up existing path: ${dest} -> ${backup}"
+    mv "${dest}" "${backup}"
+  fi
+
+  ln -s "${src}" "${dest}"
+  echo "Linked: ${dest} -> ${src}"
+}
+
+ensure_dir() {
+  mkdir -p "$1"
+}
+
+# Ensure the submodule is initialised (handles fresh chezmoi init --apply)
+if [ ! -f "${VENDOR_DIR}/README.md" ]; then
+  echo "Initialising Ghostty Warp submodule..."
+  git -C "${REPO_DIR}" submodule update --init vendor/ghostty-warp
+fi
+
+# Link the Ghostty Warp directories that are read-only from Ghostty's point of
+# view.
+link_path "${VENDOR_DIR}/themes" "${GHOSTTY_DIR}/themes"
+link_path "${VENDOR_DIR}/presets" "${GHOSTTY_DIR}/presets"
+link_path "${VENDOR_DIR}/fonts" "${GHOSTTY_DIR}/fonts"
+link_path "${VENDOR_DIR}/tmux" "${GHOSTTY_DIR}/tmux"
+
+# Keep platform and keybind directories local so gconfig can create
+# current.conf symlinks there without modifying the submodule worktree.
+ensure_dir "${GHOSTTY_DIR}/keybinds"
+ensure_dir "${GHOSTTY_DIR}/platform"
+link_path "${VENDOR_DIR}/keybinds/linux.conf" "${GHOSTTY_DIR}/keybinds/linux.conf"
+link_path "${VENDOR_DIR}/keybinds/macos.conf" "${GHOSTTY_DIR}/keybinds/macos.conf"
+link_path "${VENDOR_DIR}/platform/linux.conf" "${GHOSTTY_DIR}/platform/linux.conf"
+link_path "${VENDOR_DIR}/platform/macos.conf" "${GHOSTTY_DIR}/platform/macos.conf"
+
+# The generated entrypoint lives in the user's Ghostty config directory.
+link_path "${REPO_DIR}/dot_config/ghostty/executable_gconfig" "${GHOSTTY_DIR}/gconfig"
+mkdir -p "${HOME}/.local/bin"
+link_path "${GHOSTTY_DIR}/gconfig" "${HOME}/.local/bin/gconfig"
