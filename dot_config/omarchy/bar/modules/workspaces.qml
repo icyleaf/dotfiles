@@ -9,12 +9,14 @@ BarWidget {
   moduleName: "my-workspaces"
 
   function getMonitorId() {
-    var name = root.Window.window ? root.Window.window.screen.name : ""
+    var win = root.Window.window
+    var screen = win ? win.screen : null
+    var name = screen ? screen.name : ""
     if (name === "eDP-1") return 0
     if (name === "DP-1") return 1
     if (name === "DP-2") return 2
     // Fallback if monitors mapping is dynamic
-    if (name.indexOf("DP-") === 0) {
+    if (name && name.indexOf("DP-") === 0) {
       var num = parseInt(name.substring(3))
       if (!isNaN(num)) return num
     }
