@@ -12,8 +12,9 @@ BarWidget {
   property int memoryPercent: 0
   property real previousIdle: -1
   property real previousTotal: -1
+  readonly property int updateInterval: 2000
 
-  readonly property string displayText: " " + String(cpuPercent).padStart(2, "0") + "%  󰍛 " + String(memoryPercent).padStart(2, "0") + "%"
+  readonly property string displayText: "\uf4bc " + String(cpuPercent).padStart(2, "0") + "%  󰍛 " + String(memoryPercent).padStart(2, "0") + "%"
 
   function refresh() {
     if (!statsProc.running) statsProc.running = true
@@ -26,7 +27,8 @@ BarWidget {
   function updateFromProc(text) {
     var lines = String(text || "").split("\n")
     var cpuLine = lines.length > 0 ? lines[0].trim() : ""
-    var memLine = lines.length > 1 ? lines[1].trim() : ""
+    var totalMemory = 0
+    var availableMemory = 0
 
     var cpuMatch = cpuLine.match(/^cpu\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)/)
     if (cpuMatch) {
@@ -52,11 +54,17 @@ BarWidget {
       root.previousTotal = currentTotal
     }
 
-    var memMatch = memLine.match(/^Mem:\s+(\d+)\s+(\d+)/)
-    if (memMatch) {
-      var totalMemory = Number(memMatch[1])
-      var availableMemory = Number(memMatch[2])
-      if (totalMemory > 0) root.memoryPercent = clampPercent(((totalMemory - availableMemory) / totalMemory) * 100)
+    for (var i = 0; i < lines.length; i++) {
+      var line = lines[i].trim()
+      var totalMatch = line.match(/^MemTotal:\s+(\d+)/)
+      if (totalMatch) totalMemory = Number(totalMatch[1])
+
+      var availableMatch = line.match(/^MemAvailable:\s+(\d+)/)
+      if (availableMatch) availableMemory = Number(availableMatch[1])
+    }
+
+    if (totalMemory > 0 && availableMemory >= 0) {
+      root.memoryPercent = clampPercent(((totalMemory - availableMemory) / totalMemory) * 100)
     }
   }
 
@@ -64,7 +72,7 @@ BarWidget {
 
   Process {
     id: statsProc
-    command: ["bash", "-c", "awk '/^cpu / { print; exit }' /proc/stat; awk '/^MemTotal:/ { total=$2 } /^MemAvailable:/ { available=$2 } END { printf \"Mem: %s %s\\n\", total, available }' /proc/meminfo"]
+    command: ["bash", "-c", "cat /proc/stat /proc/meminfo"]
     stdout: StdioCollector {
       waitForEnd: true
       onStreamFinished: root.updateFromProc(text)
@@ -72,7 +80,7 @@ BarWidget {
   }
 
   Timer {
-    interval: 2000
+    interval: root.updateInterval
     running: true
     repeat: true
     triggeredOnStart: true
