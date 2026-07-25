@@ -7,20 +7,9 @@
   "bar": {
     "position": "top",
     "transparent": true,
-    "centerAnchor": "omarchy.clock",
+    "centerAnchor": "omarchy.calendar",
     "layout": {
       "left": [
-        {
-          "id": "icyleaf.workspaces"
-        }
-      ],
-      "center": [
-        {
-          "id": "omarchy.clock",
-          "format": "dddd HH:mm",
-          "formatAlt": "d MMMM 'W'ww yyyy",
-          "verticalFormat": "HH\n—\nmm"
-        },
         {
           "id": "omarchy.weather"
         },
@@ -31,9 +20,15 @@
           "id": "omarchy.indicators"
         }
       ],
+      "center": [
+        {
+          "id": "icyleaf.workspaces"
+        }
+      ],
       "right": [
         {
-          "id": "omarchy.tray"
+          "id": "omarchy.tray",
+          "expanded": true
         },
         {
           "id": "omarchy.bluetooth"
@@ -49,6 +44,12 @@
         },
         {
           "id": "omarchy.power"
+        },
+        {
+          "id": "omarchy.clock",
+          "format": "dddd HH:mm",
+          "formatAlt": "d MMMM 'W'ww yyyy",
+          "verticalFormat": "HH\n—\nmm"
         }
       ]
     }
