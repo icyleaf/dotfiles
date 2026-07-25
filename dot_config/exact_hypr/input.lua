@@ -1,8 +1,5 @@
--- Keep only your personal input overrides here.
--- Currently commented out to use Omarchy's defaults.
--- Feel free to uncomment and adapt.
+-- Personal input overrides
 
---[[
 hl.config({
   input = {
     kb_layout = "us",
@@ -27,11 +24,12 @@ hl.config({
   },
 })
 
-gestures = {
-  workspace_swipe_invert = true,
-  workspace_swipe_min_speed_to_force = 30
-  workspace_swipe_cancel_ratio = 0.5
-  workspace_swipe_create_new = true
-  workspace_swipe_forever = false
-}
---]]
+hl.config({
+  gestures = {
+    workspace_swipe_invert = true,
+    workspace_swipe_min_speed_to_force = 30,
+    workspace_swipe_cancel_ratio = 0.5,
+    workspace_swipe_create_new = true,
+    workspace_swipe_forever = false,
+  }
+})
