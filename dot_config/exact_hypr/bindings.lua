@@ -82,11 +82,21 @@ o.bind("SUPER + U", "Toggle floating", hl.dsp.window.float({ action = "toggle" }
 o.bind("SUPER + P", "Pseudo window", hl.dsp.window.pseudo())
 
 -- Mouse binds
-hl.config({
-  bindm = {
-    "SUPER, mouse:272, movewindow",
-    "SUPER, mouse:273, resizewindow",
-    "SUPER, Z, movewindow",
-    "SUPER, X, resizewindow",
-  }
-})
+o.bind("SUPER + mouse:272", "Move window", hl.dsp.window.drag(), { mouse = true })
+o.bind("SUPER + mouse:273", "Resize window", hl.dsp.window.resize(), { mouse = true })
+o.bind("SUPER + Z", "Move window", hl.dsp.window.drag(), { mouse = true })
+o.bind("SUPER + X", "Resize window", hl.dsp.window.resize(), { mouse = true })
+
+-- Custom workspaces switching (Independent workspaces per display)
+for workspace = 1, 10 do
+  local key = "code:" .. tostring(workspace + 9)
+  hl.unbind("SUPER + " .. key)
+  hl.unbind("SUPER + SHIFT + " .. key)
+  hl.unbind("SUPER + SHIFT + ALT + " .. key)
+
+  o.bind("SUPER + " .. key, "Switch to workspace " .. workspace, "bash /home/icyleaf/.config/hypr/scripts/workspace-switch.sh switch " .. workspace)
+  o.bind("SUPER + SHIFT + " .. key, "Move window to workspace " .. workspace, "bash /home/icyleaf/.config/hypr/scripts/workspace-switch.sh move " .. workspace)
+  o.bind("SUPER + SHIFT + CTRL + " .. key, "Move window silently to workspace " .. workspace, "bash /home/icyleaf/.config/hypr/scripts/workspace-switch.sh movesilent " .. workspace)
+end
+
+
