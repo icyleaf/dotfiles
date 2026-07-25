@@ -11,6 +11,9 @@
     "layout": {
       "left": [
         {
+          "id": "icyleaf.resources"
+        },
+        {
           "id": "omarchy.weather"
         },
         {
@@ -38,12 +41,6 @@
         },
         {
           "id": "omarchy.audio"
-        },
-        {
-          "id": "icyleaf.resources"
-        },
-        {
-          "id": "omarchy.monitor"
         },
         {
           "id": "omarchy.power"

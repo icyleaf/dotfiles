@@ -1,0 +1,6 @@
+[font]
+base-size = 14
+
+[bar]
+size-horizontal = 28  # bar 高度
+scale-with-font = true # 是否随字体缩放
