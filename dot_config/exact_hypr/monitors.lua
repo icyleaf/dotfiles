@@ -66,16 +66,18 @@ hl.monitor({
 
 -- 3. Tokyo/Work displays
 hl.monitor({
-  output = "desc:Invalid Vendor Codename - RTK UHD",
-  mode = "3240x2160@60",
-  position = "-400x-1080",
+  output = "desc:YTH HS-140KP",
+  mode = "3840x2160@60",
+  -- position = "-1970x0",
+  position = "auto-left",
   scale = 2
 })
 
 hl.monitor({
-  output = "desc:YTH HS-140KP",
-  mode = "3840x2160@60",
-  position = "-1980x0",
+  output = "desc:Invalid Vendor Codename - RTK UHD demoset-1",
+  mode = "3240x2160@60",
+  -- position = "-300x-1080",
+  position = "auto-center-up",
   scale = 2
 })
 

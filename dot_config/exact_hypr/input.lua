@@ -22,9 +22,6 @@ hl.config({
       scroll_factor = 0.4,
     },
   },
-})
-
-hl.config({
   gestures = {
     workspace_swipe_invert = true,
     workspace_swipe_min_speed_to_force = 30,
