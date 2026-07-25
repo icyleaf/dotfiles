@@ -14,8 +14,7 @@
           "id": "omarchy.menu"
         },
         {
-          "id": "workspaces",
-          "type": "qml"
+          "id": "icyleaf.workspaces"
         }
       ],
       "center": [

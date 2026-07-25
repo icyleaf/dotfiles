@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "id": "icyleaf.workspaces",
+  "name": "Icy Workspaces",
+  "version": "1.0.0",
+  "author": "icyleaf",
+  "description": "Multi-monitor workspaces status bar widget",
+  "kinds": ["bar-widget"],
+  "entryPoints": { "barWidget": "Widget.qml" }
+}

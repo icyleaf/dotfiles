@@ -6,7 +6,7 @@ import qs.Ui
 
 BarWidget {
   id: root
-  moduleName: "my-workspaces"
+  moduleName: "icyleaf.workspaces"
 
   function getMonitorId() {
     var win = root.Window.window
@@ -31,6 +31,7 @@ BarWidget {
     return null
   }
 
+  // Workspaces 1 to 9 default + active ones
   function workspaceIds() {
     var monitorId = getMonitorId()
     var offset = monitorId * 10
