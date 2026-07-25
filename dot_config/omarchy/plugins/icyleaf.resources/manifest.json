@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "icyleaf.resources",
+  "name": "System Resources",
+  "version": "1.0.0",
+  "author": "icyleaf",
+  "description": "CPU and memory usage status bar widget",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "Widget.qml"
+  }
+}
