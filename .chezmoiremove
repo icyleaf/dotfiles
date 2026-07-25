@@ -1,2 +1,4 @@
 # Clean up config files that are no longer managed or needed
 .config/kitty
+.config/hypr/hyprland.conf
+
