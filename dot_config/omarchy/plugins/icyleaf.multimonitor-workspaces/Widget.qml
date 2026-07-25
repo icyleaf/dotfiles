@@ -8,10 +8,12 @@ BarWidget {
   id: root
   moduleName: "icyleaf.multimonitor-workspaces"
 
+  readonly property var activeWindow: root.Window.window
+  readonly property var activeScreen: activeWindow ? activeWindow.screen : null
+  readonly property string screenName: activeScreen ? activeScreen.name : ""
+
   function getMonitorId() {
-    var win = root.Window.window
-    var screen = win ? win.screen : null
-    var name = screen ? screen.name : ""
+    var name = root.screenName
     if (name === "eDP-1") return 0
     if (name === "DP-1") return 1
     if (name === "DP-2") return 2
