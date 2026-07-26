@@ -1,0 +1,11 @@
+# vim:ft=toml
+
+{{ $chezmoiVersion := output "curl" "-fsSL" "-o" "/dev/null" "-w" "%{url_effective}" "https://github.com/twpayne/chezmoi/releases/latest" | trim | base | trimPrefix "v" }}
+[".local/bin/chezmoi"]
+	type = "file"
+	refreshPeriod = "168h"
+	executable = true
+	url = "https://github.com/twpayne/chezmoi/releases/download/v{{ $chezmoiVersion }}/chezmoi_{{ $chezmoiVersion }}_{{ .chezmoi.os }}_{{ .chezmoi.arch }}.tar.gz"
+	[".local/bin/chezmoi".filter]
+		command = "tar"
+		args = ["--extract", "--file", "/dev/stdin", "--gzip", "--to-stdout", "chezmoi"]

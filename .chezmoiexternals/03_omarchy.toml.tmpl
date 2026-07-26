@@ -1,0 +1,7 @@
+# vim:ft=toml
+
+{{ if ne .chezmoi.os "darwin" }}
+[".local/share/omarchy"]
+    type = "git-repo"
+    url = "https://github.com/basecamp/omarchy.git"
+{{ end }}
