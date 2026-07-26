@@ -1,3 +1,5 @@
+onboarding = false
+
 [keys]
 prefix = "ctrl+a"
 

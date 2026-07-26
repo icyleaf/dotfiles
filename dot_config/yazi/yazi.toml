@@ -1,0 +1,15 @@
+[mgr]
+ratio = [1, 3, 4]
+show_hidden = true
+show_symlink = true
+scrolloff = 5
+
+[preview]
+wrap = "yes"
+tab_size = 2
+
+[input]
+cursor_blink = true
+
+[log]
+enabled = false

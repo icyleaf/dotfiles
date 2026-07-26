@@ -28,3 +28,7 @@ dot_config/ghostty/presets/
 dot_config/ghostty/themes/
 dot_config/ghostty/tmux/
 dot_config/ghostty/executable_gconfig
+
+
+# omarchy files
+vendor/omarchy/

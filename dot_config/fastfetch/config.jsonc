@@ -12,24 +12,24 @@
       "6": "#A6E3A1",
       "7": "#94E2D5",
       "8": "#89DCEB",
-      "9": "#74C7EC"
+      "9": "#74C7EC",
     },
     "padding": {
       "top": 2,
       "right": 6,
-      "left": 2
-    }
+      "left": 2,
+    },
   },
   "modules": [
     "break",
     {
       "type": "custom",
-      "format": "\u001b[90m┌──────────────────────Hardware──────────────────────┐"
+      "format": "\u001b[90m┌──────────────────────Hardware──────────────────────┐",
     },
     {
       "type": "host",
       "key": " PC",
-      "keyColor": "green"
+      "keyColor": "green",
     },
     // {
     //   "type": "title",
@@ -41,53 +41,53 @@
       "type": "cpu",
       "key": "│ ├",
       "showPeCoreCount": true,
-      "keyColor": "green"
+      "keyColor": "green",
     },
     {
       "type": "gpu",
       "key": "│ ├",
       "detectionMethod": "pci",
-      "keyColor": "green"
+      "keyColor": "green",
     },
     {
       "type": "display",
       "key": "│ ├󱄄",
-      "keyColor": "green"
+      "keyColor": "green",
     },
     {
       "type": "disk",
       "key": "│ ├󰋊",
-      "keyColor": "green"
+      "keyColor": "green",
     },
     {
       "type": "memory",
       "key": "│ ├",
-      "keyColor": "green"
+      "keyColor": "green",
     },
     {
       "type": "swap",
       "key": "└ └󰓡 ",
-      "keyColor": "green"
+      "keyColor": "green",
     },
     {
       "type": "custom",
-      "format": "\u001b[90m└────────────────────────────────────────────────────┘"
+      "format": "\u001b[90m└────────────────────────────────────────────────────┘",
     },
     "break",
     {
       "type": "custom",
-      "format": "\u001b[90m┌──────────────────────Software──────────────────────┐"
+      "format": "\u001b[90m┌──────────────────────Software──────────────────────┐",
     },
     {
       "type": "os",
       "key": "{icon} OS",
-      "keyColor": "blue"
+      "keyColor": "blue",
     },
     {
       "type": "command",
       "key": "│ ├\ue900",
       "keyColor": "blue",
-      "text": "version=$(omarchy-version); branch=$(omarchy-version-branch); echo \"Omarchy $version\" [\"$branch\"]"
+      "text": "version=$(omarchy-version); branch=$(omarchy-version-branch); echo \"Omarchy $version\" [\"$branch\"]",
     },
     // {
     //   "type": "command",
@@ -98,73 +98,73 @@
     {
       "type": "kernel",
       "key": "│ ├",
-      "keyColor": "blue"
+      "keyColor": "blue",
     },
     {
       "type": "wm",
       "key": "│ ├",
-      "keyColor": "blue"
+      "keyColor": "blue",
     },
     {
       "type": "de",
       "key": " DE",
-      "keyColor": "blue"
+      "keyColor": "blue",
     },
     {
       "type": "terminal",
       "key": "│ ├",
-      "keyColor": "blue"
+      "keyColor": "blue",
     },
     {
       "type": "packages",
       "key": "│ ├󰏖",
-      "keyColor": "blue"
+      "keyColor": "blue",
     },
     {
       "type": "wmtheme",
       "key": "│ ├󰉼",
-      "keyColor": "blue"
+      "keyColor": "blue",
     },
     {
       "type": "command",
       "key": "│ ├󰸌",
       "keyColor": "blue",
-      "text": "theme=$(omarchy-theme-current); echo -e \"$theme \\e[38m●\\e[37m●\\e[36m●\\e[35m●\\e[34m●\\e[33m●\\e[32m●\\e[31m●\""
+      "text": "theme=$(omarchy-theme-current); echo -e \"$theme \\e[38m●\\e[37m●\\e[36m●\\e[35m●\\e[34m●\\e[33m●\\e[32m●\\e[31m●\"",
     },
     {
       "type": "icons",
       "key": "│ ├󰀻",
-      "keyColor": "blue"
+      "keyColor": "blue",
     },
     {
       "type": "terminalfont",
       "key": "└ └",
-      "keyColor": "blue"
+      "keyColor": "blue",
     },
     {
       "type": "custom",
-      "format": "\u001b[90m└────────────────────────────────────────────────────┘"
+      "format": "\u001b[90m└────────────────────────────────────────────────────┘",
     },
     "break",
     {
       "type": "custom",
-      "format": "\u001b[90m┌────────────────────Uptime / Age────────────────────┐"
+      "format": "\u001b[90m┌────────────────────Uptime / Age────────────────────┐",
     },
     {
       "type": "command",
       "key": "󱦟 OS Age",
       "keyColor": "magenta",
-      "text": "birth_install=$(stat -c %W /); current=$(date +%s); time_progression=$((current - birth_install)); days_difference=$((time_progression / 86400)); echo $days_difference days"
+      "text": "birth_install=$(stat -c %W /); current=$(date +%s); time_progression=$((current - birth_install)); days_difference=$((time_progression / 86400)); echo $days_difference days",
     },
     {
       "type": "uptime",
       "key": "󱫐 Uptime",
-      "keyColor": "magenta"
+      "keyColor": "magenta",
     },
     {
       "type": "custom",
-      "format": "\u001b[90m└────────────────────────────────────────────────────┘"
+      "format": "\u001b[90m└────────────────────────────────────────────────────┘",
     },
-    "break"
-  ]
+    "break",
+  ],
 }

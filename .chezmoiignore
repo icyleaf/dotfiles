@@ -1,21 +1,7 @@
 # Ignore files by OS
 
-{{ if ne .chezmoi.os "linux" }}
-# Ignore Linux specific configurations on non-Linux hosts
-.config/hypr/**
-.config/waybar/**
-.config/walker/**
-.config/swaync/**
-.config/fcitx5/**
-.config/btop/**
-.config/chrome-flags.conf
-.local/bin/pm.sh
-.local/bin/walker-*
-.local/bin/systemupdate.sh
-{{ end }}
-
-{{ if ne .chezmoi.os "darwin" }}
-# Ignore macOS specific configurations on non-macOS hosts
+{{ if eq .chezmoi.os "linux" }}
+# Ignore macOS specific configurations on Linux
 .Brewfile
 .amethyst.yml
 Library/**
@@ -23,7 +9,33 @@ Library/**
 .config/karabiner/**
 .config/linearmouse/**
 .config/raycast/**
+.config/fcitx5/conf/notifications.conf
+.config/fcitx5/conf/wayland.conf
+.config/ghostty/fonts/**
+.config/ghostty/keybinds/**
+.config/ghostty/platform/**
+.config/ghostty/presets/**
+.config/ghostty/themes/**
+.config/ghostty/tmux/**
+.config/ghostty/config
+.config/ghostty/executable_gconfig
 run_onchange_install-brew.sh.tmpl
+{{ end }}
+
+{{ if eq .chezmoi.os "darwin" }}
+# Ignore Linux specific configurations on macOS
+.config/hypr/**
+.config/waybar/**
+.config/walker/**
+.config/swaync/**
+.config/fcitx5/**
+.config/btop/**
+.config/omarchy/**
+.config/chrome-flags.conf
+.local/bin/pm.sh
+.local/bin/walker-*
+.local/bin/systemupdate.sh
+run_onchange_install-packages-linux.sh.tmpl
 {{ end }}
 
 # Ignore legacy files and directories
@@ -46,8 +58,3 @@ install.sh
 
 # Ignore vendored third-party source (managed via git submodules, deployed by run_once scripts)
 vendor/**
-
-# Ignore Linux packages installer on non-Linux hosts
-{{ if ne .chezmoi.os "linux" }}
-run_onchange_install-packages-linux.sh.tmpl
-{{ end }}

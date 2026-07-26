@@ -1,6 +1,6 @@
 [font]
-base-size = 14
+base-size = 11
 
 [bar]
-size-horizontal = 28  # bar 高度
+size-horizontal = 20  # bar 高度
 scale-with-font = true # 是否随字体缩放
