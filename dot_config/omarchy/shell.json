@@ -11,10 +11,10 @@
     "layout": {
       "left": [
         {
-          "id": "local.herdr"
+          "id": "icyleaf.herdr"
         },
         {
-          "id": "local.system"
+          "id": "icyleaf.resources"
         },
         {
           "id": "omarchy.indicators"
@@ -54,13 +54,7 @@
   },
   "plugins": [
     {
-      "id": "local.settings"
-    },
-    {
       "id": "local.orbit"
-    },
-    {
-      "id": "local.manga"
     }
   ]
 }
