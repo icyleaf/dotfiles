@@ -16,8 +16,8 @@ Panel {
   property var sessionRows: ([])
   property int disconnectCount: 0
 
-  readonly property int retentionWindowMs: settings && settings.retentionWindowMs !== undefined ? Number(settings.retentionWindowMs) : 6000
-  readonly property string promptDensity: settings && settings.promptDensity !== undefined ? String(settings.promptDensity) : "compact"
+  readonly property int retentionWindowMs: Number(setting("retentionWindowMs", 6000)) || 6000
+  readonly property string promptDensity: String(setting("promptDensity", "compact"))
   readonly property string herdrLaunchCmd: "omarchy-launch-terminal bash -c 'herdr'"
 
   readonly property int refreshIntervalMs: 2000
