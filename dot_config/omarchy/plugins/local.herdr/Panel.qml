@@ -13,6 +13,7 @@ Panel {
   property string aggregateStatus: "unknown"
   property bool connected: false
   property string lastError: ""
+  property var sessionRows: ([])
 
   readonly property int refreshIntervalMs: 2000
   readonly property color panelFg: bar ? bar.foreground : Color.foreground
@@ -41,6 +42,20 @@ Panel {
     return 0
   }
 
+  function statusText(status) {
+    if (status === "needs-input") return "needs input"
+    if (status === "running") return "running"
+    if (status === "idle") return "idle"
+    return "unknown"
+  }
+
+  function statusColor(status) {
+    if (status === "needs-input") return Color.urgent
+    if (status === "running") return Color.yellow
+    if (status === "idle") return Color.accent
+    return Qt.rgba(panelFg.r, panelFg.g, panelFg.b, 0.75)
+  }
+
   function normalizeStatus(value) {
     var raw = String(value || "").toLowerCase().replace(/[_\s]+/g, "-")
     if (raw === "needs-input" || raw === "blocked" || raw === "waiting-input") return "needs-input"
@@ -49,19 +64,138 @@ Panel {
     return "unknown"
   }
 
-  function updateAggregateFromAgents(agents) {
-    if (!agents || agents.length === 0) {
+  function firstString(values) {
+    for (var i = 0; i < values.length; i++) {
+      var value = values[i]
+      if (value === undefined || value === null) continue
+      var text = String(value).trim()
+      if (text.length > 0) return text
+    }
+    return ""
+  }
+
+  function normalizePrompt(text) {
+    var compact = String(text || "").replace(/\s+/g, " ").trim()
+    if (compact.length === 0) return "No prompt available."
+    if (compact.length <= 72) return compact
+    return compact.slice(0, 69) + "..."
+  }
+
+  function parseTimestampMs(value) {
+    if (value === undefined || value === null) return -1
+
+    if (typeof value === "number") {
+      if (!isFinite(value) || value <= 0) return -1
+      if (value >= 1000000000000) return Math.round(value)
+      if (value >= 1000000000) return Math.round(value * 1000)
+      return Math.round(value)
+    }
+
+    var parsed = Date.parse(String(value))
+    return isNaN(parsed) ? -1 : parsed
+  }
+
+  function formatDurationMs(durationMs) {
+    if (!isFinite(durationMs) || durationMs < 0) return "n/a"
+    if (durationMs < 60000) return Math.floor(durationMs / 1000) + "s"
+    if (durationMs < 3600000) return Math.floor(durationMs / 60000) + "m"
+    if (durationMs < 86400000) return Math.floor(durationMs / 3600000) + "h"
+    return Math.floor(durationMs / 86400000) + "d"
+  }
+
+  function formatElapsed(startMs) {
+    if (startMs < 0) return "n/a"
+    return formatDurationMs(Math.max(0, Date.now() - startMs))
+  }
+
+  function formatReadAgo(readMs) {
+    if (readMs < 0) return "n/a"
+    return formatDurationMs(Math.max(0, Date.now() - readMs)) + " ago"
+  }
+
+  function buildSessionRows(agents) {
+    var rows = []
+    for (var i = 0; i < agents.length; i++) {
+      var agent = agents[i] || {}
+      var meta = agent.metadata || {}
+      var status = normalizeStatus(agent.agent_status)
+
+      var promptRaw = firstString([
+        agent.prompt,
+        agent.last_prompt,
+        agent.current_prompt,
+        meta.prompt,
+        meta.last_prompt,
+        meta.current_prompt,
+        agent.terminal_title_stripped,
+        agent.terminal_title
+      ])
+
+      var startMs = parseTimestampMs(firstString([
+        agent.started_at,
+        agent.created_at,
+        meta.started_at,
+        meta.created_at
+      ]))
+
+      var readMs = parseTimestampMs(firstString([
+        agent.last_read_at,
+        agent.read_at,
+        meta.last_read_at,
+        meta.read_at,
+        agent.updated_at,
+        meta.updated_at
+      ]))
+
+      var recency = Number(agent.state_change_seq)
+      if (!isFinite(recency)) recency = Number(agent.revision)
+      if (!isFinite(recency)) recency = 0
+
+      var title = firstString([agent.agent, agent.terminal_title_stripped, agent.pane_id, "session"])
+
+      rows.push({
+        id: firstString([agent.agent, agent.pane_id, agent.terminal_id, "session-" + i]),
+        title: title,
+        status: status,
+        statusText: statusText(status),
+        statusColor: statusColor(status),
+        promptSnippet: normalizePrompt(promptRaw),
+        elapsedText: formatElapsed(startMs),
+        readAgoText: formatReadAgo(readMs),
+        recency: recency
+      })
+    }
+
+    rows.sort(function(a, b) {
+      var rankDelta = statusRank(b.status) - statusRank(a.status)
+      if (rankDelta !== 0) return rankDelta
+
+      var recencyDelta = b.recency - a.recency
+      if (recencyDelta !== 0) return recencyDelta
+
+      if (a.title < b.title) return -1
+      if (a.title > b.title) return 1
+      return 0
+    })
+
+    return rows
+  }
+
+  function updateAggregateFromRows(rows) {
+    if (!rows || rows.length === 0) {
       sessionCount = 0
       aggregateStatus = "idle"
+      sessionRows = []
       return
     }
 
-    sessionCount = agents.length
+    sessionRows = rows
+    sessionCount = rows.length
     var best = "idle"
     var bestRank = statusRank(best)
 
-    for (var i = 0; i < agents.length; i++) {
-      var current = normalizeStatus(agents[i].agent_status)
+    for (var i = 0; i < rows.length; i++) {
+      var current = rows[i].status
       var rank = statusRank(current)
       if (rank > bestRank) {
         best = current
@@ -83,14 +217,15 @@ Panel {
       var snapshot = envelope.result.snapshot
       if (!Array.isArray(snapshot.agents)) throw new Error("missing agents array")
 
-      var agents = snapshot.agents
-      updateAggregateFromAgents(agents)
+      var rows = buildSessionRows(snapshot.agents)
+      updateAggregateFromRows(rows)
       connected = true
       lastError = ""
     } catch (error) {
       connected = false
       aggregateStatus = "unknown"
       sessionCount = 0
+      sessionRows = []
       lastError = error && error.message ? String(error.message) : "snapshot parse failed"
     }
   }
@@ -167,7 +302,7 @@ Panel {
 
         PanelHero {
           title: "Herdr Sessions"
-          subtitle: root.sessionCount + " sessions - " + root.aggregateStatus
+          subtitle: root.sessionCount + " sessions - " + root.statusText(root.aggregateStatus)
           foreground: root.panelFg
           fontFamily: root.panelFont
           glyph: "H"
@@ -198,6 +333,84 @@ Panel {
           color: Qt.rgba(root.panelFg.r, root.panelFg.g, root.panelFg.b, 0.84)
           font.family: root.panelFont
           font.pixelSize: Style.font.caption
+        }
+
+        Column {
+          width: parent.width
+          spacing: Style.spacing.sm
+
+          Repeater {
+            model: root.sessionRows
+
+            delegate: Rectangle {
+              required property var modelData
+
+              width: parent ? parent.width : 0
+              radius: Style.cornerRadius
+              color: Qt.rgba(root.panelFg.r, root.panelFg.g, root.panelFg.b, 0.06)
+              border.width: 1
+              border.color: Qt.rgba(modelData.statusColor.r, modelData.statusColor.g, modelData.statusColor.b, 0.38)
+              implicitHeight: rowColumn.implicitHeight + Style.spacing.sm * 2
+
+              Column {
+                id: rowColumn
+                anchors.fill: parent
+                anchors.margins: Style.spacing.sm
+                spacing: Style.spacing.xs
+
+                Row {
+                  width: parent.width
+                  spacing: Style.spacing.rowGap
+
+                  Text {
+                    text: modelData.title
+                    color: root.panelFg
+                    font.family: root.panelFont
+                    font.pixelSize: Style.font.body
+                    font.bold: true
+                    elide: Text.ElideRight
+                    width: Math.max(0, parent.width - statusLabel.implicitWidth - Style.spacing.rowGap)
+                  }
+
+                  Text {
+                    id: statusLabel
+                    text: modelData.statusText
+                    color: modelData.statusColor
+                    font.family: root.panelFont
+                    font.pixelSize: Style.font.caption
+                    font.bold: true
+                    horizontalAlignment: Text.AlignRight
+                  }
+                }
+
+                Text {
+                  width: parent.width
+                  text: modelData.promptSnippet
+                  color: Qt.rgba(root.panelFg.r, root.panelFg.g, root.panelFg.b, 0.9)
+                  font.family: root.panelFont
+                  font.pixelSize: Style.font.caption
+                  wrapMode: Text.Wrap
+                }
+
+                Text {
+                  width: parent.width
+                  text: "elapsed " + modelData.elapsedText + " | read " + modelData.readAgoText
+                  color: Qt.rgba(root.panelFg.r, root.panelFg.g, root.panelFg.b, 0.7)
+                  font.family: root.panelFont
+                  font.pixelSize: Style.font.small
+                }
+              }
+            }
+          }
+
+          Text {
+            visible: root.sessionRows.length === 0
+            width: parent.width
+            text: connected ? "No active agent sessions." : "No session data available while disconnected."
+            color: Qt.rgba(root.panelFg.r, root.panelFg.g, root.panelFg.b, 0.72)
+            font.family: root.panelFont
+            font.pixelSize: Style.font.caption
+          }
         }
       }
     }
