@@ -15,8 +15,10 @@ Panel {
   property string lastError: ""
   property var sessionRows: ([])
   property int disconnectCount: 0
-  readonly property int retentionWindowMs: 6000
-  readonly property string promptDensity: String(setting("promptDensity", "compact"))
+
+  readonly property int retentionWindowMs: settings && settings.retentionWindowMs !== undefined ? Number(settings.retentionWindowMs) : 6000
+  readonly property string promptDensity: settings && settings.promptDensity !== undefined ? String(settings.promptDensity) : "compact"
+  readonly property string herdrLaunchCmd: "omarchy-launch-terminal bash -c 'herdr'"
 
   readonly property int refreshIntervalMs: 2000
   readonly property color panelFg: bar ? bar.foreground : Color.foreground
@@ -69,15 +71,16 @@ Panel {
     return ""
   }
 
+  function truncateText(text, limit) {
+    if (text.length <= limit) return text
+    return text.slice(0, limit - 3) + "..."
+  }
+
   function normalizePrompt(text) {
     var compact = String(text || "").replace(/\s+/g, " ").trim()
     if (compact.length === 0) return "No prompt available."
-    if (promptDensity === "expanded") {
-      if (compact.length <= 144) return compact
-      return compact.slice(0, 141) + "..."
-    }
-    if (compact.length <= 72) return compact
-    return compact.slice(0, 69) + "..."
+    var limit = promptDensity === "expanded" ? 144 : 72
+    return truncateText(compact, limit)
   }
 
   function parseTimestampMs(value) {
@@ -397,7 +400,7 @@ Panel {
             anchors.verticalCenter: parent.verticalCenter
             onClicked: {
               if (root.bar) {
-                root.bar.run("omarchy-launch-terminal bash -c 'herdr'")
+                root.bar.run(root.herdrLaunchCmd)
               }
             }
           }

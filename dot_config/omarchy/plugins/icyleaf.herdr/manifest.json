@@ -17,14 +17,28 @@
     "category": "Productivity",
     "allowMultiple": false,
     "defaults": {
-      "promptDensity": "compact"
+      "promptDensity": "compact",
+      "retentionWindowMs": 6000
     },
     "schema": [
       {
         "key": "promptDensity",
-        "type": "string",
+        "type": "enum",
         "label": "Prompt snippet density mode",
+        "options": [
+          "compact",
+          "expanded"
+        ],
         "defaultValue": "compact"
+      },
+      {
+        "key": "retentionWindowMs",
+        "type": "integer",
+        "label": "Failed snapshot retention window (ms)",
+        "min": 1000,
+        "max": 30000,
+        "step": 500,
+        "defaultValue": 6000
       }
     ]
   }
