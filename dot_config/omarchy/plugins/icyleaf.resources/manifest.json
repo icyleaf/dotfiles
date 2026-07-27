@@ -4,11 +4,52 @@
   "name": "System Resources",
   "version": "1.0.0",
   "author": "icyleaf",
-  "description": "CPU and memory usage status bar widget",
+  "description": "CPU and memory usage status bar widget and dropdown telemetry panel.",
   "kinds": [
     "bar-widget"
   ],
   "entryPoints": {
-    "barWidget": "Widget.qml"
+    "barWidget": "Panel.qml"
+  },
+  "barWidget": {
+    "displayName": "System Resources",
+    "description": "System telemetry panel featuring CPU, RAM, CPU Temp/Freq/Model, Swap, Disk, GPU, and Uptime metrics.",
+    "category": "System",
+    "allowMultiple": false,
+    "defaults": {
+      "refreshSeconds": 2,
+      "diskPath": "/",
+      "showGpu": true,
+      "displayMode": "utilization"
+    },
+    "schema": [
+      {
+        "key": "refreshSeconds",
+        "type": "integer",
+        "label": "Refresh seconds",
+        "min": 1,
+        "max": 60,
+        "step": 1,
+        "defaultValue": 2
+      },
+      {
+        "key": "diskPath",
+        "type": "string",
+        "label": "Disk path",
+        "defaultValue": "/"
+      },
+      {
+        "key": "showGpu",
+        "type": "boolean",
+        "label": "Show GPU row",
+        "defaultValue": true
+      },
+      {
+        "key": "displayMode",
+        "type": "string",
+        "label": "Display mode (utilization/temperature)",
+        "defaultValue": "utilization"
+      }
+    ]
   }
 }

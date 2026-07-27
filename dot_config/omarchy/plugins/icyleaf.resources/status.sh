@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+# This script collects system status information including host, uptime, CPU, memory, load average, disk usage, GPU status, and CPU details.
+# Copy from https://github.com/AyushKr2003/omarchy-dotfiles
+# Copyright (c) Ayush Kumar
+
 set -uo pipefail
 
 disk_path="${1:-/}"
