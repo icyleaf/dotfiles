@@ -3,6 +3,14 @@ onboarding = false
 [keys]
 prefix = "ctrl+a"
 
+[[keys.command]]
+key = "prefix+ctrl+g"
+type = "popup"
+command = "lazygit"
+description = "run lazygit"
+width = "80%"
+height = "80%"
+
 [theme]
 name = "nord"
 auto_switch = false
