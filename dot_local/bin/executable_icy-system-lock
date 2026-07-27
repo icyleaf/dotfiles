@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
 #
-# icy-system-lock: middleware wrapper around omarchy-system-lock
+# icy-system-lock: middleware wrapper around hyprlock
 #
 # This is the Omarchy-agnostic entry point used by Hyprland/Waybar configs.
 # Replace the implementation below to remove the Omarchy dependency.
 #
 # To replace: implement the desired behaviour directly here and remove
-# the delegation to omarchy-system-lock.
+# the delegation to hyprlock.
 
-if command -v "omarchy-system-lock" >/dev/null 2>&1; then
-  exec "omarchy-system-lock" "$@"
+if command -v "hyprlock" >/dev/null 2>&1; then
+  exec "hyprlock" "$@"
 else
-  echo "icy-system-lock: 'omarchy-system-lock' not found. Install Omarchy or implement a replacement." >&2
+  echo "icy-system-lock: 'hyprlock' not found. Install Omarchy or implement a replacement." >&2
   exit 127
 fi
