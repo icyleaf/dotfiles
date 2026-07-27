@@ -148,6 +148,7 @@ Panel {
       rows.push({
         id: firstString([agent.agent, agent.pane_id, agent.terminal_id, "session-" + i]),
         title: title,
+        agentName: firstString([agent.agent]),
         status: status,
         statusText: statusText(status),
         statusColor: statusColor(status),
@@ -244,6 +245,33 @@ Panel {
       waitForEnd: true
       onStreamFinished: root.applySnapshotPayload(text)
     }
+  }
+
+  Process {
+    id: jumpProc
+    command: []
+    stdout: StdioCollector {
+      waitForEnd: true
+    }
+  }
+
+  function jumpToAgent(agentName) {
+    if (!agentName) return
+    jumpProc.command = [
+      "bash", "-c",
+      "agent=\"$1\"\n" +
+      "address=$(hyprctl clients -j 2>/dev/null | jq -r --arg p \"$agent\" '[.[] | select((.class // \"\") + (.title // \"\") | test($p; \"i\"))] | first.address // empty')\n" +
+      "if [[ -n \"$address\" ]]; then\n" +
+      "  hyprctl dispatch focuswindow \"address:$address\" >/dev/null\n" +
+      "  exit 0\n" +
+      "else\n" +
+      "  omarchy-notification-send -u critical -g \"⚠️\" \"Jump Failed\" \"No active window found for agent '$agent'\"\n" +
+      "  exit 1\n" +
+      "fi",
+      "--",
+      agentName
+    ]
+    jumpProc.running = true
   }
 
   Timer {
@@ -343,54 +371,71 @@ Panel {
               color: Qt.rgba(root.panelFg.r, root.panelFg.g, root.panelFg.b, 0.06)
               border.width: 1
               border.color: Qt.rgba(modelData.statusColor.r, modelData.statusColor.g, modelData.statusColor.b, 0.38)
-              implicitHeight: rowColumn.implicitHeight + Style.spacing.sm * 2
+              implicitHeight: rowContentRow.implicitHeight + Style.spacing.sm * 2
 
-              Column {
-                id: rowColumn
+              Row {
+                id: rowContentRow
                 anchors.fill: parent
                 anchors.margins: Style.spacing.sm
-                spacing: Style.spacing.xs
+                spacing: Style.spacing.sm
 
-                Row {
-                  width: parent.width
-                  spacing: Style.spacing.rowGap
+                Column {
+                  id: rowColumn
+                  width: parent.width - (jumpButton.visible ? jumpButton.width + parent.spacing : 0)
+                  spacing: Style.spacing.xs
 
-                  Text {
-                    text: modelData.title
-                    color: root.panelFg
-                    font.family: root.panelFont
-                    font.pixelSize: Style.font.body
-                    font.bold: true
-                    elide: Text.ElideRight
-                    width: Math.max(0, parent.width - statusLabel.implicitWidth - Style.spacing.rowGap)
+                  Row {
+                    width: parent.width
+                    spacing: Style.spacing.rowGap
+
+                    Text {
+                      text: modelData.title
+                      color: root.panelFg
+                      font.family: root.panelFont
+                      font.pixelSize: Style.font.body
+                      font.bold: true
+                      elide: Text.ElideRight
+                      width: Math.max(0, parent.width - statusLabel.implicitWidth - Style.spacing.rowGap)
+                    }
+
+                    Text {
+                      id: statusLabel
+                      text: modelData.statusText
+                      color: modelData.statusColor
+                      font.family: root.panelFont
+                      font.pixelSize: Style.font.caption
+                      font.bold: true
+                      horizontalAlignment: Text.AlignRight
+                    }
                   }
 
                   Text {
-                    id: statusLabel
-                    text: modelData.statusText
-                    color: modelData.statusColor
+                    width: parent.width
+                    text: modelData.promptSnippet
+                    color: Qt.rgba(root.panelFg.r, root.panelFg.g, root.panelFg.b, 0.9)
                     font.family: root.panelFont
                     font.pixelSize: Style.font.caption
-                    font.bold: true
-                    horizontalAlignment: Text.AlignRight
+                    wrapMode: Text.Wrap
+                  }
+
+                  Text {
+                    width: parent.width
+                    text: "elapsed " + modelData.elapsedText + " | read " + modelData.readAgoText
+                    color: Qt.rgba(root.panelFg.r, root.panelFg.g, root.panelFg.b, 0.7)
+                    font.family: root.panelFont
+                    font.pixelSize: Style.font.small
                   }
                 }
 
-                Text {
-                  width: parent.width
-                  text: modelData.promptSnippet
-                  color: Qt.rgba(root.panelFg.r, root.panelFg.g, root.panelFg.b, 0.9)
-                  font.family: root.panelFont
-                  font.pixelSize: Style.font.caption
-                  wrapMode: Text.Wrap
-                }
-
-                Text {
-                  width: parent.width
-                  text: "elapsed " + modelData.elapsedText + " | read " + modelData.readAgoText
-                  color: Qt.rgba(root.panelFg.r, root.panelFg.g, root.panelFg.b, 0.7)
-                  font.family: root.panelFont
-                  font.pixelSize: Style.font.small
+                PanelActionButton {
+                  id: jumpButton
+                  visible: modelData.agentName !== ""
+                  iconText: "󰌋"
+                  tooltipText: "Jump to agent interaction"
+                  foreground: root.panelFg
+                  fontFamily: root.panelFont
+                  anchors.verticalCenter: parent.verticalCenter
+                  onClicked: root.jumpToAgent(modelData.agentName)
                 }
               }
             }
