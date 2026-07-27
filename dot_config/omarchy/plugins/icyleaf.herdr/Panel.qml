@@ -88,14 +88,16 @@ Panel {
   function parseTimestampMs(value) {
     if (value === undefined || value === null) return -1
 
-    if (typeof value === "number") {
-      if (!isFinite(value) || value <= 0) return -1
-      if (value >= 1000000000000) return Math.round(value)
-      if (value >= 1000000000) return Math.round(value * 1000)
-      return Math.round(value)
+    var strVal = String(value).trim()
+    var num = Number(strVal)
+    if (!isNaN(num) && strVal.length > 0 && /^\d+$/.test(strVal)) {
+      if (!isFinite(num) || num <= 0) return -1
+      if (num >= 1000000000000) return Math.round(num)
+      if (num >= 1000000000) return Math.round(num * 1000)
+      return Math.round(num)
     }
 
-    var parsed = Date.parse(String(value))
+    var parsed = Date.parse(strVal)
     return isNaN(parsed) ? -1 : parsed
   }
 
@@ -121,6 +123,8 @@ Panel {
     var rows = []
     for (var i = 0; i < agents.length; i++) {
       var agent = agents[i] || {}
+      var tokens = agent.tokens || {}
+      var labels = agent.state_labels || {}
       var meta = agent.metadata || {}
       var status = normalizeStatus(agent.agent_status)
 
@@ -128,6 +132,12 @@ Panel {
         agent.prompt,
         agent.last_prompt,
         agent.current_prompt,
+        tokens.prompt,
+        tokens.last_prompt,
+        tokens.current_prompt,
+        labels.prompt,
+        labels.last_prompt,
+        labels.current_prompt,
         meta.prompt,
         meta.last_prompt,
         meta.current_prompt,
@@ -138,17 +148,35 @@ Panel {
       var startMs = parseTimestampMs(firstString([
         agent.started_at,
         agent.created_at,
+        agent.started_unix_ms,
+        tokens.started_at,
+        tokens.created_at,
+        tokens.started_unix_ms,
+        labels.started_at,
+        labels.created_at,
+        labels.started_unix_ms,
         meta.started_at,
-        meta.created_at
+        meta.created_at,
+        meta.started_unix_ms
       ]))
 
       var readMs = parseTimestampMs(firstString([
         agent.last_read_at,
         agent.read_at,
+        tokens.last_read_at,
+        tokens.read_at,
+        labels.last_read_at,
+        labels.read_at,
         meta.last_read_at,
         meta.read_at,
         agent.updated_at,
-        meta.updated_at
+        agent.updated_unix_ms,
+        tokens.updated_at,
+        tokens.updated_unix_ms,
+        labels.updated_at,
+        labels.updated_unix_ms,
+        meta.updated_at,
+        meta.updated_unix_ms
       ]))
 
       var recency = Number(agent.state_change_seq)
