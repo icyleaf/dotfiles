@@ -304,10 +304,15 @@ Panel {
 
         PanelHero {
           title: "Herdr Sessions"
-          subtitle: root.sessionCount + " sessions - " + root.statusText(root.aggregateStatus)
+          meta: root.sessionCount + " sessions - " + root.statusText(root.aggregateStatus)
           foreground: root.panelFg
           fontFamily: root.panelFont
-          glyph: "H"
+          iconComponent: Text {
+            text: "🐚"
+            font.family: root.panelFont
+            font.pixelSize: Style.font.display
+            color: root.panelFg
+          }
         }
 
         PanelSeparator { foreground: root.panelFg }
