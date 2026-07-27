@@ -15,17 +15,6 @@
     "displayName": "Herdr Session Overview",
     "description": "Status widget with expandable overview panel shell for Herdr sessions.",
     "category": "Productivity",
-    "allowMultiple": false,
-    "defaults": {
-      "badgeText": "0"
-    },
-    "schema": [
-      {
-        "key": "badgeText",
-        "type": "string",
-        "label": "Badge text",
-        "defaultValue": "0"
-      }
-    ]
+    "allowMultiple": false
   }
 }

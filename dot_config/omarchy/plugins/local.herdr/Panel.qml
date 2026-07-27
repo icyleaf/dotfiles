@@ -9,9 +9,95 @@ Panel {
   moduleName: "local.herdr"
   ipcTarget: "local.herdr"
 
-  readonly property string badgeText: String(setting("badgeText", "0") || "0")
+  property int sessionCount: 0
+  property string aggregateStatus: "unknown"
+  property bool connected: false
+  property string lastError: ""
+
+  readonly property int refreshIntervalMs: 2000
   readonly property color panelFg: bar ? bar.foreground : Color.foreground
   readonly property string panelFont: bar ? bar.fontFamily : Style.font.family
+  readonly property string widgetText: "HRD " + sessionCount
+  readonly property color widgetColor: {
+    if (!connected) return Qt.rgba(panelFg.r, panelFg.g, panelFg.b, 0.62)
+    if (aggregateStatus === "needs-input") return Color.urgent
+    if (aggregateStatus === "running") return Color.yellow
+    if (aggregateStatus === "idle") return Color.accent
+    return panelFg
+  }
+  readonly property string widgetTooltip: {
+    var lines = []
+    lines.push("Status: " + aggregateStatus)
+    lines.push("Sessions: " + sessionCount)
+    lines.push("Connected: " + (connected ? "yes" : "no"))
+    if (lastError.length > 0) lines.push("Error: " + lastError)
+    return lines.join("\n")
+  }
+
+  function statusRank(status) {
+    if (status === "needs-input") return 3
+    if (status === "running") return 2
+    if (status === "idle") return 1
+    return 0
+  }
+
+  function normalizeStatus(value) {
+    var raw = String(value || "").toLowerCase().replace(/[_\s]+/g, "-")
+    if (raw === "needs-input" || raw === "blocked" || raw === "waiting-input") return "needs-input"
+    if (raw === "running" || raw === "busy") return "running"
+    if (raw === "idle") return "idle"
+    return "unknown"
+  }
+
+  function updateAggregateFromAgents(agents) {
+    if (!agents || agents.length === 0) {
+      sessionCount = 0
+      aggregateStatus = "idle"
+      return
+    }
+
+    sessionCount = agents.length
+    var best = "idle"
+    var bestRank = statusRank(best)
+
+    for (var i = 0; i < agents.length; i++) {
+      var current = normalizeStatus(agents[i].agent_status)
+      var rank = statusRank(current)
+      if (rank > bestRank) {
+        best = current
+        bestRank = rank
+      }
+    }
+
+    aggregateStatus = best
+  }
+
+  function applySnapshotPayload(raw) {
+    try {
+      var payload = String(raw || "").trim()
+      if (payload.length === 0 || payload.charAt(0) !== "{") throw new Error("non-json payload")
+
+      var envelope = JSON.parse(payload)
+      if (!envelope || !envelope.result || !envelope.result.snapshot) throw new Error("missing snapshot object")
+
+      var snapshot = envelope.result.snapshot
+      if (!Array.isArray(snapshot.agents)) throw new Error("missing agents array")
+
+      var agents = snapshot.agents
+      updateAggregateFromAgents(agents)
+      connected = true
+      lastError = ""
+    } catch (error) {
+      connected = false
+      aggregateStatus = "unknown"
+      sessionCount = 0
+      lastError = error && error.message ? String(error.message) : "snapshot parse failed"
+    }
+  }
+
+  function refreshSnapshot() {
+    if (!snapshotProc.running) snapshotProc.running = true
+  }
 
   IpcHandler {
     target: root.ipcTarget
@@ -21,6 +107,24 @@ Panel {
     function show() { root.openFromHotkey() }
     function hide() { root.close() }
     function toggle() { root.toggle() }
+    function refresh() { root.refreshSnapshot() }
+  }
+
+  Process {
+    id: snapshotProc
+    command: ["herdr", "api", "snapshot"]
+    stdout: StdioCollector {
+      waitForEnd: true
+      onStreamFinished: root.applySnapshotPayload(text)
+    }
+  }
+
+  Timer {
+    interval: root.refreshIntervalMs
+    running: true
+    repeat: true
+    triggeredOnStart: true
+    onTriggered: root.refreshSnapshot()
   }
 
   implicitWidth: button.implicitWidth
@@ -30,7 +134,9 @@ Panel {
     id: button
     anchors.fill: parent
     bar: root.bar
-    text: "HRD " + root.badgeText
+    text: root.widgetText
+    foreground: root.widgetColor
+    tooltipText: root.widgetTooltip
     horizontalMargin: 7
     verticalPadding: 7
     onPressed: function(mouseButton) {
@@ -61,7 +167,7 @@ Panel {
 
         PanelHero {
           title: "Herdr Sessions"
-          subtitle: "Overview shell ready"
+          subtitle: root.sessionCount + " sessions - " + root.aggregateStatus
           foreground: root.panelFg
           fontFamily: root.panelFont
           glyph: "H"
@@ -86,7 +192,9 @@ Panel {
         Text {
           width: parent.width
           wrapMode: Text.Wrap
-          text: "Herdr overview shell is active. Live session data will appear in upcoming tickets."
+          text: connected
+            ? "Snapshot stream active via herdr api snapshot."
+            : "Snapshot disconnected. Open Herdr to re-establish updates."
           color: Qt.rgba(root.panelFg.r, root.panelFg.g, root.panelFg.b, 0.84)
           font.family: root.panelFont
           font.pixelSize: Style.font.caption
