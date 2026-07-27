@@ -29,7 +29,7 @@ Panel {
   readonly property color widgetColor: {
     if (!connected) return Qt.rgba(panelFg.r, panelFg.g, panelFg.b, 0.62)
     if (aggregateStatus === "needs-input") return Color.urgent
-    if (aggregateStatus === "running") return Color.yellow
+    if (aggregateStatus === "running") return "#e5c07b"
     if (aggregateStatus === "idle") return Color.accent
     return panelFg
   }
@@ -50,7 +50,7 @@ Panel {
 
   function statusColor(status) {
     if (status === "needs-input") return Color.urgent
-    if (status === "running") return Color.yellow
+    if (status === "running") return "#e5c07b"
     if (status === "idle") return Color.accent
     return Qt.rgba(panelFg.r, panelFg.g, panelFg.b, 0.75)
   }
