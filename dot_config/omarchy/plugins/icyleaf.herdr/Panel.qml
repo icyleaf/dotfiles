@@ -503,7 +503,7 @@ Panel {
                     text: "elapsed " + modelData.elapsedText + " | read " + modelData.readAgoText
                     color: Qt.rgba(root.panelFg.r, root.panelFg.g, root.panelFg.b, 0.7)
                     font.family: root.panelFont
-                    font.pixelSize: Style.font.small
+                    font.pixelSize: Style.font.caption
                   }
                 }
 

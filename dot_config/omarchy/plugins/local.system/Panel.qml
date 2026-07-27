@@ -187,8 +187,9 @@ Panel {
   }
 
   function statusColorFor(pct) {
-    if (pct >= 85) return Color.red
-    if (pct >= 70) return Color.yellow
+    if (pct === undefined || pct === null || pct <= 0) return Color.accent
+    if (pct >= 85) return Color.urgent
+    if (pct >= 70) return "#e5c07b"
     return Color.accent
   }
 
