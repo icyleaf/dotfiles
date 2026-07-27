@@ -10,7 +10,7 @@ config-file = ?"~/.local/state/omarchy/current/theme/ghostty.conf"
 
 theme = TokyoNight
 
-font-family = "CaskaydiaCove Nerd Font"
+font-family = "JetBrainsMono Nerd Font"
 font-size = 11
 font-thicken = false
 font-feature = +calt,+liga,+ss01
