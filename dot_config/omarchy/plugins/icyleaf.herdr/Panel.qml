@@ -357,15 +357,19 @@ Panel {
     return lines.join("\n")
   }
 
-  BarIconButton {
+  WidgetButton {
     id: button
     anchors.fill: parent
     bar: root.bar
     text: root.icon()
     foreground: root.widgetColor
+    fontSize: Style.font.caption
+    horizontalMargin: 6
+    verticalPadding: 6
     tooltipText: root.tooltip()
     onPressed: function(b) { root.toggle() }
   }
+
 
   KeyboardPanel {
     id: panel
