@@ -15,6 +15,17 @@
     "displayName": "Herdr Session Overview",
     "description": "Status widget with expandable overview panel shell for Herdr sessions.",
     "category": "Productivity",
-    "allowMultiple": false
+    "allowMultiple": false,
+    "defaults": {
+      "promptDensity": "compact"
+    },
+    "schema": [
+      {
+        "key": "promptDensity",
+        "type": "string",
+        "label": "Prompt snippet density mode",
+        "defaultValue": "compact"
+      }
+    ]
   }
 }
