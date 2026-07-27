@@ -14,6 +14,8 @@ Panel {
   property bool connected: false
   property string lastError: ""
   property var sessionRows: ([])
+  property int disconnectCount: 0
+  readonly property int retentionWindowMs: 6000
 
   readonly property int refreshIntervalMs: 2000
   readonly property color panelFg: bar ? bar.foreground : Color.foreground
@@ -214,12 +216,16 @@ Panel {
       updateAggregateFromRows(rows)
       connected = true
       lastError = ""
+      disconnectCount = 0
     } catch (error) {
       connected = false
-      aggregateStatus = "unknown"
-      sessionCount = 0
-      sessionRows = []
       lastError = error && error.message ? String(error.message) : "snapshot parse failed"
+      disconnectCount++
+      if (disconnectCount * refreshIntervalMs >= retentionWindowMs) {
+        aggregateStatus = "unknown"
+        sessionCount = 0
+        sessionRows = []
+      }
     }
   }
 
@@ -359,15 +365,37 @@ Panel {
 
         PanelSeparator { foreground: root.panelFg }
 
-        Text {
+        Row {
           width: parent.width
-          wrapMode: Text.Wrap
-          text: connected
-            ? "Snapshot stream active via herdr api snapshot."
-            : "Snapshot disconnected. Open Herdr to re-establish updates."
-          color: Qt.rgba(root.panelFg.r, root.panelFg.g, root.panelFg.b, 0.84)
-          font.family: root.panelFont
-          font.pixelSize: Style.font.caption
+          spacing: Style.spacing.rowGap
+
+          Text {
+            width: parent.width - (openHerdrButton.visible ? openHerdrButton.width + parent.spacing : 0)
+            wrapMode: Text.Wrap
+            text: connected
+              ? "Snapshot stream active via herdr api snapshot."
+              : "Snapshot disconnected. Open Herdr to re-establish updates."
+            color: Qt.rgba(root.panelFg.r, root.panelFg.g, root.panelFg.b, 0.84)
+            font.family: root.panelFont
+            font.pixelSize: Style.font.caption
+            anchors.verticalCenter: parent.verticalCenter
+          }
+
+          Button {
+            id: openHerdrButton
+            visible: !connected
+            text: "Open Herdr"
+            bordered: true
+            focusable: true
+            foreground: root.panelFg
+            fontFamily: root.panelFont
+            anchors.verticalCenter: parent.verticalCenter
+            onClicked: {
+              if (root.bar) {
+                root.bar.run("omarchy-launch-terminal bash -c 'herdr'")
+              }
+            }
+          }
         }
 
         Column {
