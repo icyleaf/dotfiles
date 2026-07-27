@@ -58,8 +58,8 @@ Panel {
   function normalizeStatus(value) {
     var raw = String(value || "").toLowerCase().replace(/[_\s]+/g, "-")
     if (raw === "needs-input" || raw === "blocked" || raw === "waiting-input") return "needs-input"
-    if (raw === "running" || raw === "busy") return "running"
-    if (raw === "idle") return "idle"
+    if (raw === "running" || raw === "busy" || raw === "working") return "running"
+    if (raw === "idle" || raw === "done") return "idle"
     return "unknown"
   }
 
