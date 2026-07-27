@@ -256,11 +256,25 @@ Panel {
   }
 
   function jumpToAgent(agentName) {
-    if (!agentName) return
+    if (!agentName) {
+      jumpProc.command = [
+        "omarchy-notification-send",
+        "-u", "critical",
+        "-g", "⚠️",
+        "Jump Failed",
+        "No agent name provided for this session."
+      ]
+      jumpProc.running = true
+      return
+    }
     jumpProc.command = [
       "bash", "-c",
+      "if ! command -v hyprctl &>/dev/null; then\n" +
+      "  omarchy-notification-send -u critical -g \"⚠️\" \"Jump Failed\" \"Window jumping is only supported under Hyprland.\"\n" +
+      "  exit 1\n" +
+      "fi\n" +
       "agent=\"$1\"\n" +
-      "address=$(hyprctl clients -j 2>/dev/null | jq -r --arg p \"$agent\" '[.[] | select((.class // \"\") + (.title // \"\") | test($p; \"i\"))] | first.address // empty')\n" +
+      "address=$(hyprctl clients -j 2>/dev/null | jq -r --arg p \"$agent\" '[.[] | select(((.class // \"\") | ascii_downcase | contains($p | ascii_downcase)) or ((.title // \"\") | ascii_downcase | contains($p | ascii_downcase)))] | first.address // empty')\n" +
       "if [[ -n \"$address\" ]]; then\n" +
       "  hyprctl dispatch focuswindow \"address:$address\" >/dev/null\n" +
       "  exit 0\n" +
@@ -429,7 +443,7 @@ Panel {
 
                 PanelActionButton {
                   id: jumpButton
-                  visible: modelData.agentName !== ""
+                  visible: !!modelData.agentName && modelData.agentName !== ""
                   iconText: "󰌋"
                   tooltipText: "Jump to agent interaction"
                   foreground: root.panelFg
