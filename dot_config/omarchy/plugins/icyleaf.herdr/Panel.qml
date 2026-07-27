@@ -16,9 +16,11 @@ Panel {
   property var sessionRows: ([])
   property int disconnectCount: 0
 
-  readonly property int retentionWindowMs: Number(setting("retentionWindowMs", 6000)) || 6000
+  readonly property int retentionWindowMs: Number(setting("retentionWindowMs", 6000))
   readonly property string promptDensity: String(setting("promptDensity", "compact"))
   readonly property string herdrLaunchCmd: "omarchy-launch-terminal bash -c 'herdr'"
+  readonly property int limitCompact: 72
+  readonly property int limitExpanded: 144
 
   readonly property int refreshIntervalMs: 2000
   readonly property color panelFg: bar ? bar.foreground : Color.foreground
@@ -79,7 +81,7 @@ Panel {
   function normalizePrompt(text) {
     var compact = String(text || "").replace(/\s+/g, " ").trim()
     if (compact.length === 0) return "No prompt available."
-    var limit = promptDensity === "expanded" ? 144 : 72
+    var limit = promptDensity === "expanded" ? limitExpanded : limitCompact
     return truncateText(compact, limit)
   }
 
