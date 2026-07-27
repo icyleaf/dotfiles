@@ -1,8 +1,8 @@
 {
   "version": 1,
   "idle": {
-    "screensaver": 10,
-    "lock": 20
+    "screensaver": 30000000000000000,
+    "lock": 150
   },
   "bar": {
     "position": "top",
@@ -11,13 +11,7 @@
     "layout": {
       "left": [
         {
-          "id": "icyleaf.resources"
-        },
-        {
-          "id": "omarchy.weather"
-        },
-        {
-          "id": "omarchy.system-update"
+          "id": "local.system"
         },
         {
           "id": "omarchy.indicators"
@@ -46,7 +40,8 @@
           "id": "omarchy.power"
         },
         {
-          "id": "omarchy.clock",
+          "id": "local.clock",
+          "showSettingsGear": false,
           "format": "yy-MM-d HH:mm",
           "formatAlt": "d MMMM 'W'ww yyyy",
           "verticalFormat": "HH\n—\nmm"
@@ -54,5 +49,15 @@
       ]
     }
   },
-  "plugins": []
+  "plugins": [
+    {
+      "id": "local.settings"
+    },
+    {
+      "id": "local.orbit"
+    },
+    {
+      "id": "local.manga"
+    }
+  ]
 }

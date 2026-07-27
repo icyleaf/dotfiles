@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "id": "local.clock",
+  "name": "Local Clock",
+  "version": "1.0.0",
+  "author": "AyushKr2003",
+  "description": "Clock bar widget with a monthly calendar popup.",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "Panel.qml"
+  },
+  "barWidget": {
+    "displayName": "Local Clock",
+    "description": "Clock label with a monthly calendar popup.",
+    "category": "Time",
+    "allowMultiple": false,
+    "defaults": {
+      "format": "dddd HH:mm",
+      "formatAlt": "dd MMMM 'W'ww yyyy",
+      "verticalFormat": "HH\n—\nmm",
+      "showSettingsGear": true,
+      "firstDayOfWeek": "sunday",
+      "settingsCommand": "omarchy-shell shell summon local.settings"
+    },
+    "schema": [
+      {
+        "key": "format",
+        "type": "string",
+        "label": "Clock format",
+        "defaultValue": "dddd HH:mm"
+      },
+      {
+        "key": "formatAlt",
+        "type": "string",
+        "label": "Alternate format",
+        "defaultValue": "dd MMMM 'W'ww yyyy"
+      },
+      {
+        "key": "verticalFormat",
+        "type": "string",
+        "label": "Vertical format",
+        "defaultValue": "HH\n—\nmm"
+      },
+      {
+        "key": "showSettingsGear",
+        "type": "boolean",
+        "label": "Show settings gear",
+        "description": "Reveal a small settings button to the left of the clock on hover.",
+        "defaultValue": true
+      },
+      {
+        "key": "firstDayOfWeek",
+        "type": "enum",
+        "label": "First day of week",
+        "options": [
+          "sunday",
+          "monday"
+        ],
+        "defaultValue": "sunday"
+      },
+      {
+        "key": "settingsCommand",
+        "type": "string",
+        "label": "Settings command",
+        "defaultValue": "omarchy-shell shell summon local.settings"
+      }
+    ]
+  }
+}
