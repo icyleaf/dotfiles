@@ -11,6 +11,9 @@
     "layout": {
       "left": [
         {
+          "id": "local.herdr"
+        },
+        {
           "id": "local.system"
         },
         {
