@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+#
+# Set up LazyVim Starter symlinks.
+# Links the unmodified starter template files from ~/.local/share/lazyvim-starter
+# into ~/.config/nvim so we don't have to duplicate them in our repository.
+
+set -eu
+
+STARTER_DIR="${HOME}/.local/share/lazyvim-starter"
+NVIM_DIR="${HOME}/.config/nvim"
+
+link_path() {
+  src="$1"
+  dest="$2"
+
+  mkdir -p "$(dirname "${dest}")"
+
+  if [ -L "${dest}" ]; then
+    current_target="$(readlink "${dest}")"
+    if [ "${current_target}" = "${src}" ]; then
+      echo "Link already in place: ${dest} -> ${src}"
+      return 0
+    fi
+    rm "${dest}"
+  elif [ -e "${dest}" ]; then
+    backup="${dest}.bak"
+    echo "Backing up existing path: ${dest} -> ${backup}"
+    mv "${dest}" "${backup}"
+  fi
+
+  ln -s "${src}" "${dest}"
+  echo "Linked: ${dest} -> ${src}"
+}
+
+ensure_dir() {
+  mkdir -p "$1"
+}
+
+# Wait for the external to be downloaded by Chezmoi
+if [ ! -d "${STARTER_DIR}" ]; then
+  echo "LazyVim starter source directory not found: ${STARTER_DIR}" >&2
+  exit 1
+fi
+
+# Link default files that are unmodified
+link_path "${STARTER_DIR}/init.lua" "${NVIM_DIR}/init.lua"
+link_path "${STARTER_DIR}/.neoconf.json" "${NVIM_DIR}/.neoconf.json"
+link_path "${STARTER_DIR}/.gitignore" "${NVIM_DIR}/.gitignore"
+link_path "${STARTER_DIR}/stylua.toml" "${NVIM_DIR}/stylua.toml"
+
+# Link config templates
+ensure_dir "${NVIM_DIR}/lua/config"
+link_path "${STARTER_DIR}/lua/config/autocmds.lua" "${NVIM_DIR}/lua/config/autocmds.lua"
+link_path "${STARTER_DIR}/lua/config/keymaps.lua" "${NVIM_DIR}/lua/config/keymaps.lua"
