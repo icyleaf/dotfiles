@@ -39,6 +39,48 @@ Declarative dotfiles managed by [Chezmoi](https://chezmoi.io). Targets macOS and
 **Middleware Wrapper** — executable scripts located in `dot_local/bin/` (deployed to `~/.local/bin/`) prefixed with `icy-` that act as an abstraction layer between user configs (Hyprland, Waybar) and external tooling (Omarchy), facilitating plug-and-play config swapping.
 
 **Omarchy Shell Plugin** — third-party or custom status bar/shell extensions located in `~/.config/omarchy/plugins/<id>/` with a `manifest.json` at their root. They are subject to two constraints in this repository:
+
 1. **Real Copied Directories**: `omarchy-shell` rejects symlinked plugin folders. They must be deployed by Chezmoi as real copied files/folders, not symlinks.
 2. **Reload Flow**: Modifications to `shell.json` or custom plugins must be reloaded using `omarchy-restart-shell`. The `omarchy-refresh-shell` command must **NOT** be used for reloads, as it resets `shell.json` to factory defaults and removes custom plugins.
 
+**Herdr Session Overview Plugin** — an Omarchy Shell Plugin focused on presenting all active herdr sessions, their interaction state, and fast navigation/actions from a single status surface.
+
+**Herdr Bridge** — a local long-running process that owns herdr request/response and event subscriptions, maintains session state, and exposes a stable control/data surface for a UI plugin.
+
+**Thin Panel Client** — a UI panel that renders state from a bridge and emits user intents, while avoiding direct ownership of transport concerns such as socket lifecycle and reconnect policy.
+
+**Hybrid Truth Source** — a session-state strategy that combines low-latency event subscriptions with periodic snapshot reconciliation, so UI state remains timely and self-healing across reconnect gaps.
+
+**Passive Blocked Alert** — a blocked-session handling policy that raises visual/audio cues without automatic focus switching, leaving final navigation to explicit user action.
+
+**Jump-First Interaction Policy** — an interaction policy where overview-level actions navigate to the target terminal/session first, and sensitive approvals or free-form answers are completed in-context rather than auto-submitted from the overview surface.
+
+**Read-Only Mode Surface** — a mode-control surface that shows current and candidate interaction modes, while delegating actual mode switching to in-pane workflow.
+
+**Capability Profile Switch** — a configuration-driven behavior switch that defaults to conservative interaction (passive blocked alerts, jump-first actions, read-only mode surface) while allowing an explicit opt-in experimental profile for more direct automation.
+
+**Dual-Layer Configuration** — a configuration model with instance-level plugin settings plus global defaults, where instance values can override global behavior for presentation and interaction policy.
+
+**Linux Status Widget Mapping** — a Linux-native presentation model where a bar widget shows live color-coded status directly on the bar, and clicking the widget opens a detailed panel for session overview and actions.
+
+**Independent Herdr Plugin** — a standalone Omarchy plugin dedicated to herdr session state and interactions, isolated from generic system telemetry modules.
+
+**QML-First MVP** — a first-release strategy that prioritizes rapid delivery by implementing data fetch, state rendering, and interaction wiring directly in plugin QML components before introducing a dedicated bridge service.
+
+**Bridge-Deferred Roadmap** — a staged evolution path where bridge extraction is planned as a follow-up hardening phase after a validated QML-first MVP.
+
+**Practical MVP Tier** — a first-release scope that includes status color + session count + expandable session list + jump action + needs-input or idle state + elapsed/read-ago timing + prompt summary, while deferring richer visual chrome and advanced mode controls.
+
+**JSON-Only Snapshot Contract** — a first-release data contract where the plugin consumes a stable machine-readable JSON snapshot as its sole source format, avoiding text scraping paths.
+
+**Agent-Name Jump Anchor** — a jump targeting policy that treats the agent name as the primary navigation identifier for session focus actions.
+
+**V1 Core-Only Scope** — a release scope that excludes global hotkeys, sounds, do-not-disturb controls, and launch-at-login behavior, reserving those system-level capabilities for a later phase.
+
+**Graceful Snapshot Degradation** — a failure policy where snapshot disconnects show a neutral disconnected state, keep the last successful overview briefly, and provide an explicit Open Herdr recovery action instead of auto-spawning processes.
+
+**Configurable Prompt Snippet Density** — a presentation policy where prompt summaries default to a compact single-line truncation and can be switched to a two-line expanded snippet through configuration.
+
+**Priority-First Session Ordering** — a session ordering policy that ranks needs-input sessions above running and idle sessions, then orders within each status tier by most recent activity.
+
+**Two-Second Snapshot Cadence** — a polling cadence that refreshes the session snapshot every 2 seconds to balance responsiveness with shell/plugin overhead.
