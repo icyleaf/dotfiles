@@ -12,8 +12,11 @@ Library/**
 .config/fcitx5/conf/notifications.conf
 .config/fcitx5/conf/wayland.conf
 .config/ghostty/fonts/**
-.config/ghostty/keybinds/**
-.config/ghostty/platform/**
+.config/ghostty/keybinds/current.conf
+.config/ghostty/keybinds/macos.conf
+.config/ghostty/platform/current.conf
+.config/ghostty/platform/linux.conf
+.config/ghostty/platform/macos.conf
 .config/ghostty/presets/**
 .config/ghostty/themes/**
 .config/ghostty/tmux/**

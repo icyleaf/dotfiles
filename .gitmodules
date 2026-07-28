@@ -1,9 +1,6 @@
 [submodule "vim/dotfiles/vim/bundle/vundle"]
 	path = vim/dotfiles/vim/bundle/vundle
 	url = https://github.com/gmarik/vundle.git
-[submodule "vendor/ghostty-warp"]
-	path = vendor/ghostty-warp
-	url = https://github.com/Arakiss/ghostty-warp
 [submodule "vendor/omarchy"]
 	path = vendor/omarchy
 	url = https://github.com/basecamp/omarchy.git
