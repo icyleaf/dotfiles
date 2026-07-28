@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# Recover Wayland and X11 display environment from systemd user session
+eval "$(systemctl --user show-environment 2>/dev/null | grep -E '^(WAYLAND_DISPLAY|DISPLAY|XAUTHORITY|DBUS_SESSION_BUS_ADDRESS|XDG_RUNTIME_DIR)=')"
+
+# Fallback: if WAYLAND_DISPLAY is still not set, detect it from socket
+if [[ -z ${WAYLAND_DISPLAY:-} ]]; then
+  socket=$(ls -t "${XDG_RUNTIME_DIR:-/run/user/$UID}"/wayland-[0-9]* 2>/dev/null | grep -v '\.lock$' | head -n1)
+  [[ -n $socket ]] && export WAYLAND_DISPLAY=${socket##*/}
+fi
+
+# Execute the real quickshell binary
+exec /usr/bin/quickshell "$@"
