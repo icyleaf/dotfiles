@@ -1,16 +1,4 @@
-# Ignore files by OS
-
-{{ if eq .chezmoi.os "linux" }}
-# Ignore macOS specific configurations on Linux
-.Brewfile
-.amethyst.yml
-Library/**
-.config/iterm2/**
-.config/karabiner/**
-.config/linearmouse/**
-.config/raycast/**
-.config/fcitx5/conf/notifications.conf
-.config/fcitx5/conf/wayland.conf
+# Ignore always
 .config/ghostty/fonts/**
 .config/ghostty/keybinds/current.conf
 .config/ghostty/keybinds/macos.conf
@@ -20,7 +8,23 @@ Library/**
 .config/ghostty/presets/**
 .config/ghostty/themes/**
 .config/ghostty/tmux/**
+
+# Ignore files by OS
+
+{{ if eq .chezmoi.os "linux" }}
+# Ignore macOS specific configurations on Linux
 run_onchange_install-brew.sh.tmpl
+.Brewfile
+.amethyst.yml
+Library/**
+.config/iterm2/**
+.config/karabiner/**
+.config/linearmouse/**
+.config/raycast/**
+
+# Ignore fcitx5 some config
+.config/fcitx5/conf/notifications.conf
+.config/fcitx5/conf/wayland.conf
 {{ end }}
 
 {{ if eq .chezmoi.os "darwin" }}

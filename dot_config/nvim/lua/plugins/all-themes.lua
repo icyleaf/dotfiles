@@ -73,4 +73,9 @@ return {
 		lazy = true,
 		priority = 1000,
 	},
+  {
+    "projekt0n/github-nvim-theme",
+    lazy = true,
+    priority = 1000,
+  }
 }
