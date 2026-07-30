@@ -20,8 +20,6 @@ Library/**
 .config/ghostty/presets/**
 .config/ghostty/themes/**
 .config/ghostty/tmux/**
-.config/ghostty/config
-.config/ghostty/executable_gconfig
 run_onchange_install-brew.sh.tmpl
 {{ end }}
 

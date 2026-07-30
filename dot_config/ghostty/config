@@ -12,8 +12,8 @@ theme = TokyoNight
 
 font-family = "JetBrainsMono Nerd Font"
 font-size = 11
-font-thicken = false
-font-feature = +calt,+liga,+ss01
+font-thicken = true
+font-feature = +calt,+liga
 
 grapheme-width-method = unicode
 
@@ -25,7 +25,7 @@ cursor-opacity = 0.9
 
 minimum-contrast = 1.2
 
-selection-background = #364a82
+# selection-background = #364a82
 
 # Mouse
 copy-on-select = clipboard
@@ -46,9 +46,3 @@ config-file = ?"~/.config/ghostty/platform/current.conf"
 
 # Keybinds (auto-detected by gconfig setup)
 config-file = ?"~/.config/ghostty/keybinds/current.conf"
-
-# Send Shift+Enter as CSI-u so TUIs can distinguish it from Enter.
-keybind = shift+enter=csi:13;2u
-
-# Legacy encoding sends Alt+Shift+Enter the same as Alt+Enter; send CSI-u so tmux can match M-S-Enter.
-keybind = alt+shift+enter=csi:13;4u
