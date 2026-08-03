@@ -326,9 +326,16 @@ Panel {
   function applyPreviewPayload(paneId, text) {
     if (paneId) {
       var nextTexts = Object.assign({}, previewTexts)
-      var cleanedText = String(text || "").trim()
-      nextTexts[paneId] = cleanedText
+      nextTexts[paneId] = String(text || "")
       previewTexts = nextTexts
+
+      var updatedRows = sessionRows.slice(0)
+      for (var i = 0; i < updatedRows.length; i++) {
+        if (updatedRows[i].paneId === paneId) {
+          updatedRows[i].previewText = nextTexts[paneId]
+        }
+      }
+      sessionRows = updatedRows
     }
     currentPreviewPane = ""
     fetchNextPreview()
@@ -352,6 +359,29 @@ Panel {
       waitForEnd: true
       onStreamFinished: root.applyPreviewPayload(root.currentPreviewPane, text)
     }
+  }
+
+  Process {
+    id: sendInputProc
+    command: []
+    stdout: StdioCollector {
+      waitForEnd: true
+      onStreamFinished: {
+        root.refreshSnapshot()
+      }
+    }
+  }
+
+  function sendPaneInput(paneId, text) {
+    if (!paneId) return
+    var payloadText = text === undefined || text === null ? "" : String(text)
+    if (payloadText.length === 0) {
+      payloadText = "\n"
+    } else if (!payloadText.endsWith("\n")) {
+      payloadText += "\n"
+    }
+    sendInputProc.command = ["herdr", "pane", "send-text", paneId, payloadText]
+    sendInputProc.running = true
   }
 
   Process {
@@ -520,7 +550,9 @@ Panel {
             model: root.sessionRows
 
             delegate: Rectangle {
+              id: sessionCard
               required property var modelData
+              readonly property string sessionPaneId: modelData.paneId || ""
 
               width: parent ? parent.width : 0
               radius: Style.cornerRadius
@@ -574,36 +606,133 @@ Panel {
                     wrapMode: Text.Wrap
                   }
 
-                  Rectangle {
-                    visible: modelData.status === "needs-input" && !!modelData.previewText
+                  Column {
+                    id: needsInputCol
+                    visible: modelData.status === "needs-input"
                     width: parent.width
-                    radius: Style.cornerRadius
-                    color: Qt.rgba(0, 0, 0, 0.28)
-                    border.width: 1
-                    border.color: Qt.rgba(Color.urgent.r, Color.urgent.g, Color.urgent.b, 0.45)
-                    implicitHeight: previewCol.implicitHeight + Style.spacing.xs * 2
+                    spacing: Style.spacing.xs
 
-                    Column {
-                      id: previewCol
-                      anchors.fill: parent
-                      anchors.margins: Style.spacing.xs
-                      spacing: 2
+                    Rectangle {
+                      visible: !!modelData.previewText
+                      width: parent.width
+                      radius: Style.cornerRadius
+                      color: Qt.rgba(0, 0, 0, 0.28)
+                      border.width: 1
+                      border.color: Qt.rgba(Color.urgent.r, Color.urgent.g, Color.urgent.b, 0.45)
+                      implicitHeight: previewCol.implicitHeight + Style.spacing.xs * 2
 
-                      Text {
-                        text: "Terminal Question Preview:"
-                        color: Color.urgent
-                        font.family: root.panelFont
-                        font.pixelSize: Style.font.caption
-                        font.bold: true
+                      Column {
+                        id: previewCol
+                        anchors.fill: parent
+                        anchors.margins: Style.spacing.xs
+                        spacing: 2
+
+                        Text {
+                          text: "Terminal Question Preview:"
+                          color: Color.urgent
+                          font.family: root.panelFont
+                          font.pixelSize: Style.font.caption
+                          font.bold: true
+                        }
+
+                        Text {
+                          width: parent.width
+                          text: modelData.previewText
+                          color: root.panelFg
+                          font.family: root.panelFont
+                          font.pixelSize: Style.font.caption
+                          wrapMode: Text.Wrap
+                        }
+                      }
+                    }
+
+                    Row {
+                      spacing: Style.spacing.xs
+                      width: parent.width
+
+                      Repeater {
+                        model: [
+                          { label: "1", val: "1" },
+                          { label: "2", val: "2" },
+                          { label: "3", val: "3" },
+                          { label: "4", val: "4" },
+                          { label: "y", val: "y" },
+                          { label: "n", val: "n" },
+                          { label: "↵", val: "" }
+                        ]
+
+                        delegate: Rectangle {
+                          required property var modelData
+                          width: 28
+                          height: 24
+                          radius: Style.cornerRadius
+                          color: presetMouse.containsMouse ? Qt.rgba(root.panelFg.r, root.panelFg.g, root.panelFg.b, 0.25) : Qt.rgba(root.panelFg.r, root.panelFg.g, root.panelFg.b, 0.12)
+                          border.width: 1
+                          border.color: Qt.rgba(root.panelFg.r, root.panelFg.g, root.panelFg.b, 0.3)
+
+                          Text {
+                            anchors.centerIn: parent
+                            text: modelData.label
+                            color: root.panelFg
+                            font.family: root.panelFont
+                            font.pixelSize: Style.font.caption
+                            font.bold: true
+                          }
+
+                          MouseArea {
+                            id: presetMouse
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            onClicked: root.sendPaneInput(sessionCard.sessionPaneId, modelData.val)
+                          }
+                        }
+                      }
+                    }
+
+                    Row {
+                      width: parent.width
+                      spacing: Style.spacing.xs
+
+                      Rectangle {
+                        width: parent.width - sendBtn.width - parent.spacing
+                        height: 26
+                        radius: Style.cornerRadius
+                        color: Qt.rgba(0, 0, 0, 0.35)
+                        border.width: 1
+                        border.color: customInput.activeFocus ? Color.accent : Qt.rgba(root.panelFg.r, root.panelFg.g, root.panelFg.b, 0.3)
+
+                        TextInput {
+                          id: customInput
+                          anchors.fill: parent
+                          anchors.margins: 4
+                          color: root.panelFg
+                          font.family: root.panelFont
+                          font.pixelSize: Style.font.caption
+                          selectByMouse: true
+                          clip: true
+                          onAccepted: {
+                            if (text.length > 0) {
+                              root.sendPaneInput(sessionCard.sessionPaneId, text)
+                              text = ""
+                            }
+                          }
+                        }
                       }
 
-                      Text {
-                        width: parent.width
-                        text: modelData.previewText
-                        color: root.panelFg
-                        font.family: root.panelFont
-                        font.pixelSize: Style.font.caption
-                        wrapMode: Text.Wrap
+                      Button {
+                        id: sendBtn
+                        text: "Send"
+                        bordered: true
+                        focusable: true
+                        foreground: root.panelFg
+                        fontFamily: root.panelFont
+                        height: 26
+                        onClicked: {
+                          if (customInput.text.length > 0) {
+                            root.sendPaneInput(sessionCard.sessionPaneId, customInput.text)
+                            customInput.text = ""
+                          }
+                        }
                       }
                     }
                   }

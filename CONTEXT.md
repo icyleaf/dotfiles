@@ -77,6 +77,8 @@ Declarative dotfiles managed by [Chezmoi](https://chezmoi.io). Targets macOS and
 
 **Local Session Time Tracking** — a fallback time-tracking policy in the thin panel client where session discovery (`discoveredAt`) and status transitions (`statusChangedAt`) are recorded locally per `pane_id` when the upstream snapshot contract omits explicit timestamps.
 
+**Inline Session Response Surface** — an interactive control surface policy in the QML panel for sessions in `needs-input` status, combining background terminal question preview (`herdr pane read`), quick preset choice buttons (`1`, `2`, `3`, `4`, `y`, `n`, `↵ Enter`), and custom text input submission (`herdr pane send-text`) directly within the session overview card.
+
 **V1 Core-Only Scope** — a release scope that excludes global hotkeys, sounds, do-not-disturb controls, and launch-at-login behavior, reserving those system-level capabilities for a later phase.
 
 **Graceful Snapshot Degradation** — a failure policy where snapshot disconnects show a neutral disconnected state, keep the last successful overview briefly, and provide an explicit Open Herdr recovery action instead of auto-spawning processes.
