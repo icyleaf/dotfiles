@@ -16,6 +16,7 @@ Panel {
   property var sessionRows: ([])
   property var sessionTimestamps: ({})
   property var previewTexts: ({})
+  property var previewOptions: ({})
   property var pendingPreviewPanes: ([])
   property string currentPreviewPane: ""
   property int disconnectCount: 0
@@ -233,6 +234,7 @@ Panel {
         statusColor: statusColor(status),
         promptSnippet: normalizePrompt(promptRaw),
         previewText: previewTexts[paneId] || "",
+        previewOpts: previewOptions[paneId] || [],
         elapsedText: formatElapsed(startMs),
         readAgoText: formatReadAgo(readMs),
         recency: recency
@@ -264,14 +266,19 @@ Panel {
     }
     var existingKeys = Object.keys(previewTexts)
     var cleanedPreview = Object.assign({}, previewTexts)
+    var cleanedOptions = Object.assign({}, previewOptions)
     var hasCleaned = false
     for (var k = 0; k < existingKeys.length; k++) {
       if (!activeMap[existingKeys[k]]) {
         delete cleanedPreview[existingKeys[k]]
+        delete cleanedOptions[existingKeys[k]]
         hasCleaned = true
       }
     }
-    if (hasCleaned) previewTexts = cleanedPreview
+    if (hasCleaned) {
+      previewTexts = cleanedPreview
+      previewOptions = cleanedOptions
+    }
   }
 
   function updateAggregateFromRows(rows) {
@@ -343,43 +350,80 @@ Panel {
     function refresh() { root.refreshSnapshot() }
   }
 
-  function cleanPreviewText(rawText) {
-    if (!rawText) return ""
+  function parsePreviewContent(rawText) {
+    if (!rawText) return { cleanText: "", options: [] }
     var lines = String(rawText).split("\n")
+
     var filtered = []
     for (var i = 0; i < lines.length; i++) {
       var line = lines[i]
       var stripped = line.trim()
       if (/^[─━▀═_|-]{5,}$/.test(stripped)) continue
-      if (/esc to cancel|ctrl\+[a-z] commands/i.test(stripped)) continue
+      if (/esc to cancel|ctrl\+[a-z] commands|Navigate|tab Amend/i.test(stripped)) continue
       filtered.push(line)
     }
-    while (filtered.length > 0 && filtered[0].trim() === "") filtered.shift()
-    while (filtered.length > 0 && filtered[filtered.length - 1].trim() === "") filtered.pop()
-    if (filtered.length > 20) {
-      filtered = filtered.slice(filtered.length - 20)
+
+    var startIdx = -1
+    for (var j = 0; j < filtered.length; j++) {
+      var str = filtered[j]
+      if (str.indexOf("Do you want to proceed?") >= 0) {
+        startIdx = j
+        break
+      } else if (str.indexOf("Requesting permission for:") >= 0) {
+        if (startIdx < 0) startIdx = j
+      }
     }
-    return filtered.join("\n")
+
+    var relevantLines = startIdx >= 0 ? filtered.slice(startIdx) : filtered
+    while (relevantLines.length > 0 && relevantLines[0].trim() === "") relevantLines.shift()
+    while (relevantLines.length > 0 && relevantLines[relevantLines.length - 1].trim() === "") relevantLines.pop()
+
+    var options = []
+    var optionRegex = /^\s*>?\s*(\d+)\.\s+(.+)$/
+    for (var k = 0; k < relevantLines.length; k++) {
+      var match = optionRegex.exec(relevantLines[k])
+      if (match) {
+        options.push({
+          num: match[1],
+          label: match[1] + ". " + match[2].trim()
+        })
+      }
+    }
+
+    if (relevantLines.length > 20) {
+      relevantLines = relevantLines.slice(relevantLines.length - 20)
+    }
+
+    return {
+      cleanText: relevantLines.join("\n"),
+      options: options
+    }
   }
 
   function fetchNextPreview() {
     if (previewProc.running || !pendingPreviewPanes || pendingPreviewPanes.length === 0) return
     var paneId = pendingPreviewPanes.shift()
     currentPreviewPane = paneId
-    previewProc.command = ["herdr", "pane", "read", paneId, "--lines", "20"]
+    previewProc.command = ["herdr", "pane", "read", paneId, "--lines", "25"]
     previewProc.running = true
   }
 
   function applyPreviewPayload(paneId, text) {
     if (paneId) {
+      var parsed = parsePreviewContent(text)
       var nextTexts = Object.assign({}, previewTexts)
-      nextTexts[paneId] = cleanPreviewText(text)
+      nextTexts[paneId] = parsed.cleanText
       previewTexts = nextTexts
+
+      var nextOptions = Object.assign({}, previewOptions)
+      nextOptions[paneId] = parsed.options
+      previewOptions = nextOptions
 
       var updatedRows = sessionRows.slice(0)
       for (var i = 0; i < updatedRows.length; i++) {
         if (updatedRows[i].paneId === paneId) {
           updatedRows[i].previewText = nextTexts[paneId]
+          updatedRows[i].previewOpts = nextOptions[paneId] || []
         }
       }
       sessionRows = updatedRows
@@ -700,40 +744,84 @@ Panel {
                       }
                     }
 
-                    Row {
-                      spacing: Style.spacing.xs
-                      width: parent.width
+                      Column {
+                        visible: !!modelData.previewOpts && modelData.previewOpts.length > 0
+                        width: parent.width
+                        spacing: Style.spacing.xs
 
-                      Repeater {
-                        model: root.presetChoices
+                        Repeater {
+                          model: modelData.previewOpts || []
 
-                        delegate: Rectangle {
-                          required property var modelData
-                          width: 28
-                          height: 24
-                          radius: Style.cornerRadius
-                          color: presetMouse.containsMouse ? Qt.rgba(root.panelFg.r, root.panelFg.g, root.panelFg.b, 0.25) : Qt.rgba(root.panelFg.r, root.panelFg.g, root.panelFg.b, 0.12)
-                          border.width: 1
-                          border.color: Qt.rgba(root.panelFg.r, root.panelFg.g, root.panelFg.b, 0.3)
+                          delegate: Rectangle {
+                            required property var modelData
+                            width: parent ? parent.width : 0
+                            implicitHeight: optText.implicitHeight + Style.spacing.xs * 2
+                            radius: Style.cornerRadius
+                            color: optMouse.containsMouse ? Qt.rgba(Color.accent.r, Color.accent.g, Color.accent.b, 0.28) : Qt.rgba(root.panelFg.r, root.panelFg.g, root.panelFg.b, 0.1)
+                            border.width: 1
+                            border.color: optMouse.containsMouse ? Color.accent : Qt.rgba(root.panelFg.r, root.panelFg.g, root.panelFg.b, 0.25)
 
-                          Text {
-                            anchors.centerIn: parent
-                            text: modelData.label
-                            color: root.panelFg
-                            font.family: root.panelFont
-                            font.pixelSize: Style.font.caption
-                            font.bold: true
-                          }
+                            Row {
+                              anchors.fill: parent
+                              anchors.margins: Style.spacing.xs
+                              spacing: Style.spacing.xs
 
-                          MouseArea {
-                            id: presetMouse
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            onClicked: root.sendPaneInput(sessionCard.sessionPaneId, modelData.val)
+                              Text {
+                                id: optText
+                                width: parent.width
+                                text: modelData.label
+                                color: root.panelFg
+                                font.family: root.panelFont
+                                font.pixelSize: Style.font.caption
+                                wrapMode: Text.Wrap
+                              }
+                            }
+
+                            MouseArea {
+                              id: optMouse
+                              anchors.fill: parent
+                              hoverEnabled: true
+                              onClicked: root.sendPaneInput(sessionCard.sessionPaneId, modelData.num)
+                            }
                           }
                         }
                       }
-                    }
+
+                      Row {
+                        visible: !modelData.previewOpts || modelData.previewOpts.length === 0
+                        spacing: Style.spacing.xs
+                        width: parent.width
+
+                        Repeater {
+                          model: root.presetChoices
+
+                          delegate: Rectangle {
+                            required property var modelData
+                            width: 28
+                            height: 24
+                            radius: Style.cornerRadius
+                            color: presetMouse.containsMouse ? Qt.rgba(root.panelFg.r, root.panelFg.g, root.panelFg.b, 0.25) : Qt.rgba(root.panelFg.r, root.panelFg.g, root.panelFg.b, 0.12)
+                            border.width: 1
+                            border.color: Qt.rgba(root.panelFg.r, root.panelFg.g, root.panelFg.b, 0.3)
+
+                            Text {
+                              anchors.centerIn: parent
+                              text: modelData.label
+                              color: root.panelFg
+                              font.family: root.panelFont
+                              font.pixelSize: Style.font.caption
+                              font.bold: true
+                            }
+
+                            MouseArea {
+                              id: presetMouse
+                              anchors.fill: parent
+                              hoverEnabled: true
+                              onClicked: root.sendPaneInput(sessionCard.sessionPaneId, modelData.val)
+                            }
+                          }
+                        }
+                      }
 
                     Row {
                       width: parent.width
