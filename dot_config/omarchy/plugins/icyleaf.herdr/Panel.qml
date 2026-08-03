@@ -14,6 +14,10 @@ Panel {
   property bool connected: false
   property string lastError: ""
   property var sessionRows: ([])
+  property var sessionTimestamps: ({})
+  property var previewTexts: ({})
+  property var pendingPreviewPanes: ([])
+  property string currentPreviewPane: ""
   property int disconnectCount: 0
 
   readonly property int retentionWindowMs: Number(setting("retentionWindowMs", 6000))
@@ -121,6 +125,7 @@ Panel {
 
   function buildSessionRows(agents) {
     var rows = []
+    var needsInputPanes = []
     for (var i = 0; i < agents.length; i++) {
       var agent = agents[i] || {}
       var tokens = agent.tokens || {}
@@ -145,6 +150,27 @@ Panel {
         agent.terminal_title
       ])
 
+      var paneId = firstString([agent.pane_id, agent.agent, agent.terminal_id])
+      if (status === "needs-input" && paneId.length > 0) {
+        needsInputPanes.push(paneId)
+      }
+
+      var now = Date.now()
+      var ts = sessionTimestamps[paneId]
+      if (!ts) {
+        ts = {
+          discoveredAt: now,
+          status: status,
+          statusChangedAt: now
+        }
+        sessionTimestamps[paneId] = ts
+      } else {
+        if (ts.status !== status) {
+          ts.status = status
+          ts.statusChangedAt = now
+        }
+      }
+
       var startMs = parseTimestampMs(firstString([
         agent.started_at,
         agent.created_at,
@@ -159,6 +185,7 @@ Panel {
         meta.created_at,
         meta.started_unix_ms
       ]))
+      if (startMs < 0) startMs = ts.discoveredAt
 
       var readMs = parseTimestampMs(firstString([
         agent.last_read_at,
@@ -178,6 +205,7 @@ Panel {
         meta.updated_at,
         meta.updated_unix_ms
       ]))
+      if (readMs < 0) readMs = ts.statusChangedAt
 
       var recency = Number(agent.state_change_seq)
       if (!isFinite(recency)) recency = Number(agent.revision)
@@ -187,17 +215,21 @@ Panel {
 
       rows.push({
         id: firstString([agent.agent, agent.pane_id, agent.terminal_id, "session-" + i]),
+        paneId: paneId,
         title: title,
         agentName: firstString([agent.agent]),
         status: status,
         statusText: statusText(status),
         statusColor: statusColor(status),
         promptSnippet: normalizePrompt(promptRaw),
+        previewText: previewTexts[paneId] || "",
         elapsedText: formatElapsed(startMs),
         readAgoText: formatReadAgo(readMs),
         recency: recency
       })
     }
+
+    queuePreviewReads(needsInputPanes)
 
     rows.sort(function(a, b) {
       var rankDelta = statusRank(b.status) - statusRank(a.status)
@@ -263,6 +295,7 @@ Panel {
         aggregateStatus = "unknown"
         sessionCount = 0
         sessionRows = []
+        sessionTimestamps = ({})
       }
     }
   }
@@ -282,6 +315,45 @@ Panel {
     function refresh() { root.refreshSnapshot() }
   }
 
+  function fetchNextPreview() {
+    if (previewProc.running || !pendingPreviewPanes || pendingPreviewPanes.length === 0) return
+    var paneId = pendingPreviewPanes.shift()
+    currentPreviewPane = paneId
+    previewProc.command = ["herdr", "pane", "read", paneId, "--lines", "6"]
+    previewProc.running = true
+  }
+
+  function applyPreviewPayload(paneId, text) {
+    if (paneId) {
+      var nextTexts = Object.assign({}, previewTexts)
+      var cleanedText = String(text || "").trim()
+      nextTexts[paneId] = cleanedText
+      previewTexts = nextTexts
+    }
+    currentPreviewPane = ""
+    fetchNextPreview()
+  }
+
+  function queuePreviewReads(needsInputPanes) {
+    if (!needsInputPanes || needsInputPanes.length === 0) return
+    for (var i = 0; i < needsInputPanes.length; i++) {
+      var paneId = needsInputPanes[i]
+      if (pendingPreviewPanes.indexOf(paneId) < 0 && currentPreviewPane !== paneId) {
+        pendingPreviewPanes.push(paneId)
+      }
+    }
+    fetchNextPreview()
+  }
+
+  Process {
+    id: previewProc
+    command: []
+    stdout: StdioCollector {
+      waitForEnd: true
+      onStreamFinished: root.applyPreviewPayload(root.currentPreviewPane, text)
+    }
+  }
+
   Process {
     id: snapshotProc
     command: ["herdr", "api", "snapshot"]
@@ -299,35 +371,35 @@ Panel {
     }
   }
 
-  function jumpToAgent(agentName) {
-    if (!agentName) {
+  function jumpToAgent(paneId, agentName) {
+    var targetPane = paneId || agentName
+    if (!targetPane) {
       jumpProc.command = [
         "omarchy-notification-send",
         "-u", "critical",
         "-g", "⚠️",
         "Jump Failed",
-        "No agent name provided for this session."
+        "No target pane or agent identifier available for this session."
       ]
       jumpProc.running = true
       return
     }
     jumpProc.command = [
       "bash", "-c",
-      "if ! command -v hyprctl &>/dev/null; then\n" +
-      "  omarchy-notification-send -u critical -g \"⚠️\" \"Jump Failed\" \"Window jumping is only supported under Hyprland.\"\n" +
-      "  exit 1\n" +
+      "pane=\"$1\"\n" +
+      "if command -v hyprctl &>/dev/null; then\n" +
+      "  address=$(hyprctl clients -j 2>/dev/null | jq -r '[.[] | select(((.title // \"\") | ascii_downcase | contains(\"herdr\")) or ((.class // \"\") | ascii_downcase | contains(\"ghostty\")) or ((.class // \"\") | ascii_downcase | contains(\"kitty\")) or ((.class // \"\") | ascii_downcase | contains(\"alacritty\")) or ((.class // \"\") | ascii_downcase | contains(\"foot\")) or ((.class // \"\") | ascii_downcase | contains(\"wezterm\")))] | first.address // empty')\n" +
+      "  if [[ -n \"$address\" ]]; then\n" +
+      "    hyprctl dispatch focuswindow \"address:$address\" >/dev/null\n" +
+      "  else\n" +
+      "    omarchy-launch-terminal bash -c 'herdr' &\n" +
+      "  fi\n" +
       "fi\n" +
-      "agent=\"$1\"\n" +
-      "address=$(hyprctl clients -j 2>/dev/null | jq -r --arg p \"$agent\" '[.[] | select(((.class // \"\") | ascii_downcase | contains($p | ascii_downcase)) or ((.title // \"\") | ascii_downcase | contains($p | ascii_downcase)))] | first.address // empty')\n" +
-      "if [[ -n \"$address\" ]]; then\n" +
-      "  hyprctl dispatch focuswindow \"address:$address\" >/dev/null\n" +
-      "  exit 0\n" +
-      "else\n" +
-      "  omarchy-notification-send -u critical -g \"⚠️\" \"Jump Failed\" \"No active window found for agent '$agent'\"\n" +
-      "  exit 1\n" +
+      "if command -v herdr &>/dev/null && [[ -n \"$pane\" ]]; then\n" +
+      "  herdr agent focus \"$pane\" >/dev/null 2>&1\n" +
       "fi",
       "--",
-      agentName
+      targetPane
     ]
     jumpProc.running = true
   }
@@ -502,6 +574,40 @@ Panel {
                     wrapMode: Text.Wrap
                   }
 
+                  Rectangle {
+                    visible: modelData.status === "needs-input" && !!modelData.previewText
+                    width: parent.width
+                    radius: Style.cornerRadius
+                    color: Qt.rgba(0, 0, 0, 0.28)
+                    border.width: 1
+                    border.color: Qt.rgba(Color.urgent.r, Color.urgent.g, Color.urgent.b, 0.45)
+                    implicitHeight: previewCol.implicitHeight + Style.spacing.xs * 2
+
+                    Column {
+                      id: previewCol
+                      anchors.fill: parent
+                      anchors.margins: Style.spacing.xs
+                      spacing: 2
+
+                      Text {
+                        text: "Terminal Question Preview:"
+                        color: Color.urgent
+                        font.family: root.panelFont
+                        font.pixelSize: Style.font.caption
+                        font.bold: true
+                      }
+
+                      Text {
+                        width: parent.width
+                        text: modelData.previewText
+                        color: root.panelFg
+                        font.family: root.panelFont
+                        font.pixelSize: Style.font.caption
+                        wrapMode: Text.Wrap
+                      }
+                    }
+                  }
+
                   Text {
                     width: parent.width
                     text: "elapsed " + modelData.elapsedText + " | read " + modelData.readAgoText
@@ -513,13 +619,13 @@ Panel {
 
                 PanelActionButton {
                   id: jumpButton
-                  visible: !!modelData.agentName && modelData.agentName !== ""
+                  visible: (!!modelData.paneId && modelData.paneId !== "") || (!!modelData.agentName && modelData.agentName !== "")
                   iconText: "󰌋"
                   tooltipText: "Jump to agent interaction"
                   foreground: root.panelFg
                   fontFamily: root.panelFont
                   anchors.verticalCenter: parent.verticalCenter
-                  onClicked: root.jumpToAgent(modelData.agentName)
+                  onClicked: root.jumpToAgent(modelData.paneId, modelData.agentName)
                 }
               }
             }

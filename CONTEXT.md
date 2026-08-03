@@ -73,7 +73,9 @@ Declarative dotfiles managed by [Chezmoi](https://chezmoi.io). Targets macOS and
 
 **JSON-Only Snapshot Contract** — a first-release data contract where the plugin consumes a stable machine-readable JSON snapshot as its sole source format, avoiding text scraping paths.
 
-**Agent-Name Jump Anchor** — a jump targeting policy that treats the agent name as the primary navigation identifier for session focus actions.
+**Pane-ID Jump Anchor** — a jump targeting policy that uses the pane ID (`pane_id`) to switch internal `herdr` focus via `herdr agent focus <pane_id>`, combined with Hyprland window focus on the terminal host window.
+
+**Local Session Time Tracking** — a fallback time-tracking policy in the thin panel client where session discovery (`discoveredAt`) and status transitions (`statusChangedAt`) are recorded locally per `pane_id` when the upstream snapshot contract omits explicit timestamps.
 
 **V1 Core-Only Scope** — a release scope that excludes global hotkeys, sounds, do-not-disturb controls, and launch-at-login behavior, reserving those system-level capabilities for a later phase.
 
