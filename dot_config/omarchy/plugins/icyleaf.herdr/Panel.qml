@@ -239,22 +239,7 @@ Panel {
       })
     }
 
-    // Clean up stale preview texts for panes no longer in needs-input status
-    var activeMap = {}
-    for (var j = 0; j < needsInputPanes.length; j++) {
-      activeMap[needsInputPanes[j]] = true
-    }
-    var existingKeys = Object.keys(previewTexts)
-    var cleanedPreview = Object.assign({}, previewTexts)
-    var hasCleaned = false
-    for (var k = 0; k < existingKeys.length; k++) {
-      if (!activeMap[existingKeys[k]]) {
-        delete cleanedPreview[existingKeys[k]]
-        hasCleaned = true
-      }
-    }
-    if (hasCleaned) previewTexts = cleanedPreview
-
+    cleanupPreviewCache(needsInputPanes)
     queuePreviewReads(needsInputPanes)
 
     rows.sort(function(a, b) {
@@ -270,6 +255,23 @@ Panel {
     })
 
     return rows
+  }
+
+  function cleanupPreviewCache(needsInputPanes) {
+    var activeMap = {}
+    for (var j = 0; j < (needsInputPanes || []).length; j++) {
+      activeMap[needsInputPanes[j]] = true
+    }
+    var existingKeys = Object.keys(previewTexts)
+    var cleanedPreview = Object.assign({}, previewTexts)
+    var hasCleaned = false
+    for (var k = 0; k < existingKeys.length; k++) {
+      if (!activeMap[existingKeys[k]]) {
+        delete cleanedPreview[existingKeys[k]]
+        hasCleaned = true
+      }
+    }
+    if (hasCleaned) previewTexts = cleanedPreview
   }
 
   function updateAggregateFromRows(rows) {
@@ -348,11 +350,12 @@ Panel {
     for (var i = 0; i < lines.length; i++) {
       var line = lines[i]
       var stripped = line.trim()
-      if (/esc to cancel|Gemini|DeepSeek|OpenCode \d|Claude|gpt-|ctrl\+p commands/i.test(stripped)) continue
-      if (/^[─━▀═_|-]+$/.test(stripped)) continue
-      if (stripped === ">" || stripped === "") continue
+      if (/^[─━▀═_|-]{5,}$/.test(stripped)) continue
+      if (/esc to cancel|ctrl\+[a-z] commands/i.test(stripped)) continue
       filtered.push(line)
     }
+    while (filtered.length > 0 && filtered[0].trim() === "") filtered.shift()
+    while (filtered.length > 0 && filtered[filtered.length - 1].trim() === "") filtered.pop()
     if (filtered.length > 20) {
       filtered = filtered.slice(filtered.length - 20)
     }
@@ -665,11 +668,12 @@ Panel {
                     Rectangle {
                       visible: !!modelData.previewText
                       width: parent.width
+                      clip: true
                       radius: Style.cornerRadius
                       color: Qt.rgba(0, 0, 0, 0.28)
                       border.width: 1
                       border.color: Qt.rgba(Color.urgent.r, Color.urgent.g, Color.urgent.b, 0.45)
-                      implicitHeight: previewCol.implicitHeight + Style.spacing.xs * 2
+                      implicitHeight: Math.min(previewCol.implicitHeight + Style.spacing.xs * 2, 220)
 
                       Column {
                         id: previewCol
