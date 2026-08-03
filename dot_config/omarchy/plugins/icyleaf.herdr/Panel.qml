@@ -360,7 +360,7 @@ Panel {
       var stripped = line.trim()
       if (/^[─━▀═_|-]{5,}$/.test(stripped)) continue
       if (/esc to cancel|ctrl\+[a-z] commands|Navigate|tab Amend|Asked \d+ question|Build ·|select\s+enter\s+submit/i.test(stripped)) continue
-      var cleanLine = line.replace(/^\s*[┌│└|┃\u2502\u2503\u250c\u2514]\s*/, "")
+      var cleanLine = line.replace(/^\s*[┌│└|┃\u2502\u2503\u250c\u2514]\s*/, "").replace(/\s*[┐│┘|┃\u2502\u2503\u2510\u2518]\s*$/, "")
       cleanedLines.push(cleanLine)
     }
 
@@ -383,20 +383,22 @@ Panel {
       var lineText = relevantLines[k]
       var match = optionRegex.exec(lineText)
       if (match) {
-        var num = match[1] || match[2] || match[3]
+        var optKey = match[1] || match[2] || match[3]
         var cleanLabel = lineText.trim()
         if (cleanLabel.indexOf(">") === 0) {
           cleanLabel = cleanLabel.substring(1).trim()
         }
         currentOpt = {
-          num: num,
+          num: optKey,
           title: cleanLabel,
           detail: ""
         }
         options.push(currentOpt)
       } else if (currentOpt !== null) {
         var textStripped = lineText.trim()
-        if (textStripped.length > 0) {
+        if (/esc to cancel|ctrl\+[a-z]|select\s+enter|Navigate|tab Amend/i.test(textStripped)) {
+          currentOpt = null
+        } else if (textStripped.length > 0) {
           if (currentOpt.detail.length > 0) {
             currentOpt.detail += " " + textStripped
           } else {
