@@ -354,27 +354,29 @@ Panel {
     if (!rawText) return { cleanText: "", options: [] }
     var lines = String(rawText).split("\n")
 
-    var filtered = []
+    var cleanedLines = []
     for (var i = 0; i < lines.length; i++) {
       var line = lines[i]
       var stripped = line.trim()
       if (/^[─━▀═_|-]{5,}$/.test(stripped)) continue
-      if (/esc to cancel|ctrl\+[a-z] commands|Navigate|tab Amend/i.test(stripped)) continue
-      filtered.push(line)
+      if (/esc to cancel|ctrl\+[a-z] commands|Navigate|tab Amend|Asked \d+ question|Build ·|select\s+enter\s+submit/i.test(stripped)) continue
+      var cleanLine = line.replace(/^\s*[┌│└|┃\u2502\u2503\u250c\u2514]\s*/, "")
+      cleanedLines.push(cleanLine)
     }
 
-    var questionAnchorRegex = /\b(Do you want to|Requesting permission|Allow|Approve|Confirm|Select|Choose|Proceed|Would you like|Permission requested)\b|\?/i
+    var questionAnchorRegex = /\b(Do you want to|Requesting permission|Allow|Approve|Confirm|Select|Choose|Proceed|Would you like|Permission requested)\b|\?|？|怎么处理|如何处理/i
     var startIdx = -1
-    for (var j = 0; j < filtered.length; j++) {
-      if (questionAnchorRegex.test(filtered[j])) {
+    for (var j = 0; j < cleanedLines.length; j++) {
+      if (questionAnchorRegex.test(cleanedLines[j])) {
         startIdx = j
         break
       }
     }
 
-    var relevantLines = startIdx >= 0 ? filtered.slice(startIdx) : filtered
+    var relevantLines = startIdx >= 0 ? cleanedLines.slice(startIdx) : cleanedLines
     var options = []
     var questionLines = []
+    var currentOpt = null
     var optionRegex = /^\s*>?\s*(?:\[(\d+|[a-zA-Z])\]|(\d+|[a-zA-Z])[\.\)]|\(([a-zA-Z])\))\s*(.*)$/
 
     for (var k = 0; k < relevantLines.length; k++) {
@@ -386,10 +388,21 @@ Panel {
         if (cleanLabel.indexOf(">") === 0) {
           cleanLabel = cleanLabel.substring(1).trim()
         }
-        options.push({
+        currentOpt = {
           num: num,
-          label: cleanLabel
-        })
+          title: cleanLabel,
+          detail: ""
+        }
+        options.push(currentOpt)
+      } else if (currentOpt !== null) {
+        var textStripped = lineText.trim()
+        if (textStripped.length > 0) {
+          if (currentOpt.detail.length > 0) {
+            currentOpt.detail += " " + textStripped
+          } else {
+            currentOpt.detail = textStripped
+          }
+        }
       } else {
         questionLines.push(lineText)
       }
@@ -763,22 +776,33 @@ Panel {
                           delegate: Rectangle {
                             required property var modelData
                             width: parent ? parent.width : 0
-                            implicitHeight: optText.implicitHeight + Style.spacing.xs * 2
+                            implicitHeight: optCol.implicitHeight + Style.spacing.xs * 2
                             radius: Style.cornerRadius
                             color: optMouse.containsMouse ? Qt.rgba(Color.accent.r, Color.accent.g, Color.accent.b, 0.28) : Qt.rgba(root.panelFg.r, root.panelFg.g, root.panelFg.b, 0.1)
                             border.width: 1
                             border.color: optMouse.containsMouse ? Color.accent : Qt.rgba(root.panelFg.r, root.panelFg.g, root.panelFg.b, 0.25)
 
-                            Row {
+                            Column {
+                              id: optCol
                               anchors.fill: parent
                               anchors.margins: Style.spacing.xs
-                              spacing: Style.spacing.xs
+                              spacing: 2
 
                               Text {
-                                id: optText
                                 width: parent.width
-                                text: modelData.label
+                                text: modelData.title || modelData.label || ""
                                 color: root.panelFg
+                                font.family: root.panelFont
+                                font.pixelSize: Style.font.caption
+                                font.bold: true
+                                wrapMode: Text.Wrap
+                              }
+
+                              Text {
+                                visible: !!modelData.detail && modelData.detail.length > 0
+                                width: parent.width
+                                text: modelData.detail || ""
+                                color: Qt.rgba(root.panelFg.r, root.panelFg.g, root.panelFg.b, 0.78)
                                 font.family: root.panelFont
                                 font.pixelSize: Style.font.caption
                                 wrapMode: Text.Wrap
