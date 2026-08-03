@@ -315,18 +315,36 @@ Panel {
     function refresh() { root.refreshSnapshot() }
   }
 
+  function cleanPreviewText(rawText) {
+    if (!rawText) return ""
+    var lines = String(rawText).split("\n")
+    var filtered = []
+    for (var i = 0; i < lines.length; i++) {
+      var line = lines[i]
+      var stripped = line.trim()
+      if (/esc to cancel|Gemini|DeepSeek|OpenCode \d|Claude|gpt-|ctrl\+p commands/i.test(stripped)) continue
+      if (/^[─━▀═_|-]+$/.test(stripped)) continue
+      if (stripped === ">" || stripped === "") continue
+      filtered.push(line)
+    }
+    if (filtered.length > 10) {
+      filtered = filtered.slice(filtered.length - 10)
+    }
+    return filtered.join("\n")
+  }
+
   function fetchNextPreview() {
     if (previewProc.running || !pendingPreviewPanes || pendingPreviewPanes.length === 0) return
     var paneId = pendingPreviewPanes.shift()
     currentPreviewPane = paneId
-    previewProc.command = ["herdr", "pane", "read", paneId, "--lines", "6"]
+    previewProc.command = ["herdr", "pane", "read", paneId, "--lines", "20"]
     previewProc.running = true
   }
 
   function applyPreviewPayload(paneId, text) {
     if (paneId) {
       var nextTexts = Object.assign({}, previewTexts)
-      nextTexts[paneId] = String(text || "")
+      nextTexts[paneId] = cleanPreviewText(text)
       previewTexts = nextTexts
 
       var updatedRows = sessionRows.slice(0)
