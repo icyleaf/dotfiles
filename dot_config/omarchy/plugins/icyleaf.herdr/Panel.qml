@@ -373,16 +373,16 @@ Panel {
     }
 
     var relevantLines = startIdx >= 0 ? filtered.slice(startIdx) : filtered
-    while (relevantLines.length > 0 && relevantLines[0].trim() === "") relevantLines.shift()
-    while (relevantLines.length > 0 && relevantLines[relevantLines.length - 1].trim() === "") relevantLines.pop()
-
     var options = []
+    var questionLines = []
     var optionRegex = /^\s*>?\s*(?:\[(\d+|[a-zA-Z])\]|(\d+|[a-zA-Z])[\.\)]|\(([a-zA-Z])\))\s*(.*)$/
+
     for (var k = 0; k < relevantLines.length; k++) {
-      var match = optionRegex.exec(relevantLines[k])
+      var lineText = relevantLines[k]
+      var match = optionRegex.exec(lineText)
       if (match) {
         var num = match[1] || match[2] || match[3]
-        var cleanLabel = relevantLines[k].trim()
+        var cleanLabel = lineText.trim()
         if (cleanLabel.indexOf(">") === 0) {
           cleanLabel = cleanLabel.substring(1).trim()
         }
@@ -390,15 +390,20 @@ Panel {
           num: num,
           label: cleanLabel
         })
+      } else {
+        questionLines.push(lineText)
       }
     }
 
-    if (relevantLines.length > 20) {
-      relevantLines = relevantLines.slice(relevantLines.length - 20)
+    while (questionLines.length > 0 && questionLines[0].trim() === "") questionLines.shift()
+    while (questionLines.length > 0 && questionLines[questionLines.length - 1].trim() === "") questionLines.pop()
+
+    if (questionLines.length > 20) {
+      questionLines = questionLines.slice(questionLines.length - 20)
     }
 
     return {
-      cleanText: relevantLines.join("\n"),
+      cleanText: questionLines.join("\n"),
       options: options
     }
   }
