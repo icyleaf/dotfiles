@@ -363,14 +363,12 @@ Panel {
       filtered.push(line)
     }
 
+    var questionAnchorRegex = /\b(Do you want to|Requesting permission|Allow|Approve|Confirm|Select|Choose|Proceed|Would you like|Permission requested)\b|\?/i
     var startIdx = -1
     for (var j = 0; j < filtered.length; j++) {
-      var str = filtered[j]
-      if (str.indexOf("Do you want to proceed?") >= 0) {
+      if (questionAnchorRegex.test(filtered[j])) {
         startIdx = j
         break
-      } else if (str.indexOf("Requesting permission for:") >= 0) {
-        if (startIdx < 0) startIdx = j
       }
     }
 
@@ -379,13 +377,18 @@ Panel {
     while (relevantLines.length > 0 && relevantLines[relevantLines.length - 1].trim() === "") relevantLines.pop()
 
     var options = []
-    var optionRegex = /^\s*>?\s*(\d+)\.\s+(.+)$/
+    var optionRegex = /^\s*>?\s*(?:\[(\d+|[a-zA-Z])\]|(\d+|[a-zA-Z])[\.\)]|\(([a-zA-Z])\))\s*(.*)$/
     for (var k = 0; k < relevantLines.length; k++) {
       var match = optionRegex.exec(relevantLines[k])
       if (match) {
+        var num = match[1] || match[2] || match[3]
+        var cleanLabel = relevantLines[k].trim()
+        if (cleanLabel.indexOf(">") === 0) {
+          cleanLabel = cleanLabel.substring(1).trim()
+        }
         options.push({
-          num: match[1],
-          label: match[1] + ". " + match[2].trim()
+          num: num,
+          label: cleanLabel
         })
       }
     }
