@@ -29,6 +29,16 @@ Panel {
   readonly property int refreshIntervalMs: 2000
   readonly property color panelFg: bar ? bar.foreground : Color.foreground
   readonly property string panelFont: bar ? bar.fontFamily : Style.font.family
+
+  readonly property var presetChoices: [
+    { label: "1", val: "1" },
+    { label: "2", val: "2" },
+    { label: "3", val: "3" },
+    { label: "4", val: "4" },
+    { label: "y", val: "y" },
+    { label: "n", val: "n" },
+    { label: "↵", val: "" }
+  ]
   
   readonly property color widgetColor: {
     if (!connected) return Qt.rgba(panelFg.r, panelFg.g, panelFg.b, 0.62)
@@ -229,6 +239,22 @@ Panel {
       })
     }
 
+    // Clean up stale preview texts for panes no longer in needs-input status
+    var activeMap = {}
+    for (var j = 0; j < needsInputPanes.length; j++) {
+      activeMap[needsInputPanes[j]] = true
+    }
+    var existingKeys = Object.keys(previewTexts)
+    var cleanedPreview = Object.assign({}, previewTexts)
+    var hasCleaned = false
+    for (var k = 0; k < existingKeys.length; k++) {
+      if (!activeMap[existingKeys[k]]) {
+        delete cleanedPreview[existingKeys[k]]
+        hasCleaned = true
+      }
+    }
+    if (hasCleaned) previewTexts = cleanedPreview
+
     queuePreviewReads(needsInputPanes)
 
     rows.sort(function(a, b) {
@@ -327,8 +353,8 @@ Panel {
       if (stripped === ">" || stripped === "") continue
       filtered.push(line)
     }
-    if (filtered.length > 10) {
-      filtered = filtered.slice(filtered.length - 10)
+    if (filtered.length > 20) {
+      filtered = filtered.slice(filtered.length - 20)
     }
     return filtered.join("\n")
   }
@@ -400,6 +426,12 @@ Panel {
     }
     sendInputProc.command = ["herdr", "pane", "send-text", paneId, payloadText]
     sendInputProc.running = true
+  }
+
+  function submitCustomInput(paneId, textInputItem) {
+    if (!paneId || !textInputItem) return
+    root.sendPaneInput(paneId, textInputItem.text)
+    textInputItem.text = ""
   }
 
   Process {
@@ -669,15 +701,7 @@ Panel {
                       width: parent.width
 
                       Repeater {
-                        model: [
-                          { label: "1", val: "1" },
-                          { label: "2", val: "2" },
-                          { label: "3", val: "3" },
-                          { label: "4", val: "4" },
-                          { label: "y", val: "y" },
-                          { label: "n", val: "n" },
-                          { label: "↵", val: "" }
-                        ]
+                        model: root.presetChoices
 
                         delegate: Rectangle {
                           required property var modelData
@@ -728,12 +752,7 @@ Panel {
                           font.pixelSize: Style.font.caption
                           selectByMouse: true
                           clip: true
-                          onAccepted: {
-                            if (text.length > 0) {
-                              root.sendPaneInput(sessionCard.sessionPaneId, text)
-                              text = ""
-                            }
-                          }
+                          onAccepted: root.submitCustomInput(sessionCard.sessionPaneId, customInput)
                         }
                       }
 
@@ -745,12 +764,7 @@ Panel {
                         foreground: root.panelFg
                         fontFamily: root.panelFont
                         height: 26
-                        onClicked: {
-                          if (customInput.text.length > 0) {
-                            root.sendPaneInput(sessionCard.sessionPaneId, customInput.text)
-                            customInput.text = ""
-                          }
-                        }
+                        onClicked: root.submitCustomInput(sessionCard.sessionPaneId, customInput)
                       }
                     }
                   }
