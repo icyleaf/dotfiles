@@ -82,7 +82,7 @@ o.bind("SUPER + SHIFT + O", "Share", "omarchy-menu toggle share")
 -- o.bind("SUPER + CTRL + ALT + W", "Show weather", o.notify("$(icy-weather-status)"))
 
 -- Web apps
-o.bind("SUPER + SHIFT + B", "BiliBili", "icy-launch-webapp \"https://www.bilibili.com/\"")
+o.bind("SUPER + SHIFT + B", "btop", "icy-launch-tui btop")
 
 -- System window management
 o.bind("CTRL + ALT + DELETE", "Close all Windows", "icy-cmd-close-all-windows")
