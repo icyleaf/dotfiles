@@ -14,10 +14,10 @@ Panel {
   property date displayDate: clock.date
   property date panelMonth: new Date(displayDate.getFullYear(), displayDate.getMonth(), 1)
 
+  readonly property string localeSetting: String(setting("locale", "")).trim()
+  readonly property var loc: localeSetting !== "" ? Qt.locale(localeSetting) : Qt.locale()
+
   readonly property bool weekStartsSunday: String(setting("firstDayOfWeek", "sunday")).toLowerCase() !== "monday"
-  readonly property var weekdayLabels: weekStartsSunday
-    ? ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
-    : ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
   readonly property bool showSettingsGear: setting("showSettingsGear", true) === true
     || String(setting("showSettingsGear", "true")).toLowerCase() === "true"
   readonly property string settingsCommand: String(setting("settingsCommand", "omarchy-shell shell summon local.settings"))
@@ -25,6 +25,16 @@ Panel {
   readonly property string activeFormat: alt
     ? setting("formatAlt", "dd MMMM 'W'ww yyyy")
     : (bar && bar.vertical ? setting("verticalFormat", "HH\n—\nmm") : setting("format", "dddd HH:mm"))
+
+
+  function weekdayLabels() {
+    var days = weekStartsSunday
+      ? [Locale.Sunday, Locale.Monday, Locale.Tuesday, Locale.Wednesday, Locale.Thursday, Locale.Friday, Locale.Saturday]
+      : [Locale.Monday, Locale.Tuesday, Locale.Wednesday, Locale.Thursday, Locale.Friday, Locale.Saturday, Locale.Sunday]
+    return days.map(function(d) {
+      return loc.dayName(d, Locale.ShortFormat)
+    })
+  }
 
   function refresh() {
     displayDate = new Date()
@@ -44,7 +54,7 @@ Panel {
   }
 
   function formatted(date) {
-    return Qt.formatDateTime(date, activeFormat.replace(/ww/g, isoWeekLiteral(date)))
+    return date.toLocaleString(loc, activeFormat.replace(/ww/g, isoWeekLiteral(date)))
   }
 
   function sameDay(a, b) {
@@ -214,7 +224,7 @@ Panel {
           Text {
             width: parent.width - prevButton.width - nextButton.width - todayButton.width - Style.spacing.rowGap * 3
             anchors.verticalCenter: parent.verticalCenter
-            text: Qt.formatDate(root.panelMonth, "MMMM yyyy")
+            text: root.panelMonth.toLocaleString(root.loc, "MMMM yyyy")
             color: root.bar ? root.bar.foreground : Color.foreground
             font.family: root.bar ? root.bar.fontFamily : Style.font.family
             font.pixelSize: Style.font.title
@@ -257,7 +267,7 @@ Panel {
           columnSpacing: Style.spacing.xs
 
           Repeater {
-            model: root.weekdayLabels
+            model: root.weekdayLabels()
             delegate: Text {
               required property string modelData
               width: (calendarColumn.width - Style.spacing.xs * 6) / 7
@@ -312,7 +322,7 @@ Panel {
 
         Text {
           width: parent.width
-          text: Qt.formatDate(root.displayDate, "dddd, dd MMMM yyyy")
+          text: root.displayDate.toLocaleString(root.loc, "dddd, dd MMMM yyyy")
           color: Qt.darker(root.bar ? root.bar.foreground : Color.foreground, 1.35)
           font.family: root.bar ? root.bar.fontFamily : Style.font.family
           font.pixelSize: Style.font.bodySmall

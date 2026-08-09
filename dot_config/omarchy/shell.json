@@ -45,9 +45,11 @@
         {
           "id": "local.clock",
           "showSettingsGear": false,
-          "format": "yy-MM-d HH:mm",
-          "formatAlt": "d MMMM 'W'ww yyyy",
-          "verticalFormat": "HH\n—\nmm"
+          "format": "MM-dd HH:mm ddd",
+          "formatAlt": "dd MMMM 'W'ww yyyy",
+          "verticalFormat": "HH\n—\nmm",
+          "firstDayOfWeek": "monday",
+          "locale": "ja"
         }
       ]
     }

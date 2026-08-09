@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "local.clock",
   "name": "Local Clock",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "AyushKr2003",
   "description": "Clock bar widget with a monthly calendar popup.",
   "kinds": [
@@ -22,6 +22,7 @@
       "verticalFormat": "HH\n—\nmm",
       "showSettingsGear": true,
       "firstDayOfWeek": "sunday",
+      "locale": "en",
       "settingsCommand": "omarchy-shell shell summon local.settings"
     },
     "schema": [
@@ -59,6 +60,23 @@
           "monday"
         ],
         "defaultValue": "sunday"
+      },
+      {
+        "key": "locale",
+        "type": "string",
+        "label": "Locale",
+        "description": "The locale to use for formatting the date and time. Leave empty to use the system locale.",
+        "options": [
+          "en",
+          "fr",
+          "de",
+          "es",
+          "it",
+          "ja",
+          "zh_CN",
+          "zh_TW"
+        ],
+        "defaultValue": "en"
       },
       {
         "key": "settingsCommand",
