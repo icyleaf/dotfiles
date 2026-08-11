@@ -38,10 +38,11 @@ Declarative dotfiles managed by [Chezmoi](https://chezmoi.io). Targets macOS and
 
 **Middleware Wrapper** — executable scripts located in `dot_local/bin/` (deployed to `~/.local/bin/`) prefixed with `icy-` that act as an abstraction layer between user configs (Hyprland, Waybar) and external tooling (Omarchy), facilitating plug-and-play config swapping.
 
-**Omarchy Shell Plugin** — third-party or custom status bar/shell extensions located in `~/.config/omarchy/plugins/<id>/` with a `manifest.json` at their root. They are subject to two constraints in this repository:
+**Omarchy Shell Plugin** — third-party or custom status bar/shell extensions located in `~/.config/omarchy/plugins/<id>/` with a `manifest.json` at their root. They are subject to three constraints in this repository:
 
 1. **Real Copied Directories**: `omarchy-shell` rejects symlinked plugin folders. They must be deployed by Chezmoi as real copied files/folders, not symlinks.
 2. **Reload Flow**: Modifications to `shell.json` or custom plugins must be reloaded using `omarchy-restart-shell`. The `omarchy-refresh-shell` command must **NOT** be used for reloads, as it resets `shell.json` to factory defaults and removes custom plugins.
+3. **Declarative Third-Party Plugin Sync**: Installing plugins dynamically via `omarchy plugin add` mutates `~/.config/omarchy/shell.json` locally, causing `chezmoi apply` diff warnings. To ensure clean multi-machine synchronization, third-party plugins are declared in `.chezmoiexternals/03_omarchy.toml.tmpl` and their enabled state is committed to `dot_config/omarchy/shell.json`.
 
 **Herdr Session Overview Plugin** — an Omarchy Shell Plugin focused on presenting all active herdr sessions, their interaction state, and fast navigation/actions from a single status surface.
 

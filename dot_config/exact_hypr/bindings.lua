@@ -117,3 +117,27 @@ for workspace = 1, 10 do
 end
 
 
+-- omarchy plugins
+o.bind("SUPER + SHIFT + W", "Mirador", function()
+  hl.dispatch(hl.dsp.exec_cmd("omarchy-shell shell summon mirador '{}'"))
+end)
+
+hl.gesture({
+  fingers = 3,
+  direction = "up",
+  action = function()
+    hl.dispatch(hl.dsp.exec_cmd("omarchy-shell shell summon mirador '{}'"))
+  end,
+})
+
+hl.gesture({
+  fingers = 3,
+  direction = "down",
+  action = function()
+    hl.dispatch(hl.dsp.exec_cmd("omarchy-shell shell hide mirador"))
+  end,
+})
+
+
+o.bind("mouse:275", "Orbit press", "~/.config/omarchy/plugins/local.orbit/scripts/orbit-press.sh --button 275", { locked = true })
+o.bind("mouse:275", "Orbit release fallback", "~/.config/omarchy/plugins/local.orbit/scripts/orbit-release.sh", { locked = true, release = true })
