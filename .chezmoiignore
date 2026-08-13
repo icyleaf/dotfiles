@@ -37,6 +37,7 @@ Library/**
 .config/btop/**
 .config/omarchy/**
 .config/chrome-flags.conf
+.config/user-dirs.dirs
 .local/bin/pm.sh
 .local/bin/walker-*
 .local/bin/systemupdate.sh

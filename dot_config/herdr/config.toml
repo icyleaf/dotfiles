@@ -44,3 +44,4 @@ manage_ssh_config = true
 
 [experimental]
 allow_nested = true
+pane_history = true
