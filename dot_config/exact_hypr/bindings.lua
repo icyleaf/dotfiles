@@ -12,6 +12,7 @@ hl.unbind("SUPER + P")
 hl.unbind("SUPER + L")
 hl.unbind("SUPER + S")
 hl.unbind("SUPER + ALT + S")
+hl.unbind("SUPER + SHIFT + S")
 hl.unbind("SUPER + SHIFT + T")
 hl.unbind("SUPER + ALT + D")
 hl.unbind("SUPER + F1")
@@ -81,9 +82,6 @@ o.bind("SUPER + SHIFT + O", "Share", "omarchy-menu toggle share")
 -- o.bind("SUPER + CTRL + ALT + B", "Show battery remaining", o.notify("$(icy-battery-status)"))
 -- o.bind("SUPER + CTRL + ALT + W", "Show weather", o.notify("$(icy-weather-status)"))
 
--- Web apps
-o.bind("SUPER + SHIFT + B", "btop", "icy-launch-tui btop")
-
 -- System window management
 o.bind("CTRL + ALT + DELETE", "Close all Windows", "icy-cmd-close-all-windows")
 o.bind("SUPER + W", "Close active window", hl.dsp.window.close())
@@ -97,13 +95,8 @@ o.bind("SUPER + Z", "Move window", hl.dsp.window.drag(), { mouse = true })
 o.bind("SUPER + X", "Resize window", hl.dsp.window.resize(), { mouse = true })
 
 -- Custom workspaces switching (Independent workspaces per display)
--- hl.bind(mainMod .. " + S",         hl.dsp.workspace.toggle_special("magic"))
--- hl.bind(mainMod .. " + SHIFT + S", hl.dsp.window.move({ workspace = "special:magic" }))
-hl.unbind("SUPER + SHIFT + S")
-o.bind("SUPER + SHIFT + S", "Move window to scratchpad", hl.dsp.window.move({ workspace = "special:magic" }))
--- o.bind("SUPER + ALT + S", "Move window to scratchpad (silent)", hl.dsp.window.movetoworkspace({ workspace = "special", silent = true }))
-o.bind("SUPER + S", "Toggle scratchpad", hl.dsp.workspace.toggle_special({ workspace = "magic" }))
-
+o.bind("SUPER + S", "Toggle scratchpad", hl.dsp.workspace.toggle_special("scratchpad"))
+o.bind("SUPER + SHIFT + S", "Move window to scratchpad", hl.dsp.window.move({ workspace = "special:scratchpad", follow = false }))
 
 for workspace = 1, 10 do
   local key = "code:" .. tostring(workspace + 9)
