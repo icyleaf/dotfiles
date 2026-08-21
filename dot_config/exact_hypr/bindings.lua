@@ -52,6 +52,7 @@ o.bind("SUPER + SHIFT + L", "Sleep", function()
 o.bind("SUPER + SHIFT + P", "Orbit Quick Launcher", "omarchy-shell shell toggle local.orbit")
 o.bind("SUPER + ALT + D", "Docker",  "icy-launch-tui lazydocker")
 o.bind("SUPER + F1", "Activity", "icy-launch-tui btop")
+o.bind("SUPER + F2", "System Monitor", "omarchy-shell icyleaf.resources toggle")
 o.bind("SUPER + slash", "Passwords", "uwsm app -- flatpak run com.bitwarden.desktop")
 
 -- Captures
@@ -108,7 +109,6 @@ for workspace = 1, 10 do
   o.bind("SUPER + SHIFT + " .. key, "Move window to workspace " .. workspace, "bash /home/icyleaf/.config/hypr/scripts/workspace-switch.sh move " .. workspace)
   o.bind("SUPER + SHIFT + CTRL + " .. key, "Move window silently to workspace " .. workspace, "bash /home/icyleaf/.config/hypr/scripts/workspace-switch.sh movesilent " .. workspace)
 end
-
 
 -- omarchy plugins
 o.bind("SUPER + SHIFT + W", "Mirador", function()
