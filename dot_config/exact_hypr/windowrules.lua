@@ -12,3 +12,13 @@ o.window("org.telegram.desktop", { workspace = "9" })
 o.window("wechat", { workspace = "9" })
 o.window("discord", { workspace = "10" })
 o.window("vesktop", { workspace = "10" })
+
+
+-- omarchy plugins ruls
+
+-- plugin: ryuhzk.simfarm
+o.window({ class = "^chrome-.*__-Simfarm$" }, {
+  float = true,
+  center = true,
+  size = { 500, 1040 },
+})
