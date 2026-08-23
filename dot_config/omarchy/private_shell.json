@@ -7,11 +7,17 @@
   "bar": {
     "position": "top",
     "transparent": true,
-    "centerAnchor": "omarchy.clock",
+    "centerAnchor": "icyleaf.workspaces",
     "layout": {
       "left": [
         {
           "id": "icyleaf.herdr"
+        },
+        {
+          "id": "ryuhzk.simfarm",
+          "serverUrl": "http://192.168.10.2:8801",
+          "sshHost": "tokyo-mini4",
+          "browser": "google-chrome-stable"
         },
         {
           "id": "icyleaf.resources"
@@ -23,12 +29,18 @@
       "center": [
         {
           "id": "icyleaf.workspaces"
+        },
+        {
+          "id": "omarchy.keyboard-layout"
         }
       ],
       "right": [
         {
           "id": "omarchy.tray",
           "expanded": true
+        },
+        {
+          "id": "jankeesvw.notification-center"
         },
         {
           "id": "omarchy.bluetooth"
@@ -60,6 +72,16 @@
     },
     {
       "id": "mirador"
+    },
+    {
+      "id": "icyleaf.notifications"
     }
+  ],
+  "disabledPlugins": [
+    "omarchy.notifications"
+  ],
+  "cloneSourceRestores": [
+    "icyleaf.notifications",
+    "local.clock"
   ]
 }
