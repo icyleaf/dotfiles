@@ -55,12 +55,17 @@ README.md
 CONTEXT.md
 LICENSE
 
+.config/.gemini/antigravity-cli/
+.config/.gemini/oauth_creds.json
+.config/.gemini/user_id
+
 # Ignore encrypted secrets store — deployed by run_onchange_deploy-secrets.sh.tmpl
 secrets/**
 
 # Ignore non-deployed repository metadata files
 linux-packages.txt
 install.sh
+assets/**
 
 # Ignore vendored third-party source (managed via git submodules, deployed by run_once scripts)
 vendor/**

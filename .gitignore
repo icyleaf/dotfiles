@@ -1,3 +1,4 @@
+
 **/vim/dotfiles/vim/bundle/*
 **/brew/*.lock.json
 **/gnupg/gpg-agent.conf
@@ -19,6 +20,9 @@ ssh/
 *.bak.*
 
 .scratch/
+
+dot_gemini/oauth_creds.json
+dot_gemini/user_id
 
 # ghostty-wrapper
 dot_config/ghostty/fonts/
