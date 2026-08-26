@@ -3,6 +3,7 @@
 
 -- 1. Unbind defaults we want to override
 hl.unbind("SUPER + B")
+hl.unbind("SUPER + S")
 hl.unbind("SUPER + F")
 hl.unbind("SUPER + T")
 hl.unbind("SUPER + E")
@@ -10,7 +11,6 @@ hl.unbind("SUPER + D")
 hl.unbind("SUPER + W")
 hl.unbind("SUPER + P")
 hl.unbind("SUPER + L")
-hl.unbind("SUPER + S")
 hl.unbind("SUPER + ALT + S")
 hl.unbind("SUPER + SHIFT + S")
 hl.unbind("SUPER + SHIFT + T")
@@ -96,8 +96,8 @@ o.bind("SUPER + Z", "Move window", hl.dsp.window.drag(), { mouse = true })
 o.bind("SUPER + X", "Resize window", hl.dsp.window.resize(), { mouse = true })
 
 -- Custom workspaces switching (Independent workspaces per display)
-o.bind("SUPER + S", "Toggle scratchpad", hl.dsp.workspace.toggle_special("scratchpad"))
-o.bind("SUPER + SHIFT + S", "Move window to scratchpad", hl.dsp.window.move({ workspace = "special:scratchpad", follow = false }))
+o.bind("SUPER + S", "Toggle silent", hl.dsp.workspace.toggle_special("silent"))
+o.bind("SUPER + SHIFT + S", "Move window to silent", hl.dsp.window.move({ workspace = "special:silent", follow = false }))
 
 for workspace = 1, 10 do
   local key = "code:" .. tostring(workspace + 9)
@@ -111,6 +111,14 @@ for workspace = 1, 10 do
 end
 
 -- omarchy plugins
+o.bind("SUPER + SHIFT + D", "Dict", function()
+  hl.dispatch(hl.dsp.exec_cmd("omarchy-shell shell toggle icyleaf.modict"))
+end)
+
+o.bind("SUPER + ALT + P", "Hypr Input Swither", function()
+  hl.dispatch(hl.dsp.exec_cmd("omarchy-shell shell toggle icyleaf.hypr-input-switcher"))
+end)
+
 o.bind("SUPER + SHIFT + W", "Mirador", function()
   hl.dispatch(hl.dsp.exec_cmd("omarchy-shell shell summon mirador '{}'"))
 end)
