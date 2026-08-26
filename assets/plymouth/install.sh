@@ -2,6 +2,10 @@
 #
 # 安装 plymouth 主题
 
+set -euo pipefail
+
+DIRPATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 # get hostname
 hostname=$(hostname)
 
