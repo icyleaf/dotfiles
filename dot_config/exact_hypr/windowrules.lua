@@ -19,7 +19,7 @@ o.window("vesktop", { workspace = "10" })
 o.window({ class = "^chrome-.*__-Simfarm$" }, {
   float = true,
   center = true,
-  size = { 500, 1040 },
+  size = { 600, 1040 },
 })
 
 o.window({ class = "org.quickshell", title = "(MODICT)" }, { float = true, center = true })
