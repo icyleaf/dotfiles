@@ -373,23 +373,9 @@ BarWidget {
       }
     }
 
-    // Active Special Workspace Indicator Pill (Visible whenever a special workspace is open on this screen)
-    WidgetButton {
-      visible: root.hasActiveSpecial
-      bar: root.bar
-      text: "󰘳 " + root.activeSpecialName
-      useActiveColor: false
-      tooltipText: "Active Special Workspace: " + root.activeSpecialName + " (Click to toggle/close)"
-      opacity: 1.0
-      horizontalMargin: 6
-      verticalPadding: 6
-      fixedHeight: root.barSize
-      onPressed: function() { root.toggleSpecial(root.activeSpecialName) }
-    }
-
     // Separator before Specials
     Rectangle {
-      visible: (root.shouldShowSpecials && root.specialsList.length > 0) || root.hasActiveSpecial
+      visible: root.shouldShowSpecials && root.specialsList.length > 0
       implicitWidth: root.vertical ? (root.barSize - Style.space(8)) : 1
       implicitHeight: root.vertical ? 1 : Style.space(12)
       Layout.alignment: Qt.AlignVCenter
@@ -417,13 +403,14 @@ BarWidget {
         }
 
         bar: root.bar
-        text: activeOnScreen ? (specialIcon + " " + specialName) : specialIcon
+        text: specialIcon
+        active: activeOnScreen
         useActiveColor: false
         tooltipText: "Special: " + specialName + (activeOnScreen ? " [Active]" : (occupied ? " (" + ws.toplevels.values.length + " windows)" : " [Empty]"))
-        opacity: activeOnScreen ? 1.0 : (occupied ? 0.85 : 0.35)
-        horizontalMargin: activeOnScreen ? 6 : 4
+        opacity: activeOnScreen ? 1.0 : (occupied ? 0.7 : 0.35)
+        horizontalMargin: 4
         verticalPadding: 6
-        fixedWidth: activeOnScreen ? -1 : (root.vertical ? root.barSize : Style.space(20))
+        fixedWidth: root.vertical ? root.barSize : Style.space(20)
         fixedHeight: root.barSize
         onPressed: function(button) {
           if (button === Qt.RightButton) {
@@ -431,6 +418,18 @@ BarWidget {
           } else {
             root.toggleSpecial(specialName)
           }
+        }
+
+        // Active indicator line
+        Rectangle {
+          visible: activeOnScreen
+          anchors.bottom: parent.bottom
+          anchors.horizontalCenter: parent.horizontalCenter
+          anchors.bottomMargin: Style.space(1)
+          width: Style.space(12)
+          height: Style.space(2)
+          radius: Style.space(1)
+          color: root.bar ? root.bar.barForeground : Color.foreground
         }
       }
     }
