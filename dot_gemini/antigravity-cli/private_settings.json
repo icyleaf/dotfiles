@@ -1,0 +1,56 @@
+{
+  "colorScheme": "dark",
+  "enableTelemetry": false,
+  "model": "Gemini 3.7 Flash (Medium)",
+  "permissions": {
+    "allow": [
+      "command(git)",
+      "command(npm run (build|dev|start|lint|test))",
+      "command(bun run (build|dev|start|lint|test))",
+      "command(pnpm run (build|dev|start|lint|test))",
+      "command(chezmoi)",
+      "command(cat)",
+      "command(grep)",
+      "command(head)",
+      "command(jq)",
+      "command(ls)",
+      "command(printf)",
+      "command(ps)",
+      "command(pwd)",
+      "command(read)",
+      "command(readlink)",
+      "command(shellcheck)",
+      "command(sleep)",
+      "command(sort)",
+      "command(stat)",
+      "command(strings)",
+      "command(tail)",
+      "command(wc)",
+      "command(which)",
+      "command(omarchy)",
+      "command(hyprctl)",
+      "write_file(src/)",
+      "unsandboxed(git push)",
+      "read_file(/var/log/app)",
+      "read_url(google.com)",
+      "read_file(~/.agents/)",
+      "mcp(linter/*)"
+    ],
+    "deny": [
+      "command(rm -rf)",
+      "command(sudo)",
+      "write_file(.git/)",
+      "write_file(~/.ssh)"
+    ],
+    "ask": [
+      "command(*)",
+      "execute_url(aws.amazon.com)",
+      "mcp(sql/execute_mutation)"
+    ]
+  },
+  "showFeedbackSurvey": false,
+  "toolPermission": "proceed-in-sandbox",
+  "trustedWorkspaces": [
+    "/home/icyleaf"
+  ]
+}
