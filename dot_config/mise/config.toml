@@ -1,5 +1,8 @@
 [tools]
+antigravity-cli = "latest"
+bun = "latest"
 node = "26.7.0"
+opencode = "latest"
 ruby = "3.4.5"
 
 [settings]
