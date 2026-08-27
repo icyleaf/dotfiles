@@ -43,6 +43,20 @@ BarWidget {
 
   property bool specialMenuOpen: false
 
+  onSpecialMenuOpenChanged: {
+    if (specialMenuOpen) {
+      pickerFocusTimer.restart()
+    }
+  }
+
+  Timer {
+    id: pickerFocusTimer
+    interval: 50
+    onTriggered: {
+      if (pickerCard) pickerCard.forceActiveFocus()
+    }
+  }
+
   function openSpecialMenu() {
     root.specialMenuOpen = true
   }
@@ -53,6 +67,33 @@ BarWidget {
 
   function toggleSpecialMenu() {
     root.specialMenuOpen = !root.specialMenuOpen
+  }
+
+  function getDigitIndex(event) {
+    if (event.key >= Qt.Key_1 && event.key <= Qt.Key_9) {
+      return event.key - Qt.Key_1
+    }
+    var shiftKeys = [
+      Qt.Key_Exclam,      // 1 -> !
+      Qt.Key_At,          // 2 -> @
+      Qt.Key_NumberSign,  // 3 -> #
+      Qt.Key_Dollar,      // 4 -> $
+      Qt.Key_Percent,     // 5 -> %
+      Qt.Key_AsciiCircum, // 6 -> ^
+      Qt.Key_Ampersand,   // 7 -> &
+      Qt.Key_Asterisk,    // 8 -> *
+      Qt.Key_ParenLeft    // 9 -> (
+    ]
+    var sIdx = shiftKeys.indexOf(event.key)
+    if (sIdx !== -1) return sIdx
+
+    var ch = String(event.text || "")
+    if (ch >= "1" && ch <= "9") return parseInt(ch, 10) - 1
+    var syms = "!@#$%^&*("
+    var symIdx = syms.indexOf(ch)
+    if (symIdx !== -1) return symIdx
+
+    return -1
   }
 
   // -------------------------------------------------------------- IPC Handler
@@ -126,6 +167,16 @@ BarWidget {
     var desc = monitorDesc ? (monitorDesc + (monitorName ? " (" + monitorName + ")" : "")) : (monitorName ? monitorName : ("Monitor " + (monitorId + 1)))
     return desc + (isFocusedMonitor ? " · [Focused]" : "")
   }
+
+  // Active Special Workspace on this monitor
+  readonly property var activeSpecialWs: root.monitor ? root.monitor.specialWorkspace : null
+  readonly property string activeSpecialName: {
+    if (!activeSpecialWs) return ""
+    var n = String(activeSpecialWs.name || "")
+    if (n.indexOf("special:") === 0) return n.substring(8)
+    return n
+  }
+  readonly property bool hasActiveSpecial: activeSpecialName !== ""
 
   function workspaceById(id) {
     var values = Hyprland.workspaces.values
@@ -307,9 +358,23 @@ BarWidget {
       }
     }
 
+    // Active Special Workspace Indicator Pill (Visible whenever a special workspace is open on this screen)
+    WidgetButton {
+      visible: root.hasActiveSpecial
+      bar: root.bar
+      text: "󰘳 " + root.activeSpecialName
+      useActiveColor: false
+      tooltipText: "Active Special Workspace: " + root.activeSpecialName + " (Click to toggle/close)"
+      opacity: 1.0
+      horizontalMargin: 6
+      verticalPadding: 6
+      fixedHeight: root.barSize
+      onPressed: function() { root.toggleSpecial(root.activeSpecialName) }
+    }
+
     // Separator before Specials
     Rectangle {
-      visible: root.shouldShowSpecials && root.specialsList.length > 0
+      visible: (root.shouldShowSpecials && root.specialsList.length > 0) || root.hasActiveSpecial
       implicitWidth: root.vertical ? (root.barSize - Style.space(8)) : 1
       implicitHeight: root.vertical ? 1 : Style.space(12)
       Layout.alignment: Qt.AlignVCenter
@@ -337,13 +402,13 @@ BarWidget {
         }
 
         bar: root.bar
-        text: specialIcon
+        text: activeOnScreen ? (specialIcon + " " + specialName) : specialIcon
         useActiveColor: false
         tooltipText: "Special: " + specialName + (activeOnScreen ? " [Active]" : (occupied ? " (" + ws.toplevels.values.length + " windows)" : " [Empty]"))
-        opacity: activeOnScreen || occupied ? 1.0 : 0.35
-        horizontalMargin: 4
+        opacity: activeOnScreen ? 1.0 : (occupied ? 0.85 : 0.35)
+        horizontalMargin: activeOnScreen ? 6 : 4
         verticalPadding: 6
-        fixedWidth: root.vertical ? root.barSize : Style.space(20)
+        fixedWidth: activeOnScreen ? -1 : (root.vertical ? root.barSize : Style.space(20))
         fixedHeight: root.barSize
         onPressed: function(button) {
           if (button === Qt.RightButton) {
@@ -393,19 +458,19 @@ BarWidget {
           if (event.key === Qt.Key_Escape) {
             root.closeSpecialMenu()
             event.accepted = true
-          } else if (event.key >= Qt.Key_1 && event.key <= Qt.Key_9) {
-            var idx = event.key - Qt.Key_1
-            if (idx < root.specialsList.length) {
-              var item = root.specialsList[idx]
-              var specialName = String(item.name || "")
-              if (event.modifiers & Qt.ShiftModifier) {
-                root.moveSpecial(specialName, false)
-              } else {
-                root.toggleSpecial(specialName)
-              }
-              root.closeSpecialMenu()
-              event.accepted = true
+            return
+          }
+          var digitIdx = root.getDigitIndex(event)
+          if (digitIdx >= 0 && digitIdx < root.specialsList.length) {
+            var item = root.specialsList[digitIdx]
+            var specialName = String(item.name || "")
+            if (event.modifiers & Qt.ShiftModifier) {
+              root.moveSpecial(specialName, false)
+            } else {
+              root.toggleSpecial(specialName)
             }
+            root.closeSpecialMenu()
+            event.accepted = true
           }
         }
 
