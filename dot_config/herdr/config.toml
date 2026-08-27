@@ -8,8 +8,24 @@ key = "prefix+ctrl+g"
 type = "popup"
 command = "lazygit"
 description = "run lazygit"
-width = "80%"
-height = "80%"
+width = "90%"
+height = "90%"
+
+[[keys.command]]
+key = "prefix+ctrl+d"
+type = "popup"
+command = "lazydocker"
+description = "run lazydocker"
+width = "90%"
+height = "90%"
+
+[[keys.command]]
+key = "prefix+ctrl+b"
+type = "popup"
+command = "btop"
+description = "run btop"
+width = "90%"
+height = "90%"
 
 [theme]
 name = "nord"
