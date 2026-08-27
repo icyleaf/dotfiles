@@ -33,12 +33,12 @@ BarWidget {
     return defaultSpecials
   }
 
-  readonly property string specialDisplayMode: String(root.setting("specialDisplayMode", "primaryOnly"))
+  readonly property string specialDisplayMode: String(root.setting("specialDisplayMode", "all"))
   readonly property bool isPrimaryMonitor: root.monitorId === 0
   readonly property bool shouldShowSpecials: {
     if (root.specialDisplayMode === "none") return false
     if (root.specialDisplayMode === "primaryOnly") return root.isPrimaryMonitor
-    return true // "allAlways" or "allWhenOccupied"
+    return true // "all" (default) or "allWhenOccupied"
   }
 
   property bool specialMenuOpen: false
@@ -169,12 +169,16 @@ BarWidget {
   }
 
   // Active Special Workspace on this monitor
-  readonly property var activeSpecialWs: root.monitor ? root.monitor.specialWorkspace : null
   readonly property string activeSpecialName: {
-    if (!activeSpecialWs) return ""
-    var n = String(activeSpecialWs.name || "")
-    if (n.indexOf("special:") === 0) return n.substring(8)
-    return n
+    if (Hyprland.focusedWorkspace) {
+      var wsName = String(Hyprland.focusedWorkspace.name || "")
+      if (wsName.indexOf("special:") === 0) {
+        if (Hyprland.focusedWorkspace.monitor === root.monitor || root.isFocusedMonitor) {
+          return wsName.substring(8)
+        }
+      }
+    }
+    return ""
   }
   readonly property bool hasActiveSpecial: activeSpecialName !== ""
 
@@ -196,11 +200,7 @@ BarWidget {
   }
 
   function isSpecialActive(name) {
-    var targetName = "special:" + name
-    if (root.monitor && root.monitor.specialWorkspace) {
-      return String(root.monitor.specialWorkspace.name) === targetName
-    }
-    return false
+    return root.activeSpecialName === String(name || "")
   }
 
   // -------------------------------------------------------------- actions & ipc
