@@ -169,18 +169,33 @@ BarWidget {
   }
 
   // Active Special Workspace on this monitor
-  readonly property string activeSpecialName: {
-    if (Hyprland.focusedWorkspace) {
-      var wsName = String(Hyprland.focusedWorkspace.name || "")
-      if (wsName.indexOf("special:") === 0) {
-        if (Hyprland.focusedWorkspace.monitor === root.monitor || root.isFocusedMonitor) {
-          return wsName.substring(8)
-        }
-      }
+  property string activeSpecialName: {
+    if (root.monitor && root.monitor.lastIpcObject && root.monitor.lastIpcObject.specialWorkspace) {
+      var n = String(root.monitor.lastIpcObject.specialWorkspace.name || "")
+      if (n.indexOf("special:") === 0) return n.substring(8)
+      return n
     }
     return ""
   }
   readonly property bool hasActiveSpecial: activeSpecialName !== ""
+
+  Connections {
+    target: Hyprland
+    function onRawEvent(event) {
+      if (event && event.name === "activespecial") {
+        var parts = String(event.data || "").split(",")
+        var ws = parts[0] ? parts[0].trim() : ""
+        var mon = parts[1] ? parts[1].trim() : ""
+        if (mon === "" || mon === root.monitorName) {
+          if (ws.indexOf("special:") === 0) {
+            root.activeSpecialName = ws.substring(8)
+          } else {
+            root.activeSpecialName = ""
+          }
+        }
+      }
+    }
+  }
 
   function workspaceById(id) {
     var values = Hyprland.workspaces.values
