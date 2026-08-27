@@ -95,10 +95,12 @@ o.bind("SUPER + mouse:273", "Resize window", hl.dsp.window.resize(), { mouse = t
 o.bind("SUPER + Z", "Move window", hl.dsp.window.drag(), { mouse = true })
 o.bind("SUPER + X", "Resize window", hl.dsp.window.resize(), { mouse = true })
 
--- Custom workspaces switching (delegated to icyleaf.workspaces plugin via IPC)
-o.bind("SUPER + S", "Toggle silent", hl.dsp.workspace.toggle_special("silent"))
-o.bind("SUPER + SHIFT + S", "Move window to silent", hl.dsp.window.move({ workspace = "special:silent", follow = false }))
+-- Custom special workspaces switching (Scratchpads via icyleaf.workspaces IPC)
+o.bind("SUPER + S", "Toggle silent scratchpad", "omarchy-shell -q icyleaf.workspaces toggleSpecial silent")
+o.bind("SUPER + SHIFT + S", "Move window to silent scratchpad", "omarchy-shell -q icyleaf.workspaces moveSpecial silent")
+o.bind("SUPER + ALT + S", "Special scratchpad picker", "omarchy-shell -q icyleaf.workspaces selectSpecial")
 
+-- Custom numbered workspaces switching (delegated to icyleaf.workspaces plugin via IPC)
 for workspace = 1, 10 do
   local key = "code:" .. tostring(workspace + 9)
   hl.unbind("SUPER + " .. key)

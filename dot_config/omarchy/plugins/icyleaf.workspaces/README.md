@@ -25,6 +25,11 @@ It provides independent per-display workspace sets, physical monitor identity ba
   - **Right-Click**: Move active window to target workspace silently without following.
   - **Mouse Wheel**: Cycle through workspaces on the current monitor.
   - **Click Monitor Badge**: Focus target display.
+- **Multi-Special Workspace Scratchpads & Quick Picker Overlay**:
+  - Configurable scratchpad drawers (`silent`, `term`, `chat`, `music`).
+  - **Quick Picker Overlay (`SUPER + ALT + S`)**: Displays a centered modal listing all scratchpads with number keys `1`–`4` for single-stroke switching, `Shift + 1–4` for moving windows in, and `Esc` to close.
+  - **Permanent Bar Icons**: Mini badges (`󰏤`, ``, `󰭹`, `󰎆`) rendered on the primary display bar for one-click mouse access.
+  - **Display Modes (`specialDisplayMode`)**: `"primaryOnly"` (default), `"allWhenOccupied"`, `"allAlways"`.
 
 ---
 
@@ -49,7 +54,12 @@ This plugin is managed via [Chezmoi](https://chezmoi.io) within `dot_config/omar
 Add the following snippet to your `~/.config/hypr/bindings.lua` (or `dot_config/exact_hypr/bindings.lua`):
 
 ```lua
--- Multi-monitor workspaces switching (delegated to icyleaf.workspaces plugin via IPC)
+-- Special workspace scratchpads (delegated to icyleaf.workspaces plugin via IPC)
+o.bind("SUPER + S", "Toggle silent scratchpad", "omarchy-shell -q icyleaf.workspaces toggleSpecial silent")
+o.bind("SUPER + SHIFT + S", "Move window to silent scratchpad", "omarchy-shell -q icyleaf.workspaces moveSpecial silent")
+o.bind("SUPER + ALT + S", "Special scratchpad picker", "omarchy-shell -q icyleaf.workspaces selectSpecial")
+
+-- Multi-monitor numbered workspaces switching
 for workspace = 1, 10 do
   local key = "code:" .. tostring(workspace + 9)
   hl.unbind("SUPER + " .. key)
@@ -84,12 +94,19 @@ The plugin listens on the IPC target `icyleaf.workspaces` via `omarchy-shell`:
 | `focus` | `<slot: 1-10>` | Switches to workspace slot `<slot>` on the currently focused monitor |
 | `move` | `<slot: 1-10>` | Moves the active window to slot `<slot>` on the focused monitor and follows |
 | `movesilent` | `<slot: 1-10>` | Moves the active window to slot `<slot>` on the focused monitor silently |
+| `toggleSpecial` | `<name: string>` | Toggles special workspace `special:<name>` |
+| `moveSpecial` | `<name: string>` | Moves active window into `special:<name>` silently |
+| `moveSpecialFollow`| `<name: string>` | Moves active window into `special:<name>` and follows |
+| `selectSpecial` | *(none)* | Toggles the Special Scratchpads Quick Picker Overlay |
 
 ### CLI Example
 ```bash
 # Switch to slot 2 on the currently active monitor
 omarchy-shell icyleaf.workspaces focus 2
 
-# Move window silently to slot 3
-omarchy-shell icyleaf.workspaces movesilent 3
+# Toggle special scratchpad 'term'
+omarchy-shell icyleaf.workspaces toggleSpecial term
+
+# Open Special Scratchpad Picker Overlay
+omarchy-shell icyleaf.workspaces selectSpecial
 ```
