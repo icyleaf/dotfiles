@@ -89,3 +89,10 @@ Declarative dotfiles managed by [Chezmoi](https://chezmoi.io). Targets macOS and
 **Priority-First Session Ordering** — a session ordering policy that ranks needs-input sessions above running and idle sessions, then orders within each status tier by most recent activity.
 
 **Two-Second Snapshot Cadence** — a polling cadence that refreshes the session snapshot every 2 seconds to balance responsiveness with shell/plugin overhead.
+
+**Monitor-Anchored Workspace Model** — a multi-display workspace architecture where each status bar widget strictly binds its lifecycle and workspace index range to its hosting physical monitor (`barWindow.screen`), avoiding global focus crosstalk.
+
+**Monitor Identity Badge** — a status bar badge element displaying the display index (e.g. `󰍹 M1`) and connector information with active focus highlight cues, indicating which physical screen currently hosts user input focus.
+
+**Direct Hyprland IPC Dispatch** — an atomic command dispatch seam executing Lua snippets directly via `Hyprland.dispatch`, replacing external shell scripts to eliminate subshell spawning overhead during workspace and window operations.
+

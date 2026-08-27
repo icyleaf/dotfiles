@@ -95,7 +95,7 @@ o.bind("SUPER + mouse:273", "Resize window", hl.dsp.window.resize(), { mouse = t
 o.bind("SUPER + Z", "Move window", hl.dsp.window.drag(), { mouse = true })
 o.bind("SUPER + X", "Resize window", hl.dsp.window.resize(), { mouse = true })
 
--- Custom workspaces switching (Independent workspaces per display)
+-- Custom workspaces switching (delegated to icyleaf.workspaces plugin via IPC)
 o.bind("SUPER + S", "Toggle silent", hl.dsp.workspace.toggle_special("silent"))
 o.bind("SUPER + SHIFT + S", "Move window to silent", hl.dsp.window.move({ workspace = "special:silent", follow = false }))
 
@@ -104,10 +104,11 @@ for workspace = 1, 10 do
   hl.unbind("SUPER + " .. key)
   hl.unbind("SUPER + SHIFT + " .. key)
   hl.unbind("SUPER + SHIFT + ALT + " .. key)
+  hl.unbind("SUPER + SHIFT + CTRL + " .. key)
 
-  o.bind("SUPER + " .. key, "Switch to workspace " .. workspace, "bash /home/icyleaf/.config/hypr/scripts/workspace-switch.sh switch " .. workspace)
-  o.bind("SUPER + SHIFT + " .. key, "Move window to workspace " .. workspace, "bash /home/icyleaf/.config/hypr/scripts/workspace-switch.sh move " .. workspace)
-  o.bind("SUPER + SHIFT + CTRL + " .. key, "Move window silently to workspace " .. workspace, "bash /home/icyleaf/.config/hypr/scripts/workspace-switch.sh movesilent " .. workspace)
+  o.bind("SUPER + " .. key, "Switch to workspace " .. workspace, "omarchy-shell -q icyleaf.workspaces focus " .. workspace)
+  o.bind("SUPER + SHIFT + " .. key, "Move window to workspace " .. workspace, "omarchy-shell -q icyleaf.workspaces move " .. workspace)
+  o.bind("SUPER + SHIFT + CTRL + " .. key, "Move window silently to workspace " .. workspace, "omarchy-shell -q icyleaf.workspaces movesilent " .. workspace)
 end
 
 -- omarchy plugins
