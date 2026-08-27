@@ -1,0 +1,8 @@
+[mgr]
+prepend_keymap = [
+  { on = ".", run = "hidden toggle", desc = "Toggle hidden files" },
+  { on = [ "g", "d" ], run = "cd ~/Development", desc = "Go to Development workspace" },
+  { on = [ "g", "o" ], run = "cd ~/.dotfiles", desc = "Go to ~/.dotfiles" },
+  { on = [ "g", "s" ], run = "cd ~/.ssh", desc = "Go to ~/.ssh" },
+  { on = [ "g", "r" ], run = "cd ~/.local/share", desc = "Go to ~/.local/share" },
+]
