@@ -11,6 +11,7 @@
       "command(chezmoi)",
       "command(cat)",
       "command(grep)",
+      "command(gh)",
       "command(head)",
       "command(jq)",
       "command(ls)",
@@ -29,11 +30,12 @@
       "command(which)",
       "command(omarchy)",
       "command(hyprctl)",
-      "write_file(src/)",
       "unsandboxed(git push)",
       "read_file(/var/log/app)",
+      "read_file(~/.agents)",
+      "read_file(~/.gemini)",
       "read_url(google.com)",
-      "read_file(~/.agents/)",
+      "write_file(src/)",
       "mcp(linter/*)"
     ],
     "deny": [

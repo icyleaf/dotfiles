@@ -118,12 +118,16 @@ o.bind("SUPER + SHIFT + D", "Dict", function()
   hl.dispatch(hl.dsp.exec_cmd("omarchy-shell shell toggle icyleaf.modict"))
 end)
 
-o.bind("SUPER + ALT + P", "Hypr Input Swither", function()
+o.bind("SUPER + ALT + P", "Hypr Input Switcher", function()
   hl.dispatch(hl.dsp.exec_cmd("omarchy-shell shell toggle icyleaf.hypr-input-switcher"))
 end)
 
 o.bind("SUPER + SHIFT + W", "Mirador", function()
   hl.dispatch(hl.dsp.exec_cmd("omarchy-shell shell summon mirador '{}'"))
+end)
+
+o.bind("SUPER + comma", "Bitwarden", function()
+  hl.dispatch(hl.dsp.exec_cmd("omarchy-shell shell toggle icyleaf.bitwarden"))
 end)
 
 hl.gesture({

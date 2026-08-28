@@ -23,3 +23,4 @@ o.window({ class = "^chrome-.*__-Simfarm$" }, {
 })
 
 o.window({ class = "org.quickshell", title = "(MODICT)" }, { float = true, center = true })
+o.window({ class = "org.quickshell", title = "(Bitwarden)" }, { float = true, center = true })
