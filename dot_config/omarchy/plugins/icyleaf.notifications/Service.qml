@@ -52,11 +52,6 @@ Item {
   readonly property int liveBarSize: shell && shell.bar && !shell.bar.barHidden ? Math.max(0, shell.bar.barSize) : defaultBarSize
   readonly property int barClearance: liveBarSize + Style.gapsOut
 
-  // workaround: Hyprland.focusedMonitor is null on startup, so the service can't know which
-  // Remove if this is fixed in omarchy-shell. See https://github.com/basecamp/omarchy/issues/7195
-  readonly property string focusedScreenName: Hyprland.focusedMonitor ? String(Hyprland.focusedMonitor.name || "") : ""
-  readonly property bool onFocusedScreen: focusedScreenName === "" || String(modelData.name || "") === focusedScreenName
-
   // Live Notification objects by originalId, kept OUT of the ListModels: a
   // QObject stored in a model role becomes a dangling C++ pointer when the
   // server destroys the notification (sender close, DND untrack, dismiss),
@@ -359,18 +354,19 @@ Item {
   }
 
   // Run the popup's click action, then dismiss. Omarchy's own toasts carry the
-  // action as a command in the `exec` role (see execFromHints), which the
-  // persistence files preserve, so restored toasts stay clickable. Third-party
-  // clients register a libnotify action under the canonical identifier
-  // "default" instead; that one only works while the sender is still live.
+  // action as an argv vector in the `execArgv` role (see execArgvFromHints),
+  // which the persistence files preserve, so restored toasts stay clickable.
+  // Third-party clients register a libnotify action under the canonical
+  // identifier "default" instead; that one only works while the sender is live.
   function invokePopupDefault(index) {
     if (index < 0 || index >= popupModel.count) return
     var entry = popupModel.get(index)
-    var command = entry ? String(entry.exec || "") : ""
-    if (command) {
-      // Detached so the launched command outlives the shell process, which the
-      // installer toasts depend on: they restart the shell as their first act.
-      Util.execDetached(command)
+
+    // Run the argv (via Util.execArgv, no shell interpretation). Detached so it
+    // outlives the shell, which installer toasts depend on: they restart it.
+    var argv = NotificationLogic.parseExecArgv(entry ? entry.execArgv : "")
+    if (argv) {
+      Util.execArgv(argv)
       dismissPopup(index)
       return
     }
@@ -671,7 +667,7 @@ Item {
         body: row.body,
         image: row.image,
         glyph: row.glyph || "",
-        exec: row.exec || "",
+        execArgv: row.execArgv || "",
         urgency: row.urgency,
         timestamp: row.timestamp
       }, imagesDir).entry)
@@ -695,7 +691,7 @@ Item {
         body: "",
         image: "",
         glyph: "󰂚",
-        exec: "",
+        execArgv: "",
         urgency: NotificationUrgency.Low,
         expireTimeout: 0,
         timestamp: Date.now()
@@ -961,6 +957,24 @@ Item {
       id: popupWindow
       required property var modelData
       screen: modelData
+
+      // Only render toasts on the monitor that currently has focus. The
+      // check is done per-output (inside the Variants delegate) because
+      // Hyprland.focusedMonitor is a global singleton and the service-level
+      // modelData reference resolved to the wrong scope, causing every
+      // PanelWindow to evaluate as focused.
+      // When Hyprland hasn't reported a focused monitor yet (startup race,
+      // see https://github.com/basecamp/omarchy/issues/7195), fall back to
+      // the first/primary screen instead of showing on every output.
+      readonly property bool onFocusedScreen: {
+        var focused = Hyprland.focusedMonitor
+        if (!focused) {
+          var primary = Quickshell.screens[0]
+          return modelData === primary || String(modelData.name || "") === String(primary ? primary.name : "")
+        }
+        return String(modelData.name || "") === String(focused.name || "")
+      }
+
       visible: popupModel.count > 0 && onFocusedScreen
 
       WlrLayershell.namespace: "omarchy-notifications"
