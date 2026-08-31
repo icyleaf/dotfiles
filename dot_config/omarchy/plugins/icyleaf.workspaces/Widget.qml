@@ -11,6 +11,8 @@ BarWidget {
   id: root
   moduleName: "icyleaf.workspaces"
 
+  readonly property string fontFamily: root.bar && root.bar.fontFamily ? root.bar.fontFamily : Style.font.family
+
   // -------------------------------------------------------------- Special Workspaces Configuration
   readonly property var defaultSpecials: [
     { name: "silent", icon: "󰏤", label: "silent" },
