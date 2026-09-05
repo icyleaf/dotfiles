@@ -1,7 +1,7 @@
 {
   "colorScheme": "dark",
   "enableTelemetry": false,
-  "model": "Gemini 3.7 Flash (Medium)",
+  "model": "Gemini 3.8 Flash (Medium)",
   "permissions": {
     "allow": [
       "command(git)",
@@ -30,7 +30,7 @@
       "command(which)",
       "command(omarchy)",
       "command(hyprctl)",
-      "unsandboxed(git push)",
+      "command(qml)",
       "read_file(/var/log/app)",
       "read_file(~/.agents)",
       "read_file(~/.gemini)",
@@ -45,13 +45,12 @@
       "write_file(~/.ssh)"
     ],
     "ask": [
-      "command(*)",
       "execute_url(aws.amazon.com)",
       "mcp(sql/execute_mutation)"
     ]
   },
   "showFeedbackSurvey": false,
-  "toolPermission": "proceed-in-sandbox",
+  "toolPermission": "always-proceed",
   "trustedWorkspaces": [
     "/home/icyleaf"
   ]
