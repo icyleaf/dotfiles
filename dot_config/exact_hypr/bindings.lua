@@ -149,3 +149,7 @@ hl.gesture({
 
 -- o.bind("mouse:275", "Orbit press", "~/.config/omarchy/plugins/local.orbit/scripts/orbit-press.sh --button 275", { locked = true })
 -- o.bind("mouse:275", "Orbit release fallback", "~/.config/omarchy/plugins/local.orbit/scripts/orbit-release.sh", { locked = true, release = true })
+
+-- >>> japanquake hotkey (managed by Japan Quake Monitor settings — change it there)
+o.bind("SUPER + F12", "Japan Quake Monitor (earthquake map)", "omarchy-shell shell toggle io.github.weedwhitesandwine.japanquake")
+-- <<< japanquake hotkey
