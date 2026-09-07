@@ -19,12 +19,14 @@ It provides independent per-display workspace sets, physical monitor identity ba
   - Monitor 1 (`M2`): Workspaces `11` – `20` (slots `1..9, 0`)
   - Monitor 2 (`M3`): Workspaces `21` – `30` (slots `1..9, 0`)
 - **Direct Hyprland Lua IPC Dispatch**: Dispatches focus and window relocation commands atomically via Hyprland's internal Lua socket, eliminating external bash subshell execution overhead.
-- **Decoupled Shell IPC Interface**: Exposes standard `focus`, `move`, and `movesilent` methods via `IpcHandler`, allowing Hyprland keybindings to remain clean and decoupled from workspace calculation logic.
+- **Per-Monitor Layout Preview Overlay**: Right-click any Monitor Identity Badge to summon a full-screen, read-only overlay of the whole display topology on that badge's screen. Every enabled physical monitor is drawn as a compact-pack card preserving the real top→bottom / left→right arrangement and aspect ratio, showing its active workspace's windows as rectangles (tiled, floating, fullscreen, and Hyprland groups collapsed to a single frame) plus a fixed 10-slot occupancy strip. Live-updates from Hyprland events while open. Click a card to focus that monitor and dismiss; `Esc`/empty-space click dismisses; arrow keys navigate between cards and `Return` focuses the selected monitor.
+- **Decoupled Shell IPC Interface**: Exposes standard `focus`, `move`, `movesilent`, and `preview` methods via `IpcHandler`, allowing Hyprland keybindings to remain clean and decoupled from workspace calculation logic.
 - **Rich Mouse Interactions**:
   - **Left-Click**: Switch to target workspace.
   - **Right-Click**: Move active window to target workspace silently without following.
   - **Mouse Wheel**: Cycle through workspaces on the current monitor.
-  - **Click Monitor Badge**: Focus target display.
+  - **Click Monitor Identity Badge (Left)**: Focus target display.
+  - **Click Monitor Identity Badge (Right)**: Toggle the Per-Monitor Layout Preview Overlay on that display.
 - **Multi-Special Workspace Scratchpads & Quick Picker Overlay**:
   - Configurable scratchpad drawers (`silent`, `term`, `chat`, `music`).
   - **Quick Picker Overlay (`SUPER + ALT + S`)**: Displays a centered modal listing all scratchpads with number keys `1`–`4` for single-stroke switching, `Shift + 1–4` for moving windows in, and `Esc` to close.
@@ -98,6 +100,7 @@ The plugin listens on the IPC target `icyleaf.workspaces` via `omarchy-shell`:
 | `moveSpecial` | `<name: string>` | Moves active window into `special:<name>` silently |
 | `moveSpecialFollow`| `<name: string>` | Moves active window into `special:<name>` and follows |
 | `selectSpecial` | *(none)* | Toggles the Special Scratchpads Quick Picker Overlay |
+| `preview` | *(none)* | Summons the Per-Monitor Layout Preview Overlay on the currently focused monitor |
 
 ### CLI Example
 ```bash
@@ -109,4 +112,7 @@ omarchy-shell icyleaf.workspaces toggleSpecial term
 
 # Open Special Scratchpad Picker Overlay
 omarchy-shell icyleaf.workspaces selectSpecial
+
+# Open the Monitor Layout Preview on the focused display
+omarchy-shell icyleaf.workspaces preview
 ```

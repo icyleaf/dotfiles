@@ -96,3 +96,5 @@ Declarative dotfiles managed by [Chezmoi](https://chezmoi.io). Targets macOS and
 
 **Direct Hyprland IPC Dispatch** — an atomic command dispatch seam executing Lua snippets directly via `Hyprland.dispatch`, replacing external shell scripts to eliminate subshell spawning overhead during workspace and window operations.
 
+**Per-Monitor Layout Preview Overlay** — a read-only, summon-on-demand full-screen overlay in `icyleaf.workspaces`, opened by right-clicking a Monitor Identity Badge, that renders every enabled physical monitor as a compact-pack card (rows preserve true top→bottom/left→right arrangement and aspect ratio but are packed tightly and fit the screen) showing its active workspace's window rectangles plus a 10-slot occupancy strip; clicking a card focuses that monitor and dismisses, complementing rather than replacing interactive overviews.
+

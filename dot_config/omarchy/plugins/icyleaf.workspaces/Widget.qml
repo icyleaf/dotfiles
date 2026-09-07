@@ -71,6 +71,63 @@ BarWidget {
     root.specialMenuOpen = !root.specialMenuOpen
   }
 
+  // -------------------------------------------------------------- Monitor Layout Preview
+  // Only one preview overlay may be open across all monitors. This instance's
+  // overlay is screen-anchored to the bar it lives on, so opening a preview
+  // for a given monitor is done by right-clicking that monitor's own badge.
+  //
+  // Because a full-screen overlay covers only its own screen, a badge on any
+  // other monitor remains reachable; right-clicking it closes whatever preview
+  // is open elsewhere and opens one on that monitor instead. Re-right-clicking
+  // the badge underneath the open overlay lands on the overlay, which dismisses
+  // on right-click — yielding the toggle-close gesture. The broadcast methods
+  // below coordinate across per-monitor instances so only one overlay exists.
+  function previewOpenHere() {
+    return layoutPreviewItem !== null && layoutPreviewItem.open
+  }
+
+  function closeAllPreviews() {
+    root.broadcast("closeLayoutPreview")
+  }
+
+  // Open the preview on the monitor that currently holds global focus. Used by
+  // the IPC `preview` entry point: broadcast to every per-monitor instance and
+  // let the one whose bar is on the focused monitor do the opening.
+  function openLayoutPreviewOnFocused() {
+    root.broadcast("openLayoutPreviewIfFocused")
+  }
+
+  function openLayoutPreviewIfFocused() {
+    var focused = Hyprland.focusedMonitor
+    var focusedName = focused ? String(focused.name || "") : ""
+    if (focusedName !== "" && focusedName === root.monitorName) {
+      root.openLayoutPreviewHere()
+    }
+  }
+
+  function toggleLayoutPreview() {
+    if (root.previewOpenHere()) {
+      // This badge's own overlay is open → toggle it off.
+      root.closeAllPreviews()
+      return
+    }
+    // No overlay here. If one is open on another monitor it is closed by the
+    // open path below (closeAllPreviews), then we open on this monitor.
+    root.openLayoutPreviewHere()
+  }
+
+  function openLayoutPreviewHere() {
+    root.closeAllPreviews()
+    if (layoutPreviewItem) {
+      layoutPreviewItem.preselectMonitorId = root.monitorId
+      layoutPreviewItem.openFor(root.monitorId)
+    }
+  }
+
+  function closeLayoutPreview() {
+    if (layoutPreviewItem) layoutPreviewItem.close()
+  }
+
   function getDigitIndex(event) {
     if (event.key >= Qt.Key_1 && event.key <= Qt.Key_9) {
       return event.key - Qt.Key_1
@@ -151,6 +208,15 @@ BarWidget {
 
     function toggleSpecialMenu(): string {
       root.toggleSpecialMenu()
+      return "ok"
+    }
+
+    function preview(): string {
+      // Summon the layout preview for the globally focused monitor. Only one
+      // instance hosts the live IPC handler, so the actual open must happen on
+      // whichever instance's bar belongs to the focused monitor — broadcast to
+      // all instances and let each decide locally.
+      root.openLayoutPreviewOnFocused()
       return "ok"
     }
   }
@@ -338,7 +404,13 @@ BarWidget {
       verticalPadding: 6
       fixedWidth: root.vertical ? root.barSize : Style.space(34)
       fixedHeight: root.barSize
-      onPressed: function() { root.focusMonitor() }
+      onPressed: function(button) {
+        if (button === Qt.RightButton) {
+          root.toggleLayoutPreview()
+        } else {
+          root.focusMonitor()
+        }
+      }
       onWheelMoved: function(delta) { root.onWheel(delta) }
     }
 
@@ -644,5 +716,14 @@ BarWidget {
         }
       }
     }
+  }
+
+  // -------------------------------------------------------------- Monitor Layout Preview Overlay
+  // One full-screen preview per widget instance, anchored to this instance's
+  // own bar screen (each bar surface sits on exactly one monitor). Only the
+  // instance whose badge is right-clicked opens its overlay.
+  MonitorPreview {
+    id: layoutPreviewItem
+    hostBar: root.bar
   }
 }
