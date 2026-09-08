@@ -28,6 +28,7 @@
             {
                 "id": "sherpa-onnx",
                 "type": "local",
+                "model": "model.sherpa-onnx.qwen3-asr-0.6b-int8",
                 "timeout_ms": 15000
             }
         ]
