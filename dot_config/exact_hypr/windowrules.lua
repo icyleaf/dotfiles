@@ -6,6 +6,7 @@ o.window("org.gnome.Evince", { fullscreen = false })
 -- WeChat popups focus fix
 -- o.window({ class = "wechat", float = true }, { stay_focused = true })
 o.window({ class = "(wechat|Wechat)", title = "(Moments)" }, { float = true, center = true })
+o.window({ class = "(wechat|Wechat)", title = "(Photos and Videos)" }, { float = true, fullscreen = true })
 
 -- App work-spaces mapping
 o.window("org.telegram.desktop", { workspace = "9" })
