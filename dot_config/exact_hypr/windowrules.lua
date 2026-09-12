@@ -14,6 +14,24 @@ o.window("wechat", { workspace = "9" })
 o.window("discord", { workspace = "10" })
 o.window("vesktop", { workspace = "10" })
 
+-- LINE is a Chrome webapp whose real title ("LINE") is only set after the
+-- window is created. Static effects like `workspace` are evaluated against the
+-- initial title, which is the extension id, so a window rule cannot catch it.
+-- Instead move it once the title event reports the settled title.
+local line_placed = {}
+hl.on("window.title", function(w)
+  if w == nil or w.class == nil or w.title == nil then
+    return
+  end
+  if line_placed[w.address] then
+    return
+  end
+  if w.class:match("^chrome-") and w.title:match("(LINE|Line)") then
+    line_placed[w.address] = true
+    hl.dispatch(hl.dsp.window.move({ workspace = "8", window = w }))
+  end
+end)
+
 -- omarchy plugins ruls
 
 -- plugin: ryuhzk.simfarm
