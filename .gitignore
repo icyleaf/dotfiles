@@ -1,7 +1,6 @@
 
 **/vim/dotfiles/vim/bundle/*
 **/brew/*.lock.json
-**/gnupg/gpg-agent.conf
 
 __pycache__/
 *.pyc
