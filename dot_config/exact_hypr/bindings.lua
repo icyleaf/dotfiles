@@ -4,6 +4,9 @@
 -- 1. Unbind defaults we want to override
 hl.unbind("SUPER + B")
 hl.unbind("SUPER + S")
+-- SUPER + = (code:21) is Omarchy's "Shrink window left"; reclaim it for the
+-- calculator overlay. The Shift/Alt/Ctrl resize variants stay bound.
+hl.unbind("SUPER + code:21")
 hl.unbind("SUPER + F")
 hl.unbind("SUPER + T")
 hl.unbind("SUPER + E")
@@ -54,6 +57,9 @@ o.bind("SUPER + ALT + D", "Docker",  "icy-launch-tui lazydocker")
 o.bind("SUPER + F1", "Activity", "icy-launch-tui btop")
 o.bind("SUPER + F2", "System Monitor", "omarchy-shell icyleaf.resources toggle")
 o.bind("SUPER + slash", "Passwords", "uwsm app -- flatpak run com.bitwarden.desktop")
+
+-- Quick calculator overlay (Raycast-style). SUPER + = is the unbound code:21 above.
+o.bind("SUPER + code:21", "Calculator", "omarchy-shell shell toggle icyleaf.calculator '{}'")
 
 -- Captures
 o.bind("SUPER + PRINT", "Screenshot with editing", "icy-capture-screenshot")

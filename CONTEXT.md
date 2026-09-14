@@ -98,3 +98,10 @@ Declarative dotfiles managed by [Chezmoi](https://chezmoi.io). Targets macOS and
 
 **Per-Monitor Layout Preview Overlay** — a read-only, summon-on-demand full-screen overlay in `icyleaf.workspaces`, opened by right-clicking a Monitor Identity Badge, that renders every enabled physical monitor as a compact-pack card (rows preserve true top→bottom/left→right arrangement and aspect ratio but are packed tightly and fit the screen) showing its active workspace's window rectangles plus a 10-slot occupancy strip; clicking a card focuses that monitor and dismisses, complementing rather than replacing interactive overviews.
 
+**Calculator Overlay** — `icyleaf.calculator`, a summon-on-demand full-screen overlay whose entire surface is a single input row with a right-aligned live answer, opened by `SUPER + =` (delivered as `code:21`). Typing evaluates via the `qalc` engine after a debounce; `Enter` copies the answer and dismisses, `Alt+Enter` copies and stays open.
+
+**Evaluation Gate** — the calculator policy that decides whether qalc's output is a real answer or a partial echo of the input, suppressing the result display for trailing-operator expressions (typing `1 +`) and for output that merely equals the input, so the overlay never shows a misleading intermediate value.
+
+**Calculator History** — the newest-first list of the last 50 successful expressions in `icyleaf.calculator`, persisted at `~/.local/state/omarchy/calculator-history.json` on commit (Enter), deduplicated by expression, and shown when the input is empty for `↑`/`↓` selection.
+
+

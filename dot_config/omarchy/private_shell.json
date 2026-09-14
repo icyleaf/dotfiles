@@ -90,6 +90,9 @@
     },
     {
       "id": "icyleaf.modict"
+    },
+    {
+      "id": "icyleaf.calculator"
     }
   ],
   "disabledPlugins": [
