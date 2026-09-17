@@ -58,8 +58,8 @@ o.bind("SUPER + F1", "Activity", "icy-launch-tui btop")
 o.bind("SUPER + F2", "System Monitor", "omarchy-shell icyleaf.resources toggle")
 o.bind("SUPER + slash", "Passwords", "uwsm app -- flatpak run com.bitwarden.desktop")
 
--- Quick calculator overlay (Raycast-style). SUPER + = is the unbound code:21 above.
-o.bind("SUPER + code:21", "Calculator", "omarchy-shell shell toggle icyleaf.calculator '{}'")
+-- Qalculator overlay (Raycast-style). SUPER + = is the unbound code:21 above.
+o.bind("SUPER + code:21", "Qalculator", "omarchy-shell shell toggle icyleaf.qalculator '{}'")
 
 -- Captures
 o.bind("SUPER + PRINT", "Screenshot with editing", "icy-capture-screenshot")
