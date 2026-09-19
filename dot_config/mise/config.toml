@@ -4,9 +4,13 @@ bun = "latest"
 claude = "latest"
 crush = "latest"
 gh = "latest"
-node = "26.7.0"
+node = "latest"
 opencode = "latest"
 ruby = "3.4.5"
+talosctl = "latest"
 
 [settings]
 minimum_release_age = "0"
+
+[settings.upgrade]
+auto_prune = false

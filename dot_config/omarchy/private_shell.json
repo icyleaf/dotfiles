@@ -93,14 +93,25 @@
     },
     {
       "id": "icyleaf.qalculator"
+    },
+    {
+      "id": "alanfortlink.clipboard"
+    },
+    {
+      "id": "io.github.sirjul1337.lock-explorer",
+      "design": "my-dock"
     }
   ],
   "disabledPlugins": [
-    "omarchy.notifications"
+    "omarchy.notifications",
+    "omarchy.clipboard",
+    "omarchy.lock"
   ],
   "cloneSourceRestores": [
     "icyleaf.notifications",
     "ryuhzk.simfarm",
-    "local.clock"
+    "local.clock",
+    "alanfortlink.clipboard",
+    "io.github.sirjul1337.lock-explorer"
   ]
 }
