@@ -1,1 +1,0 @@
-/home/icyleaf/.config/omarchy/current/theme/neovim.lua
