@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Effects
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Hyprland
@@ -6,6 +7,7 @@ import Quickshell.Io
 import Quickshell.Wayland
 import qs.Commons
 import qs.Ui
+import "AppIconModel.js" as AppIconModel
 
 BarWidget {
   id: root
@@ -265,6 +267,258 @@ BarWidget {
     }
   }
 
+  // -------------------------------------------------------------- App Icons
+  // Each occupied workspace slot shows the icon of its largest window's app,
+  // resolved by the pure AppIconModel seam. Terminal windows are probed with
+  // `pstree` so the TUI app running inside them gets its own icon.
+  readonly property bool showAppIcons: root.setting("showAppIcons", true) !== false
+  readonly property bool monochromeIcons: root.setting("monochromeIcons", true) !== false
+  readonly property real iconScale: {
+    var value = Number(root.setting("iconScale", 1.0))
+    return isFinite(value) && value > 0 ? value : 1.0
+  }
+  readonly property int iconSize: Math.max(8, Math.round(Style.space(14) * root.iconScale))
+  readonly property var iconOverrides: AppIconModel.normalizeIconOverrides(root.setting("iconOverrides", []))
+
+  property var bundledIcons: ({})
+  property var clientInfo: ({})
+  property var probeCache: ({})
+  property var probeQueue: []
+  property int probeBusyPid: 0
+  property int probeTick: 0
+  property int syncToken: 0
+
+  readonly property color iconTintColor: root.bar ? root.bar.barForeground : Color.foreground
+  readonly property bool isLightTheme: {
+    var color = root.bar ? root.bar.background : Color.background
+    var tint = Qt.color(color)
+    return (tint.r * 0.299 + tint.g * 0.587 + tint.b * 0.114) > 0.5
+  }
+  // On light themes (and transparent bars) icons keep their own colours: a
+  // tinted monochrome mark would not read against a light bar.
+  readonly property bool tintIcons: root.monochromeIcons
+    && !(root.bar ? root.bar.transparent : false) && !root.isLightTheme
+  readonly property string genericIcon: Quickshell.iconPath("application-x-executable", true)
+
+  function bumpSync() { root.syncToken++ }
+
+  function probeNameList() {
+    return AppIconModel.probeNames(root.iconOverrides, root.bundledIcons, AppIconModel.knownTuiApps())
+  }
+
+  function resolveProcessIcon(name) {
+    return AppIconModel.resolveProcessIcon(name, root.iconOverrides, root.bundledIcons)
+  }
+
+  function biggestWindowFor(workspace) {
+    if (!workspace || !workspace.toplevels) return null
+    return AppIconModel.biggestWindow(workspace.toplevels.values, root.clientInfo)
+  }
+
+  // Process name detected inside a window's process tree, or "" when it was
+  // not probed yet or runs no known TUI app.
+  function windowProbeName(toplevel) {
+    var pid = AppIconModel.windowPid(toplevel, root.clientInfo)
+    if (pid <= 0) return ""
+    return root.probeCache[String(pid)] || ""
+  }
+
+  // Final icon source for a slot. A probed TUI process wins: an explicit
+  // override or bundled file first, then the process name itself against the
+  // icon theme. With no probe match, the window class is resolved against
+  // desktop entries and the theme, falling back to a generic executable icon.
+  function windowIconSource(toplevel) {
+    if (!toplevel) return ""
+    var probeName = root.windowProbeName(toplevel)
+    if (probeName !== "") {
+      var resolved = root.resolveProcessIcon(probeName)
+      if (resolved !== "") return Qt.resolvedUrl(resolved)
+      var themed = root.iconUrlForName(probeName)
+      if (themed) return themed
+    }
+    return root.iconSourceForClass(AppIconModel.windowClass(toplevel, root.clientInfo))
+  }
+
+  function iconUrlForName(name) {
+    var value = String(name || "")
+    if (!value) return ""
+    if (value.indexOf("file://") === 0 || value.indexOf("image://") === 0) return value
+    if (value.charAt(0) === "/") return Util.fileUrl(value)
+    return Quickshell.iconPath(value, true)
+  }
+
+  function desktopEntryForClass(klass) {
+    var candidates = AppIconModel.iconNameCandidates(klass)
+    for (var i = 0; i < candidates.length; i++) {
+      try {
+        var entry = DesktopEntries.byId(candidates[i])
+        if (entry) return entry
+      } catch (error) {
+      }
+    }
+    try {
+      var applications = DesktopEntries.applications.values
+      var lower = String(klass || "").toLowerCase()
+      for (var j = 0; j < applications.length; j++) {
+        var startupClass = String(applications[j].startupClass || "")
+        if (startupClass && startupClass.toLowerCase() === lower) return applications[j]
+      }
+    } catch (error2) {
+    }
+    return null
+  }
+
+  function iconSourceForClass(klass) {
+    var value = String(klass || "")
+    var entry = root.desktopEntryForClass(value)
+    if (entry && entry.icon) {
+      var fromEntry = root.iconUrlForName(String(entry.icon))
+      if (fromEntry) return fromEntry
+    }
+    var candidates = AppIconModel.iconNameCandidates(value)
+    for (var i = 0; i < candidates.length; i++) {
+      var source = root.iconUrlForName(candidates[i])
+      if (source) return source
+    }
+    return root.genericIcon
+  }
+
+  function scanBundledIcons() {
+    if (iconScanProcess.running) return
+    var dir = String(Qt.resolvedUrl("icons")).replace(/^file:\/\//, "")
+    iconScanProcess.command = ["bash", "-c", "ls -1 '" + dir.replace(/'/g, "") + "' 2>/dev/null"]
+    iconScanProcess.running = true
+  }
+
+  // Bundled icons can change without touching the probe cache: the cache holds
+  // detected process names, and the icon is re-resolved on every probeTick, so
+  // nothing is blanked and no terminal↔app flicker is introduced.
+  function onIconsScanned(text) {
+    root.bundledIcons = AppIconModel.scanIconListing(text)
+    root.probeTick++
+  }
+
+  function onClientsFetched(text) {
+    root.clientInfo = AppIconModel.parseClients(text)
+    root.pumpProbe()
+  }
+
+  function pumpProbe() {
+    if (root.probeBusyPid !== 0 || root.probeQueue.length === 0) return
+    root.probeBusyPid = root.probeQueue.shift()
+    probeProcess.command = ["bash", "-c",
+      AppIconModel.buildProbeCommand(root.probeBusyPid, root.probeNameList())]
+    probeProcess.running = true
+  }
+
+  // Queue one process-tree probe per occupied workspace on THIS monitor only,
+  // using the workspace's largest window. Dead pids are pruned, but the cache
+  // is never blanked before a fresh probe lands, so icons never flicker.
+  function probeOverrideWindows() {
+    if (root.probeNameList().length === 0) return
+    var seen = {}
+    var wanted = []
+    for (var slot = 1; slot <= 10; slot++) {
+      var workspace = root.workspaceById(root.offset + slot)
+      if (!workspace || !workspace.toplevels) continue
+      var pid = AppIconModel.windowPid(root.biggestWindowFor(workspace), root.clientInfo)
+      if (pid <= 0 || seen[pid]) continue
+      seen[pid] = true
+      wanted.push(pid)
+    }
+    var pruned = {}
+    for (var key in root.probeCache) {
+      if (seen[Number(key)]) pruned[key] = root.probeCache[key]
+    }
+    root.probeCache = pruned
+    for (var i = 0; i < wanted.length; i++) {
+      var wantedPid = wanted[i]
+      if (wantedPid === root.probeBusyPid || root.probeQueue.indexOf(wantedPid) !== -1) continue
+      root.probeQueue.push(wantedPid)
+    }
+    if (!clientFetchProcess.running) clientFetchProcess.running = true
+  }
+
+  Timer {
+    id: probeTimer
+    interval: 3000
+    repeat: true
+    running: root.probeNameList().length > 0
+    onTriggered: root.probeOverrideWindows()
+  }
+
+  Timer {
+    interval: 30000
+    repeat: true
+    running: true
+    triggeredOnStart: true
+    onTriggered: root.scanBundledIcons()
+  }
+
+  // One reused process scans one window per run; results are attributed via
+  // probeBusyPid rather than by timing assumptions.
+  Process {
+    id: probeProcess
+    stdout: StdioCollector {
+      id: probeCollector
+      waitForEnd: true
+    }
+    onExited: function() {
+      if (root.probeBusyPid !== 0) {
+        // Store the detected process name, not the resolved icon, so icon
+        // resolution can be re-run later without re-probing the process tree.
+        root.probeCache[String(root.probeBusyPid)] = AppIconModel.parseProbeOutput(probeCollector.text)
+        root.probeTick++
+      }
+      root.probeBusyPid = 0
+      root.pumpProbe()
+    }
+  }
+
+  Process {
+    id: iconScanProcess
+    stdout: StdioCollector {
+      id: iconScanCollector
+      waitForEnd: true
+    }
+    onExited: function() {
+      root.onIconsScanned(iconScanCollector.text)
+    }
+  }
+
+  // Live pid/area/class for every window, keyed by hex address. Quickshell only
+  // fills lastIpcObject during its initial sync, so this covers windows opened
+  // after the shell started.
+  Process {
+    id: clientFetchProcess
+    command: ["hyprctl", "clients", "-j"]
+    stdout: StdioCollector {
+      id: clientFetchCollector
+      waitForEnd: true
+    }
+    onExited: function() {
+      root.onClientsFetched(clientFetchCollector.text)
+    }
+  }
+
+  Connections {
+    target: Hyprland
+    function onRawEvent(event) {
+      if (!event) return
+      var name = String(event.name || "")
+      if (name === "openwindow" || name === "closewindow" || name === "movewindow"
+          || name === "createworkspace" || name === "destroyworkspace") {
+        root.bumpSync()
+        root.probeOverrideWindows()
+        return
+      }
+      if (name === "workspace" || name === "focusedworkspace"
+          || name === "activewindow" || name === "urgent" || name === "activespecial") {
+        root.bumpSync()
+      }
+    }
+  }
+
   function workspaceById(id) {
     var values = Hyprland.workspaces.values
     for (var i = 0; i < values.length; i++) {
@@ -419,19 +673,36 @@ BarWidget {
       model: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
       WidgetButton {
+        id: wsSlot
         required property int modelData
 
         readonly property int wsId: root.offset + modelData
-        readonly property var workspace: root.workspaceById(wsId)
+        // Hyprland collections are constant (non-notifying) models, so the
+        // syncToken/clientInfo reads force this binding to re-evaluate when
+        // windows and workspace occupancy change.
+        readonly property var workspace: {
+          var _sync = root.syncToken
+          var _clients = root.clientInfo
+          return root.workspaceById(wsId)
+        }
         readonly property bool occupied: workspace !== null && workspace.toplevels && workspace.toplevels.values.length > 0
         readonly property bool activeOnMonitor: root.monitor !== null && root.monitor.activeWorkspace !== null && root.monitor.activeWorkspace.id === wsId
         readonly property bool focusedGlobally: Hyprland.focusedWorkspace !== null && Hyprland.focusedWorkspace.id === wsId
+        readonly property bool isActive: activeOnMonitor || focusedGlobally
+        readonly property var biggestWindow: root.biggestWindowFor(workspace)
+        readonly property string iconSource: {
+          var _tick = root.probeTick
+          var _clients = root.clientInfo
+          return root.showAppIcons ? root.windowIconSource(biggestWindow) : ""
+        }
+        readonly property bool showsIcon: root.showAppIcons && occupied && iconSource !== ""
 
         bar: root.bar
-        text: (activeOnMonitor || focusedGlobally) ? "\uDB85\uDCFB" : (modelData === 10 ? "0" : String(modelData))
+        text: (isActive && !showsIcon) ? "\uDB85\uDCFB" : (modelData === 10 ? "0" : String(modelData))
+        labelVisible: !showsIcon
         useActiveColor: false
         tooltipText: "Workspace " + wsId + " (Slot " + (modelData === 10 ? 0 : modelData) + ")"
-        opacity: activeOnMonitor || focusedGlobally || occupied ? 1.0 : 0.4
+        opacity: showsIcon ? (isActive ? 1.0 : 0.9) : (isActive || occupied ? 1.0 : 0.4)
         horizontalMargin: 6
         verticalPadding: 6
         fixedWidth: root.vertical ? root.barSize : Style.space(20)
@@ -444,6 +715,49 @@ BarWidget {
           }
         }
         onWheelMoved: function(delta) { root.onWheel(delta) }
+
+        // Largest window's app icon for an occupied slot.
+        Item {
+          id: wsIconHost
+          anchors.centerIn: parent
+          width: root.iconSize
+          height: root.iconSize
+          visible: wsSlot.showsIcon
+
+          Image {
+            id: wsIcon
+            anchors.fill: parent
+            source: wsSlot.iconSource
+            asynchronous: true
+            fillMode: Image.PreserveAspectFit
+            sourceSize.width: Math.round(root.iconSize * Screen.devicePixelRatio)
+            sourceSize.height: Math.round(root.iconSize * Screen.devicePixelRatio)
+            smooth: true
+            layer.enabled: root.monochromeIcons
+            layer.smooth: true
+          }
+
+          MultiEffect {
+            anchors.fill: parent
+            source: wsIcon
+            visible: root.monochromeIcons
+            colorization: root.tintIcons ? 1.0 : 0.0
+            colorizationColor: root.iconTintColor
+          }
+        }
+
+        // Active indicator line when the slot is showing an icon instead of
+        // the active glyph.
+        Rectangle {
+          visible: wsSlot.showsIcon && wsSlot.isActive
+          anchors.bottom: parent.bottom
+          anchors.horizontalCenter: parent.horizontalCenter
+          anchors.bottomMargin: Style.space(1)
+          width: Style.space(12)
+          height: Style.space(2)
+          radius: Style.space(1)
+          color: root.bar ? root.bar.barForeground : Color.foreground
+        }
       }
     }
 

@@ -21,6 +21,7 @@ It provides independent per-display workspace sets, physical monitor identity ba
 - **Direct Hyprland Lua IPC Dispatch**: Dispatches focus and window relocation commands atomically via Hyprland's internal Lua socket, eliminating external bash subshell execution overhead.
 - **Per-Monitor Layout Preview Overlay**: Right-click any Monitor Identity Badge to summon a full-screen, read-only overlay of the whole display topology on that badge's screen. Every enabled physical monitor is drawn as a compact-pack card preserving the real top→bottom / left→right arrangement and aspect ratio, showing its active workspace's windows as rectangles (tiled, floating, fullscreen, and Hyprland groups collapsed to a single frame) plus a fixed 10-slot occupancy strip. Live-updates from Hyprland events while open. Click a card to focus that monitor and dismiss; `Esc`/empty-space click dismisses; arrow keys navigate between cards and `Return` focuses the selected monitor.
 - **Decoupled Shell IPC Interface**: Exposes standard `focus`, `move`, `movesilent`, and `preview` methods via `IpcHandler`, allowing Hyprland keybindings to remain clean and decoupled from workspace calculation logic.
+- **Per-Workspace App Icons**: Occupied slots show the icon of the largest window's app instead of the slot number. GUI apps resolve through their `.desktop` entry and your icon theme with no configuration; terminal windows are probed with `pstree` so the TUI app actually running inside (yazi, btop, lazygit, claude, ...) gets its own icon. Empty slots keep their number, the active occupied slot adds an accent underline, and the workspace number is always available in the slot tooltip. See [App Icons](#app-icons).
 - **Rich Mouse Interactions**:
   - **Left-Click**: Switch to target workspace.
   - **Right-Click**: Move active window to target workspace silently without following.
@@ -32,6 +33,60 @@ It provides independent per-display workspace sets, physical monitor identity ba
   - **Quick Picker Overlay (`SUPER + ALT + S`)**: Displays a centered modal listing all scratchpads with number keys `1`–`4` for single-stroke switching, `Shift + 1–4` for moving windows in, and `Esc` to close.
   - **Permanent Bar Icons**: Mini badges (`󰏤`, ``, `󰭹`, `󰎆`) rendered on the primary display bar for one-click mouse access.
   - **Display Modes (`specialDisplayMode`)**: `"primaryOnly"` (default), `"allWhenOccupied"`, `"allAlways"`.
+
+---
+
+## App Icons
+
+When `showAppIcons` is enabled (the default), every occupied workspace slot renders the icon of the largest window on that workspace; empty slots keep their number. The active occupied slot adds a small accent underline so you can still tell where you are.
+
+Icons resolve in four tiers, and the first three need no configuration:
+
+| What you're running | Where its icon comes from | You do |
+| :--- | :--- | :--- |
+| Any GUI app | its `.desktop` entry + your icon theme | nothing |
+| Common TUI apps (`btop`, `nvim`, `vim`, `htop`, `lazygit`, ...) | your icon theme | nothing |
+| Apps in the plugin's `icons/` directory | this repo/plugin | drop a PNG/SVG |
+| Anything else | `iconOverrides` | one setting entry |
+
+Where a window class resolves to nothing, a generic executable icon is shown as a last resort.
+
+### Why terminal apps are special
+
+A terminal's window class is always the terminal (`kitty`, `alacritty`), never what runs inside it. Each window's process tree is scanned with `pstree` (~3 s cadence, one serialized process, cached per pid) so `yazi`, `btop`, `lazygit`, `claude` and friends show their own icon. When a TUI app quits but the terminal stays open, the slot reverts to the terminal's icon within a few seconds. Shells and multiplexers are deliberately skipped: the probe takes the first match, so listing `tmux` or `bash` would shadow whatever runs inside them.
+
+### Adding an icon for an app that has none
+
+The filename **is** the configuration. Drop a transparent PNG or SVG named after the process into the plugin's `icons/` directory (`icons/<process>.png`); it is picked up within ~30 s, no restart needed.
+
+If a process name cannot line up with an icon name, add an `iconOverrides` entry to the widget's settings:
+
+```json
+"iconOverrides": [
+  { "process": "nvim", "icon": "icons/neovim.png" }
+]
+```
+
+### Finding a process name
+
+It is not always the command you type — wrappers can show up as `node` or `python3`. List what is actually running under each window with:
+
+```bash
+hyprctl clients -j | jq -r '.[] | "\(.pid)\t\(.class)"'
+```
+
+### Settings
+
+| Setting | Default | What it does |
+| :--- | :--- | :--- |
+| `showAppIcons` | `true` | Off gives plain numbers everywhere |
+| `monochromeIcons` | `true` | Tint icons to the bar foreground; ignored on light themes and transparent bars, where icons keep their own colours |
+| `iconScale` | `1.0` | Icon size multiplier |
+| `iconOverrides` | `[]` | Explicit `{ process, icon }` mappings |
+
+### Requirements
+
+`pstree` (from `psmisc`). Icons for GUI apps and common TUI apps come from your icon theme, so no bundled assets are required. The command under [Finding a process name](#finding-a-process-name) additionally uses `jq`.
 
 ---
 
