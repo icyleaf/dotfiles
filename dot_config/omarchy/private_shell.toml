@@ -2,5 +2,5 @@
 base-size = 11
 
 [bar]
-size-horizontal = 20  # bar 高度
 scale-with-font = true # 是否随字体缩放
+size-horizontal = 24  # bar 高度（基准 12px 字体下的值，随 base-size 等比缩放）

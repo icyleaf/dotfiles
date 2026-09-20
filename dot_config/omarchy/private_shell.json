@@ -6,7 +6,7 @@
   },
   "bar": {
     "position": "top",
-    "transparent": false,
+    "transparent": true,
     "centerAnchor": "icyleaf.workspaces",
     "layout": {
       "left": [
@@ -23,13 +23,13 @@
           "id": "nosignal.motion-wallpaper"
         },
         {
-          "id": "io.github.weedwhitesandwine.japanquake"
-        },
-        {
           "id": "icyleaf.resources"
         },
         {
           "id": "omarchy.indicators"
+        },
+        {
+          "id": "io.github.hominluo.launcher"
         }
       ],
       "center": [
@@ -92,7 +92,9 @@
       "id": "icyleaf.modict"
     },
     {
-      "id": "icyleaf.qalculator"
+      "id": "icyleaf.qalculator",
+      "position": "top",
+      "edgeMargin": 5
     },
     {
       "id": "alanfortlink.clipboard"
