@@ -171,3 +171,9 @@ omarchy-shell icyleaf.workspaces selectSpecial
 # Open the Monitor Layout Preview on the focused display
 omarchy-shell icyleaf.workspaces preview
 ```
+
+---
+
+## Credits
+
+The per-workspace app icon feature (GUI/TUI icon resolution and the process-tree probe) is inspired by [skylightlim/omarchy-workspace-peek](https://github.com/skylightlim/omarchy-workspace-peek) (MIT). Its code is referenced for approach, not copied, and this plugin does not depend on it to load.

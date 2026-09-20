@@ -277,7 +277,7 @@ BarWidget {
     var value = Number(root.setting("iconScale", 1.0))
     return isFinite(value) && value > 0 ? value : 1.0
   }
-  readonly property int iconSize: Math.max(8, Math.round(Style.space(14) * root.iconScale))
+  readonly property int iconSize: Math.max(8, Math.round(Style.space(12) * root.iconScale))
   readonly property var iconOverrides: AppIconModel.normalizeIconOverrides(root.setting("iconOverrides", []))
 
   property var bundledIcons: ({})
