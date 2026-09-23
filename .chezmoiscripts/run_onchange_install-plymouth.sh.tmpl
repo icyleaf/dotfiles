@@ -22,6 +22,14 @@ echo "Installing plymouth theme ${theme_name}...${src_theme_path}"
 
 if [[ -d "$src_theme_path" ]]; then
   echo "Installing plymouth theme ... ${theme_name}"
+
+  # Skip when sudo cannot run non-interactively (e.g. chezmoi apply without a TTY).
+  if ! sudo -n true >/dev/null 2>&1; then
+    echo "Warning: passwordless sudo unavailable; skipping plymouth theme install." >&2
+    echo "Re-run with a TTY or configure sudoers, then apply again to install ${theme_name}." >&2
+    exit 0
+  fi
+
   sudo mkdir -p "/usr/share/plymouth/themes"
   sudo cp -rf "$src_theme_path" "/usr/share/plymouth/themes/"
 
