@@ -1,0 +1,6 @@
+if command -v "omarchy-shell" >/dev/null 2>&1; then
+  omarchy-shell shell toggle omarchy.clipboard
+else
+  echo "icy-clipboard: 'omarchy-shell' not found. Install Omarchy or implement a replacement." >&2
+  exit 127
+fi
