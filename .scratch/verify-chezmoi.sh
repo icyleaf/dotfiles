@@ -7,10 +7,10 @@ set -euo pipefail
 # Locate the repository root dynamically (supporting execution from any directory)
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 REPO_DIR=$(cd "${SCRIPT_DIR}/.." && pwd)
-CHEZMOI_BIN="${REPO_DIR}/bin/chezmoi"
+CHEZMOI_BIN="$(command -v chezmoi || true)"
 
-if [ ! -f "${CHEZMOI_BIN}" ]; then
-  echo "FAIL: chezmoi binary not found at ${CHEZMOI_BIN}"
+if [ -z "${CHEZMOI_BIN}" ] || [ ! -x "${CHEZMOI_BIN}" ]; then
+  echo "FAIL: chezmoi binary not found in PATH"
   exit 1
 fi
 

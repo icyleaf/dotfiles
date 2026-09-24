@@ -17,4 +17,6 @@ rsync
 # Graphical environment & Terminal (Hyprland stack)
 hyprland
 fcitx5
+fcitx5-rime
+fcitx5-configtool
 snapper

@@ -18,14 +18,14 @@ Three main problems were identified:
 
 1. **Use Declarative Externals**: Delete custom plugin installer scripts (`run_once_install-zinit.sh`, `run_once_install-tpm.sh`, `run_once_install-lazyvim.sh`) and configure `.chezmoiexternal.toml.tmpl` to manage third-party repositories declaratively.
 2. **Provide a Bootstrap Script**: Add `install.sh` at the repository root to detect the host platform, install basic dependencies (`git`, `chezmoi`, `age`), and trigger `chezmoi init --apply`.
-3. **Automate Linux Packages**: Add `linux-packages.txt` at the repository root (excluded from deployment via `.chezmoiignore`), and write a `run_onchange_install-packages-linux.sh.tmpl` script that uses `pm.sh` to install all packages listed in `linux-packages.txt` on Linux hosts.
+3. **Automate Linux Packages**: Add `linux-packages.txt` at the repository root (excluded from deployment via `.chezmoiignore`), and write a `run_onchange_after_install-packages-linux.sh.tmpl` script that uses `pm.sh` to install all packages listed in `linux-packages.txt` on Linux hosts. The `after_` attribute guarantees the script runs only after all files (including `pm.sh` itself) have been written, avoiding a cold-start ordering race where the installer would execute before `pm.sh` exists.
 
 ## Reasons
 
 - **Declarative and Idempotent**: `.chezmoiexternal` allows Chezmoi to manage external repository states directly. Chezmoi optimizes download caching, tracks updates, and ensures directories exist without custom shell logic.
 - **Pure-Go Compatibility**: `.chezmoiexternal` runs natively in Chezmoi, reducing dependency on external tools or shells during dotfiles initialization.
 - **Easy Bootstrapping**: A raw machine only needs `curl -fsSL https://raw.githubusercontent.com/.../install.sh | sh` to get a fully working environment, including secret decryption keys.
-- **Unified Package Management**: Using `pm.sh` inside `run_onchange_install-packages-linux.sh.tmpl` leverages the existing robust package wrapper to install pacman/apt/yay/brew packages uniformly, depending on which package manager is present on the Linux host.
+- **Unified Package Management**: Using `pm.sh` inside `run_onchange_after_install-packages-linux.sh.tmpl` leverages the existing robust package wrapper to install pacman/apt/yay/brew packages uniformly, depending on which package manager is present on the Linux host.
 - **Separation of Concerns**: Storing Linux packages in `linux-packages.txt` under the repository root keeps the package list isolated from executable installer logic and avoids cluttering the home directory.
 
 ## Trade-offs Accepted

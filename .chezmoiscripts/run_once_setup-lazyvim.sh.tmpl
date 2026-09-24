@@ -38,8 +38,9 @@ ensure_dir() {
 
 # Wait for the external to be downloaded by Chezmoi
 if [ ! -d "${STARTER_DIR}" ]; then
-  echo "LazyVim starter source directory not found: ${STARTER_DIR}" >&2
-  exit 1
+  echo "Warning: LazyVim starter source directory not found: ${STARTER_DIR}" >&2
+  echo "Skipping LazyVim symlink setup; re-run apply after the external is fetched." >&2
+  exit 0
 fi
 
 # Link default files that are unmodified

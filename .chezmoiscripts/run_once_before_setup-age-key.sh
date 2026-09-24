@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# run_before_once_setup-age-key.sh
+# run_once_before_setup-age-key.sh
 #
 # Generates a shared age key pair at ~/.local/share/age/default-key.txt
 # if it does not already exist.

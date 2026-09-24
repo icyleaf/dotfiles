@@ -1,0 +1,57 @@
+#!/usr/bin/env sh
+#
+# Install/sync Linux packages using the Package Wrapper (pm.sh)
+#
+# linux-packages.txt hash: {{ include (joinPath .chezmoi.sourceDir "linux-packages.txt") | sha256sum }}
+
+set -eu
+
+PM_SH="{{ .chezmoi.homeDir }}/.local/bin/pm.sh"
+
+if [ ! -f "${PM_SH}" ]; then
+  echo "Error: Package Wrapper not found at ${PM_SH}." >&2
+  echo "This run_onchange_after_ script must execute after files are written; pm.sh should already be deployed." >&2
+  exit 1
+fi
+
+{{- if .headless }}
+echo "Headless machine detected. Syncing base Linux packages only..."
+# Parse only packages in the base section (up to the # gui marker)
+PACKAGES=$(sed -n '1,/# gui/p' "{{ joinPath .chezmoi.sourceDir "linux-packages.txt" }}" | grep -vE '^\s*(#|$)')
+{{- else }}
+echo "Syncing all Linux packages (including GUI)..."
+# Parse all packages
+PACKAGES=$(grep -vE '^\s*(#|$)' "{{ joinPath .chezmoi.sourceDir "linux-packages.txt" }}")
+{{- end }}
+
+if [ -n "${PACKAGES}" ]; then
+  # Only install packages that are not yet present so non-root applies
+  # do not fail when the list hash changes but nothing is missing.
+  MISSING=""
+  for PKG in ${PACKAGES}; do
+    if ! "${PM_SH}" pq "${PKG}" >/dev/null 2>&1; then
+      MISSING="${MISSING} ${PKG}"
+    fi
+  done
+  MISSING=$(echo "${MISSING}" | sed 's/^ *//')
+
+  if [ -z "${MISSING}" ]; then
+    echo "All packages already installed."
+    exit 0
+  fi
+
+  echo "Installing missing packages:${MISSING}"
+  # Detect the package manager to pass the appropriate auto-confirm flag
+  PM=$("${PM_SH}" which)
+  CONFIRM_FLAG=""
+  case "${PM}" in
+    pacman|yay|paru) CONFIRM_FLAG="--noconfirm" ;;
+    apt|dnf|apk|zypper) CONFIRM_FLAG="-y" ;;
+  esac
+
+  if [ -n "${CONFIRM_FLAG}" ]; then
+    echo "${MISSING}" | tr ' ' '\n' | xargs "${PM_SH}" install "${CONFIRM_FLAG}"
+  else
+    echo "${MISSING}" | tr ' ' '\n' | xargs "${PM_SH}" install
+  fi
+fi

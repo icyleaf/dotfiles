@@ -13,7 +13,7 @@
 
 {{ if eq .chezmoi.os "linux" }}
 # Ignore macOS specific configurations on Linux
-run_onchange_install-brew.sh.tmpl
+.chezmoiscripts/install-brew.sh
 .Brewfile
 .amethyst.yml
 Library/**

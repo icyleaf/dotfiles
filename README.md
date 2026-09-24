@@ -4,22 +4,36 @@ Personal dotfiles repository built and managed using the [Chezmoi](https://chezm
 
 ## Installation and Quick Start
 
-### Option 1: Remote One-Key Deployment (Recommended)
+### Option 1: Bootstrap Script (Recommended)
 
-Chezmoi allows you to initialize and apply configuration directly without manually cloning the repository:
+The bootstrap script detects your platform, installs the three base utilities (`git`, `chezmoi`, `age`), and then runs `chezmoi init --apply`. Remaining system packages (including `fcitx5-rime`) are installed during apply from `linux-packages.txt` via `pm.sh`:
+
+```bash
+git clone https://github.com/icyleaf/dotfiles.git ~/.dotfiles
+sh ~/.dotfiles/install.sh
+```
+
+> [!IMPORTANT]
+> Restore the shared Age private key **before** the first `chezmoi apply` (see [Secret Management](#secret-management-age)), otherwise encrypted secrets will be skipped with warnings.
+
+### Option 2: Remote One-Key Deployment
+
+Directly initialize and apply without manually cloning the repository:
 
 ```bash
 sh -c "$(curl -fsLS chezmoi.io/get)" -- init --apply icyleaf
 ```
 
-### Option 2: Local Clone Initialization
+> [!WARNING]
+> This path does **not** run `install.sh`. Ensure `git`, `chezmoi`, and `age` are already installed, and restore the Age key first, or secret deployment will be skipped.
+
+### Option 3: Local Clone Initialization
 
 If you have already cloned this repository locally:
 
 ```bash
-# Enter the repository directory and use the local chezmoi binary to initialize and deploy
 cd ~/.dotfiles
-./bin/chezmoi init --source "$PWD" --apply
+chezmoi init --source "$PWD" --apply
 ```
 
 > [!NOTE]
@@ -55,7 +69,7 @@ cp /path/to/your/backup/default-key.txt ~/.local/share/age/default-key.txt
 chmod 600 ~/.local/share/age/default-key.txt
 ```
 
-If it is not present on the first apply, the bootstrap script `run_once_setup-age-key.sh.tmpl` will automatically generate a new key pair at `~/.local/share/age/default-key.txt`.
+If it is not present on the first apply, the bootstrap script `run_before_once_setup-age-key.sh` will automatically generate a new key pair at `~/.local/share/age/default-key.txt`. A newly generated key **cannot** decrypt existing repository secrets — restore the shared private key from backup first.
 
 ### How to Encrypt a New File
 
