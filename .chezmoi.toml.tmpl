@@ -28,6 +28,11 @@
 {{   $profile = "custom" }}
 {{ end }}
 
+# Persist the active source directory across `chezmoi init` regenerations.
+# Without this, a bare `chezmoi init` falls back to the default empty source
+# and `chezmoi apply` becomes a no-op.
+sourceDir = {{ .chezmoi.sourceDir | quote }}
+
 encryption = "age"
 
 [data]
