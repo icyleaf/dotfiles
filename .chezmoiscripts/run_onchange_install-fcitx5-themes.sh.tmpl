@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+#
+# Install the Catppuccin fcitx5 theme set (run-onchange, Linux GUI only).
+#
+# Restores the theme-install half of the legacy config/linux/fcitx5/install.sh
+# that was dropped during the Chezmoi migration. The clone follows the upstream
+# default branch (no pinned commit), so a theme refresh is requested by editing
+# this script (which re-triggers it) or by deleting the target directory.
+#
+# Rime/plum setup is intentionally NOT handled here.
+
+set -euo pipefail
+
+{{ if or .headless (ne .chezmoi.os "linux") -}}
+echo "Skipping fcitx5 themes: not a Linux GUI host."
+exit 0
+{{- else -}}
+share_path="${HOME}/.local/share/fcitx5"
+themes_path="${share_path}/themes"
+tmp_clone="$(mktemp -d)"
+
+cleanup() { rm -rf "${tmp_clone}"; }
+trap cleanup EXIT
+
+if ! command -v git >/dev/null 2>&1; then
+  echo "git not found; skipping fcitx5 themes." >&2
+  exit 0
+fi
+
+echo "Fetching Catppuccin fcitx5 themes..."
+git clone --depth 1 https://github.com/catppuccin/fcitx5.git "${tmp_clone}/fcitx5"
+
+if [ ! -d "${tmp_clone}/fcitx5/src" ]; then
+  echo "Unexpected fcitx5 theme layout; src/ not found." >&2
+  exit 1
+fi
+
+mkdir -p "${themes_path}"
+# Copy each theme directory over the installed set. Existing themes are
+# overwritten, user-added themes are left untouched.
+cp -rf "${tmp_clone}/fcitx5/src/." "${themes_path}/"
+
+echo "fcitx5 themes installed to ${themes_path}."
+{{- end }}

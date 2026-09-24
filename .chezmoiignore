@@ -42,6 +42,7 @@ Library/**
 .local/bin/walker-*
 .local/bin/systemupdate.sh
 run_onchange_install-packages-linux.sh.tmpl
+run_onchange_install-fcitx5-themes.sh.tmpl
 {{ end }}
 
 # Ignore legacy files and directories
