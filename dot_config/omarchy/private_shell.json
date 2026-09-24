@@ -6,10 +6,13 @@
   },
   "bar": {
     "position": "top",
-    "transparent": true,
+    "transparent": false,
     "centerAnchor": "icyleaf.workspaces",
     "layout": {
       "left": [
+        {
+          "id": "evindor.keystroke"
+        },
         {
           "id": "icyleaf.herdr"
         },
@@ -21,6 +24,9 @@
         },
         {
           "id": "nosignal.motion-wallpaper"
+        },
+        {
+          "id": "omaplug"
         },
         {
           "id": "icyleaf.resources"
@@ -35,15 +41,18 @@
       "center": [
         {
           "id": "icyleaf.workspaces"
-        },
-        {
-          "id": "omarchy.keyboard-layout"
         }
       ],
       "right": [
         {
           "id": "omarchy.tray",
           "expanded": true
+        },
+        {
+          "id": "storage-drives"
+        },
+        {
+          "id": "komagata.input-method"
         },
         {
           "id": "jankeesvw.notification-center"
@@ -102,18 +111,23 @@
     {
       "id": "io.github.sirjul1337.lock-explorer",
       "design": "my-dock"
+    },
+    {
+      "id": "de.gransoftware.yank"
     }
   ],
   "disabledPlugins": [
     "omarchy.notifications",
     "omarchy.clipboard",
-    "omarchy.lock"
+    "omarchy.lock",
+    "omarchy.menu"
   ],
   "cloneSourceRestores": [
     "icyleaf.notifications",
     "ryuhzk.simfarm",
     "local.clock",
     "alanfortlink.clipboard",
-    "io.github.sirjul1337.lock-explorer"
+    "io.github.sirjul1337.lock-explorer",
+    "evindor.keystroke"
   ]
 }
