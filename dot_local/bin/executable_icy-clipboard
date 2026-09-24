@@ -1,6 +1,37 @@
-if command -v "omarchy-shell" >/dev/null 2>&1; then
-  omarchy-shell shell toggle omarchy.clipboard
+#!/usr/bin/env bash
+#
+# icy-clipboard: middleware wrapper that opens the first enabled clipboard overlay
+#
+# This is the Omarchy-agnostic entry point used by Hyprland/Waybar configs.
+# Replace the implementation below to remove the Omarchy dependency.
+#
+# To replace: implement the desired behaviour directly here and remove
+# the delegation to omarchy-shell.
+
+omarchy_plugin_enabled() {
+  local name=$1
+  [ -z "$name" ] && return 1
+  omarchy plugin list 2>/dev/null | awk -v id="$name" \
+    '$1 == id && $2 == "enabled" { found=1; exit } END { exit !found }'
+}
+
+open_overlay() {
+  local id=$1
+  if ! command -v omarchy-shell >/dev/null 2>&1; then
+    echo "icy-clipboard: 'omarchy-shell' not found. Install Omarchy or implement a replacement." >&2
+    exit 127
+  fi
+  exec omarchy-shell shell toggle "$id"
+}
+
+# Priority: yank > alanfortlink > built-in
+if omarchy_plugin_enabled "de.gransoftware.yank"; then
+  open_overlay "de.gransoftware.yank"
+elif omarchy_plugin_enabled "alanfortlink.clipboard"; then
+  open_overlay "alanfortlink.clipboard"
+elif omarchy_plugin_enabled "omarchy.clipboard"; then
+  open_overlay "omarchy.clipboard"
 else
-  echo "icy-clipboard: 'omarchy-shell' not found. Install Omarchy or implement a replacement." >&2
+  echo "icy-clipboard: no clipboard overlay plugin is enabled." >&2
   exit 127
 fi
