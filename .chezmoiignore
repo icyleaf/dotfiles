@@ -30,16 +30,12 @@ Library/**
 {{ if eq .chezmoi.os "darwin" }}
 # Ignore Linux specific configurations on macOS
 .config/hypr/**
-.config/waybar/**
-.config/walker/**
-.config/swaync/**
 .config/fcitx5/**
 .config/btop/**
 .config/omarchy/**
 .config/chrome-flags.conf
 .config/user-dirs.dirs
 .local/bin/pm.sh
-.local/bin/walker-*
 .local/bin/systemupdate.sh
 run_onchange_install-packages-linux.sh.tmpl
 run_onchange_install-fcitx5-themes.sh.tmpl
