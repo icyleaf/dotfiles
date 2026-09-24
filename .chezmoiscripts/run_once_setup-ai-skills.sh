@@ -4,8 +4,12 @@
 # `skills` CLI (https://skills.sh).
 #
 # Installs to ~/.agents/skills/, the shared global location read by
-# OpenCode and other agents. Non-interactive (`-g -y`) so it is safe to run
-# during `chezmoi apply`.
+# OpenCode and Antigravity CLI. Non-interactive (`-g -y`) so it is safe to
+# run during `chezmoi apply`.
+#
+# Agents are listed explicitly: without `-a`, the CLI auto-detects every
+# installable agent (including PromptScript and Eve) and reports a spurious
+# "Failed to install" for each global-incompatible agent.
 #
 # To refresh later:  npx skills@latest update -g -y
 
@@ -13,6 +17,11 @@ set -euo pipefail
 
 SKILL_PACKAGES=(
   "mattpocock/skills"
+)
+
+SKILL_AGENTS=(
+  "opencode"
+  "antigravity-cli"
 )
 
 # npx comes from the mise-managed node toolchain. Skip (non-fatal) when it is
@@ -25,8 +34,14 @@ fi
 
 install_package() {
   local package="$1"
+  shift
+  local agent_args=()
+  for agent in "$@"; do
+    agent_args+=(-a "${agent}")
+  done
+
   echo "Installing skills from ${package}..."
-  if npx --yes "skills@latest" add "${package}" --global --yes; then
+  if npx --yes "skills@latest" add "${package}" --global --yes "${agent_args[@]}"; then
     echo "Installed skills from ${package}."
   else
     echo "Warning: failed to install skills from ${package}." >&2
@@ -34,5 +49,5 @@ install_package() {
 }
 
 for package in "${SKILL_PACKAGES[@]}"; do
-  install_package "${package}"
+  install_package "${package}" "${SKILL_AGENTS[@]}"
 done
