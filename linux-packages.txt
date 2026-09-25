@@ -20,3 +20,8 @@ fcitx5
 fcitx5-rime
 fcitx5-configtool
 snapper
+
+# AUR
+hypr-input-switcher-bin
+wl-gammarelay-rs
+synology-drive
