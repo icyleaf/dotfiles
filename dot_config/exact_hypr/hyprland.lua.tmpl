@@ -1,8 +1,13 @@
 -- Learn how to configure Hyprland: https://wiki.hypr.land/Configuring/Start/
 
 -- Omarchy's bootstrap keeps path setup out of this user config.
+-- Prefer the system-wide install, falling back to the user clone.
 local home = os.getenv("HOME")
+{{ if stat "/usr/share/omarchy" -}}
+local omarchy_path = os.getenv("OMARCHY_PATH") or "/usr/share/omarchy"
+{{- else -}}
 local omarchy_path = os.getenv("OMARCHY_PATH") or (home .. "/.local/share/omarchy")
+{{- end }}
 dofile(omarchy_path .. "/default/hypr/bootstrap.lua")
 
 -- Ensure modules resolve from the computed Omarchy path even if OMARCHY_PATH is

@@ -2,4 +2,8 @@
 --ozone-platform-hint=wayland
 --password-store=gnome-libsecret
 --enable-features=TouchpadOverscrollHistoryNavigation
+{{ if stat "/usr/share/omarchy" -}}
 --load-extension=/usr/share/omarchy/default/chromium/extensions/copy-url,/usr/share/omarchy/default/chromium/extensions/yt-dlp,/usr/share/omarchy/default/chromium/extensions/whatsapp-slim
+{{- else -}}
+--load-extension={{ .chezmoi.homeDir }}/.local/share/omarchy/default/chromium/extensions/copy-url,{{ .chezmoi.homeDir }}/.local/share/omarchy/default/chromium/extensions/yt-dlp,{{ .chezmoi.homeDir }}/.local/share/omarchy/default/chromium/extensions/whatsapp-slim
+{{- end }}

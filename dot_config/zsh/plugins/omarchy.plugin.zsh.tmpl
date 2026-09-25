@@ -2,6 +2,10 @@ if test ! "$(uname -s)" = "Linux"; then
   return
 fi
 
+{{ if stat "/usr/share/omarchy" -}}
+export OMARCHY_PATH="/usr/share/omarchy"
+{{- else -}}
 export OMARCHY_PATH="$HOME/.local/share/omarchy"
+{{- end }}
 
 export PATH="$OMARCHY_PATH/bin:$HOME/.local/bin:$PATH"

@@ -1,9 +1,13 @@
 # vim:ft=toml
 
 {{ if ne .chezmoi.os "darwin" }}
+{{/* Prefer a system-wide Omarchy install. Only clone the upstream repo into
+     ~/.local/share/omarchy when /usr/share/omarchy is not present. */}}
+{{ if not (stat "/usr/share/omarchy") }}
 [".local/share/omarchy"]
     type = "git-repo"
     url = "https://github.com/basecamp/omarchy.git"
+{{ end }}
 
 # Third-party Omarchy Shell Plugins managed declaratively
 [".config/omarchy/plugins/Mirador"]
