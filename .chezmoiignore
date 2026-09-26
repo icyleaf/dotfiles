@@ -41,6 +41,11 @@ run_onchange_install-packages-linux.sh.tmpl
 run_onchange_install-fcitx5-themes.sh.tmpl
 {{ end }}
 
+{{ if ne .machine_profile "darktemplar" }}
+# Ignore host-specific configuration (AMD HDMI/DP audio + Dual LG 4K wiring)
+.config/wireplumber/**
+{{ end }}
+
 # Ignore legacy files and directories
 config/**
 functions/**
