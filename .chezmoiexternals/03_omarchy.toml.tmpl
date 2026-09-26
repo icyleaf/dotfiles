@@ -9,7 +9,12 @@
     url = "https://github.com/basecamp/omarchy.git"
 {{ end }}
 
-# Third-party Omarchy Shell Plugins managed declaratively
+# Third-party Omarchy Shell Plugins managed declaratively.
+# Only plugins that should reach every machine belong here. Dev/test-only
+# plugins stay out of this file; the matching references in
+# dot_config/omarchy/private_shell.json.tmpl are gated on machine_profile so
+# other machines receive neither the clone nor a reference to it.
+
 [".config/omarchy/plugins/Mirador"]
     type = "git-repo"
     url = "https://github.com/sanjyay/Mirador.git"
@@ -23,5 +28,55 @@
 [".config/omarchy/plugins/ryuhzk.simfarm"]
     type = "git-repo"
     url = "https://github.com/icyleaf/omarchy-simfarm.git"
+    refreshPeriod = "168h"
+
+[".config/omarchy/plugins/icyleaf.hypr-input-switcher"]
+    type = "git-repo"
+    url = "https://github.com/icyleaf/omarchy-hypr-input-switcher.git"
+    refreshPeriod = "168h"
+
+[".config/omarchy/plugins/icyleaf.modict"]
+    type = "git-repo"
+    url = "git@github.com:icyleaf/omarchy-modict.git"
+    refreshPeriod = "168h"
+
+[".config/omarchy/plugins/icyleaf.qalculator"]
+    type = "git-repo"
+    url = "https://github.com/icyleaf/omarchy-qalculator.git"
+    refreshPeriod = "168h"
+
+[".config/omarchy/plugins/alanfortlink.clipboard"]
+    type = "git-repo"
+    url = "https://github.com/alanfortlink/clipboard-history.git"
+    refreshPeriod = "168h"
+
+[".config/omarchy/plugins/io.github.sirjul1337.lock-explorer"]
+    type = "git-repo"
+    url = "https://github.com/SirJul1337/omarchy-lock-explorer.git"
+    refreshPeriod = "168h"
+
+[".config/omarchy/plugins/io.github.hominluo.launcher"]
+    type = "git-repo"
+    url = "https://github.com/hominluo/omarchy-launcher.git"
+    refreshPeriod = "168h"
+
+[".config/omarchy/plugins/jankeesvw.notification-center"]
+    type = "git-repo"
+    url = "https://github.com/jankeesvw/omarchy-notification-center.git"
+    refreshPeriod = "168h"
+
+[".config/omarchy/plugins/storage-drives"]
+    type = "git-repo"
+    url = "https://github.com/gameticharles/drives.git"
+    refreshPeriod = "168h"
+
+[".config/omarchy/plugins/de.gransoftware.yank"]
+    type = "git-repo"
+    url = "https://github.com/gran-software-solutions/yank-omarchy-plugin.git"
+    refreshPeriod = "168h"
+
+[".config/omarchy/plugins/io.github.iampoul.sysstats"]
+    type = "git-repo"
+    url = "https://github.com/iampoul/sysstats.git"
     refreshPeriod = "168h"
 {{ end }}

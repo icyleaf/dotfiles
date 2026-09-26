@@ -1,3 +1,11 @@
+{{- /* Locally-tested Omarchy plugins (evindor.keystroke, nosignal.motion-wallpaper,
+       omaplug, sunny0826.quick-fcitx, hancore.keyboard-center,
+       hancore.voxtype-enhance, komagata.input-method) are only referenced on the
+       dev machine, identified by machine_profile "darktemplar". They are also
+       intentionally absent from .chezmoiexternals/03_omarchy.toml.tmpl, so
+       portable machines receive the plugin-free subset instead of references to
+       plugins they never cloned. */ -}}
+{{- $local := eq .machine_profile "darktemplar" -}}
 {
   "version": 1,
   "idle": {
@@ -10,9 +18,11 @@
     "centerAnchor": "icyleaf.workspaces",
     "layout": {
       "left": [
+{{- if $local }}
         {
           "id": "evindor.keystroke"
         },
+{{- end }}
         {
           "id": "icyleaf.herdr"
         },
@@ -22,20 +32,25 @@
           "sshHost": "tokyo-mini4",
           "browser": "google-chrome-stable"
         },
+{{- if $local }}
         {
           "id": "nosignal.motion-wallpaper"
         },
         {
           "id": "omaplug"
         },
+{{- end }}
+        {
+          "id": "io.github.hominluo.launcher"
+        },
         {
           "id": "icyleaf.resources"
         },
         {
-          "id": "omarchy.indicators"
+          "id": "io.github.iampoul.sysstats"
         },
         {
-          "id": "io.github.hominluo.launcher"
+          "id": "omarchy.indicators"
         }
       ],
       "center": [
@@ -48,12 +63,26 @@
           "id": "omarchy.tray",
           "expanded": true
         },
+{{- if $local }}
+        {
+          "id": "sunny0826.quick-fcitx"
+        },
+        {
+          "id": "hancore.keyboard-center"
+        },
+        {
+          "id": "hancore.voxtype-enhance",
+          "middleMouseToggle": false
+        },
+{{- end }}
         {
           "id": "storage-drives"
         },
+{{- if $local }}
         {
           "id": "komagata.input-method"
         },
+{{- end }}
         {
           "id": "jankeesvw.notification-center"
         },
@@ -118,16 +147,16 @@
   ],
   "disabledPlugins": [
     "omarchy.notifications",
-    "omarchy.clipboard",
-    "omarchy.lock",
-    "omarchy.menu"
+    "omarchy.clipboard"{{ if $local }},
+    "omarchy.menu"{{ end }},
+    "omarchy.lock"
   ],
   "cloneSourceRestores": [
     "icyleaf.notifications",
     "ryuhzk.simfarm",
     "local.clock",
     "alanfortlink.clipboard",
-    "io.github.sirjul1337.lock-explorer",
-    "evindor.keystroke"
+    "io.github.sirjul1337.lock-explorer"{{ if $local }},
+    "evindor.keystroke"{{ end }}
   ]
 }
