@@ -1,10 +1,9 @@
-{{- /* Locally-tested Omarchy plugins (evindor.keystroke, nosignal.motion-wallpaper,
-       omaplug, sunny0826.quick-fcitx, hancore.keyboard-center,
-       hancore.voxtype-enhance, komagata.input-method) are only referenced on the
-       dev machine, identified by machine_profile "darktemplar". They are also
-       intentionally absent from .chezmoiexternals/03_omarchy.toml.tmpl, so
-       portable machines receive the plugin-free subset instead of references to
-       plugins they never cloned. */ -}}
+{{- /* Dev/test-only Omarchy plugins (sunny0826.quick-fcitx,
+       hancore.voxtype-enhance) are referenced only on the dev machine,
+       identified by machine_profile "darktemplar". They are intentionally
+       absent from .chezmoiexternals/03_omarchy.toml.tmpl, so portable machines
+       receive the plugin-free subset instead of references to plugins they
+       never cloned. */ -}}
 {{- $local := eq .machine_profile "darktemplar" -}}
 {
   "version": 1,
@@ -14,15 +13,13 @@
   },
   "bar": {
     "position": "top",
-    "transparent": false,
+    "transparent": true,
     "centerAnchor": "icyleaf.workspaces",
     "layout": {
       "left": [
-{{- if $local }}
         {
-          "id": "evindor.keystroke"
+          "id": "omarchy.menu"
         },
-{{- end }}
         {
           "id": "icyleaf.herdr"
         },
@@ -32,22 +29,11 @@
           "sshHost": "tokyo-mini4",
           "browser": "google-chrome-stable"
         },
-{{- if $local }}
-        {
-          "id": "nosignal.motion-wallpaper"
-        },
-        {
-          "id": "omaplug"
-        },
-{{- end }}
         {
           "id": "io.github.hominluo.launcher"
         },
         {
           "id": "icyleaf.resources"
-        },
-        {
-          "id": "io.github.iampoul.sysstats"
         },
         {
           "id": "omarchy.indicators"
@@ -63,12 +49,15 @@
           "id": "omarchy.tray",
           "expanded": true
         },
+        {
+          "id": "jankeesvw.notification-center"
+        },
+        {
+          "id": "icyleaf.input-fusion"
+        },
 {{- if $local }}
         {
           "id": "sunny0826.quick-fcitx"
-        },
-        {
-          "id": "hancore.keyboard-center"
         },
         {
           "id": "hancore.voxtype-enhance",
@@ -77,14 +66,6 @@
 {{- end }}
         {
           "id": "storage-drives"
-        },
-{{- if $local }}
-        {
-          "id": "komagata.input-method"
-        },
-{{- end }}
-        {
-          "id": "jankeesvw.notification-center"
         },
         {
           "id": "omarchy.bluetooth"
@@ -121,9 +102,6 @@
       "id": "icyleaf.notifications"
     },
     {
-      "id": "icyleaf.hypr-input-switcher"
-    },
-    {
       "id": "icyleaf.bitwarden"
     },
     {
@@ -147,8 +125,7 @@
   ],
   "disabledPlugins": [
     "omarchy.notifications",
-    "omarchy.clipboard"{{ if $local }},
-    "omarchy.menu"{{ end }},
+    "omarchy.clipboard",
     "omarchy.lock"
   ],
   "cloneSourceRestores": [
@@ -156,7 +133,6 @@
     "ryuhzk.simfarm",
     "local.clock",
     "alanfortlink.clipboard",
-    "io.github.sirjul1337.lock-explorer"{{ if $local }},
-    "evindor.keystroke"{{ end }}
+    "io.github.sirjul1337.lock-explorer"
   ]
 }
