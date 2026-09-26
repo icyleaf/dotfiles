@@ -60,11 +60,19 @@ Panel {
   readonly property url statusScriptUrl: Qt.resolvedUrl("status.sh")
   readonly property string statusScript: decodeURIComponent(String(statusScriptUrl).replace(/^file:\/\//, ""))
 
+  // Fixed status-bar glyphs. `md-memory` renders as a square chip that reads as
+  // a CPU, so use Font Awesome's RAM-stick `fa-memory` for memory and
+  // `fa-microchip` for the CPU. Icons never change with thresholds; only the
+  // value color does.
+  readonly property string cpuIcon: "\uf2db"
+  readonly property string memoryIcon: "\uefc5"
+  readonly property string temperatureIcon: "\uf2c9"
+
   readonly property real memoryUsedGiB: memoryTotalKiB > 0 ? (memoryTotalKiB - memoryAvailableKiB) / (1024 * 1024) : 0
   readonly property real memoryTotalGiB: memoryTotalKiB > 0 ? memoryTotalKiB / (1024 * 1024) : 0
 
   // ── Status Bar Text & Visuals ───────────────────────────────────────────
-  readonly property string displayText: mainGlyph() + " " + mainValueText() + "  󰍛 " + String(memoryPercent).padStart(2, "0") + "%"
+  readonly property string displayText: mainGlyph() + " " + mainValueText() + "  " + root.memoryIcon + " " + String(memoryPercent).padStart(2, "0") + "%"
   readonly property string tooltipText: buildTooltip()
   readonly property color displayForeground: usageColor(mainMetricPercent(), mainMetricTemperature())
 
@@ -72,15 +80,8 @@ Panel {
     return Math.max(0, Math.min(100, Math.round(value)))
   }
 
-  function utilizationGlyph() {
-    if (cpuPercent > 90) return ""
-    if (cpuPercent > 60) return "󰓅"
-    if (cpuPercent > 30) return "󰾅"
-    return "󰾆"
-  }
-
   function mainGlyph() {
-    return displayMode === "temperature" ? temperatureGlyph() : utilizationGlyph()
+    return displayMode === "temperature" ? root.temperatureIcon : root.cpuIcon
   }
 
   function mainValueText() {
@@ -110,19 +111,12 @@ Panel {
     return Color.foreground
   }
 
-  function temperatureGlyph() {
-    if (cpuTemperature >= 85) return ""
-    if (cpuTemperature >= 65) return ""
-    if (cpuTemperature >= 45) return ""
-    return ""
-  }
-
   function buildTooltip() {
     var lines = []
     if (cpuModel) lines.push(cpuModel)
 
-    var cpuLine = utilizationGlyph() + " Utilization: " + cpuPercent + "%"
-    if (cpuTemperature > 0) cpuLine += "   " + temperatureGlyph() + " " + cpuTemperature + "°C"
+    var cpuLine = root.cpuIcon + " Utilization: " + cpuPercent + "%"
+    if (cpuTemperature > 0) cpuLine += "   " + root.temperatureIcon + " " + cpuTemperature + "°C"
     lines.push(cpuLine)
 
     if (cpuCurrentMHz > 0 || cpuMaxMHz > 0) {
@@ -132,7 +126,7 @@ Panel {
       lines.push(clockLine)
     }
 
-    lines.push("󰍛 Memory: " + memoryPercent + "% (" + memoryUsedGiB.toFixed(1) + "/" + memoryTotalGiB.toFixed(1) + " GiB)")
+    lines.push(root.memoryIcon + " Memory: " + memoryPercent + "% (" + memoryUsedGiB.toFixed(1) + "/" + memoryTotalGiB.toFixed(1) + " GiB)")
     return lines.join("\n")
   }
 
@@ -511,7 +505,7 @@ Panel {
             detail: "Load " + root.load1.toFixed(2) + " · " + root.load5.toFixed(2) + " · " + root.load15.toFixed(2)
             valueText: root.percentText(root.cpuPercent)
             percent: root.cpuPercent
-            badgeIcon: "󰍛"
+            badgeIcon: root.cpuIcon
             accentColor: root.statusColorFor(root.cpuPercent)
           }
 
@@ -546,7 +540,7 @@ Panel {
             detail: root.gbText(root.memUsedGb) + " / " + root.gbText(root.memTotalGb) + " used"
             valueText: root.percentText(root.memoryPercent)
             percent: root.memoryPercent
-            badgeIcon: "󰘚"
+            badgeIcon: root.memoryIcon
             accentColor: root.statusColorFor(root.memoryPercent)
           }
 
