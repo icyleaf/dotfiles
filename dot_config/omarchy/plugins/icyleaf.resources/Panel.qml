@@ -9,16 +9,6 @@ Panel {
   moduleName: "icyleaf.resources"
   ipcTarget: "icyleaf.resources"
 
-  IpcHandler {
-    target: root.ipcTarget
-
-    function open() { root.openFromHotkey() }
-    function close() { root.close() }
-    function show() { root.openFromHotkey() }
-    function hide() { root.close() }
-    function toggle() { root.toggle() }
-  }
-
   // ── Telemetry State ──────────────────────────────────────────────────────
   property string hostName: ""
   property string kernelVer: ""
@@ -55,6 +45,10 @@ Panel {
   property real load5: 0
   property real load15: 0
   property var prevCpu: ({ idle: 0, total: 0 })
+
+  property var temps: []
+  property var fans: []
+  readonly property var groupedTemps: groupTemps(temps)
 
   readonly property int refreshSeconds: Math.max(1, Number(setting("refreshSeconds", 2)) || 2)
   readonly property string diskPath: String(setting("diskPath", "/") || "/")
@@ -246,6 +240,54 @@ Panel {
     if (!statsProc.running) statsProc.running = true
   }
 
+  function parseJsonArray(raw) {
+    try {
+      var parsed = JSON.parse(String(raw || "[]"))
+      return Array.isArray(parsed) ? parsed : []
+    } catch (e) {
+      return []
+    }
+  }
+
+  // Collapse every per-core/per-sensor reading into one row per hwmon chip so
+  // the panel stays a fixed, non-scrolling height. The hottest reading names
+  // the row's detail; the row's meter tracks the hottest temperature.
+  function groupTemps(list) {
+    if (!list || list.length === 0) return []
+    var order = []
+    var bySource = {}
+    for (var i = 0; i < list.length; i++) {
+      var entry = list[i]
+      var source = String(entry.source || "hwmon")
+      if (!bySource[source]) {
+        bySource[source] = { source: source, count: 0, hottest: 0, hottestLabel: "" }
+        order.push(source)
+      }
+      var group = bySource[source]
+      var temp = Number(entry.temp) || 0
+      group.count += 1
+      if (temp > group.hottest) {
+        group.hottest = temp
+        group.hottestLabel = String(entry.label || "")
+      }
+    }
+    var groups = []
+    for (var j = 0; j < order.length; j++) {
+      var g = bySource[order[j]]
+      g.hottest = Math.round(g.hottest)
+      groups.push(g)
+    }
+    groups.sort(function(a, b) { return b.hottest - a.hottest })
+    return groups
+  }
+
+  function tempColor(temp) {
+    if (temp >= 85) return Color.urgent
+    if (temp >= 65) return "#e5c07b"
+    if (temp >= 45) return "#6fb6ff"
+    return Color.accent
+  }
+
   function parseNumber(value, fallback) {
     var n = parseFloat(String(value || "").trim())
     return isNaN(n) ? fallback : n
@@ -329,6 +371,10 @@ Panel {
         cpuMaxMHz = parseInt(parts[2], 10) || 0
         cpuCurrentMHz = parseInt(parts[3], 10) || 0
         cpuModel = parts[4] || ""
+      } else if (parts[0] === "temps") {
+        temps = parseJsonArray(parts[1])
+      } else if (parts[0] === "fans") {
+        fans = parseJsonArray(parts[1])
       }
     }
   }
@@ -552,6 +598,51 @@ Panel {
             accentColor: root.statusColorFor(root.gpuPercent)
           }
         }
+
+        // ── 5. Thermal Section (Temperature + Fans) ────────────────────────
+        Column {
+          width: parent.width
+          visible: root.groupedTemps.length > 0 || root.fans.length > 0
+          spacing: Style.space(8)
+
+          PanelSeparator { foreground: root.panelFg }
+
+          PanelSectionHeader {
+            text: "THERMAL"
+            foreground: root.panelFg
+            fontFamily: root.panelFont
+          }
+
+          Repeater {
+            model: root.groupedTemps
+            delegate: StatRowItem {
+              required property var modelData
+              width: parent.width
+              label: modelData.source
+              detail: modelData.hottestLabel
+                + (modelData.count > 1 ? " · " + modelData.count + " sensors" : "")
+              valueText: modelData.hottest + "°C"
+              percent: Math.max(0, Math.min(100, modelData.hottest))
+              badgeIcon: ""
+              accentColor: root.tempColor(modelData.hottest)
+            }
+          }
+
+          Repeater {
+            model: root.fans
+            delegate: StatRowItem {
+              required property var modelData
+              width: parent.width
+              label: modelData.source
+              detail: modelData.label
+              valueText: modelData.rpm + " RPM"
+              percent: -1
+              badgeIcon: "󰈐"
+              accentColor: Color.accent
+              showMeter: false
+            }
+          }
+        }
       }
     }
   }
@@ -565,6 +656,7 @@ Panel {
     property string badgeIcon: ""
     property real percent: 0
     property color accentColor: Color.accent
+    property bool showMeter: true
 
     implicitHeight: Style.space(40)
 
@@ -635,6 +727,7 @@ Panel {
           width: parent.width
           height: Style.space(4)
           radius: height / 2
+          visible: rowItem.showMeter
           color: Qt.rgba(root.panelFg.r, root.panelFg.g, root.panelFg.b, 0.14)
 
           Rectangle {

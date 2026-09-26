@@ -4,7 +4,7 @@
   "name": "System Resources",
   "version": "1.0.0",
   "author": "icyleaf",
-  "description": "CPU and memory usage status bar widget and dropdown telemetry panel.",
+  "description": "CPU and memory usage status bar widget and dropdown telemetry panel with thermal sensors.",
   "kinds": [
     "bar-widget"
   ],
@@ -13,7 +13,7 @@
   },
   "barWidget": {
     "displayName": "System Resources",
-    "description": "System telemetry panel featuring CPU, RAM, CPU Temp/Freq/Model, Swap, Disk, GPU, and Uptime metrics.",
+    "description": "System telemetry panel featuring CPU, RAM, CPU Temp/Freq/Model, Swap, Disk, GPU, Thermal (temperature sensors + fans), and Uptime metrics.",
     "category": "System",
     "allowMultiple": false,
     "defaults": {

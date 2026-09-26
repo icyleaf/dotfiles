@@ -98,3 +98,62 @@ cpu_cur_mhz=$(awk '{sum+=$1; count++} END {if (count>0) printf "%.0f\n", sum/cou
 cpu_model=$(awk -F: '/model name/ { gsub(/^[ \t]+|[ \t]+$/, "", $2); sub(/ CPU.*/, "", $2); print $2; exit }' /proc/cpuinfo 2>/dev/null || echo "")
 
 printf "cpu_detail\t%s\t%s\t%s\t%s\n" "${cpu_temp:-0}" "${cpu_max_mhz:-0}" "${cpu_cur_mhz:-0}" "${cpu_model:-}"
+
+# Thermal sensors: every readable hwmon temp*_input as a JSON array.
+# Grouping/per-core collapsing happens in the panel, not here.
+sensors_json="["
+sensor_first=1
+for hwmon in /sys/class/hwmon/hwmon*; do
+  [ -d "$hwmon" ] || continue
+  sensor_source="hwmon"
+  [ -f "$hwmon/name" ] && sensor_source=$(cat "$hwmon/name" 2>/dev/null) && [ -n "$sensor_source" ] || sensor_source="hwmon"
+  for temp_file in "$hwmon"/temp*_input; do
+    [ -f "$temp_file" ] || continue
+    raw=$(cat "$temp_file" 2>/dev/null || true)
+    [ -z "$raw" ] && continue
+    temp_c=$((raw / 1000))
+    [ "$temp_c" -le 0 ] && continue
+    [ "$temp_c" -gt 200 ] && continue
+    sensor_index="${temp_file##*temp}"
+    sensor_index="${sensor_index%%_input*}"
+    label_file="${hwmon}/temp${sensor_index}_label"
+    sensor_label=""
+    [ -f "$label_file" ] && sensor_label=$(cat "$label_file" 2>/dev/null || true)
+    [ -z "$sensor_label" ] && sensor_label="Sensor ${sensor_index}"
+    sensor_label=${sensor_label//\\/}
+    sensor_label=${sensor_label//\"/}
+    [ "$sensor_first" -eq 1 ] || sensors_json="${sensors_json},"
+    sensor_first=0
+    sensors_json="${sensors_json}{\"source\":\"${sensor_source}\",\"label\":\"${sensor_label}\",\"temp\":${temp_c}}"
+  done
+done
+sensors_json="${sensors_json}]"
+printf "temps\t%s\n" "$sensors_json"
+
+# Fans: every spinning hwmon fan*_input as a JSON array.
+fans_json="["
+fan_first=1
+for hwmon in /sys/class/hwmon/hwmon*; do
+  [ -d "$hwmon" ] || continue
+  fan_source="hwmon"
+  [ -f "$hwmon/name" ] && fan_source=$(cat "$hwmon/name" 2>/dev/null) && [ -n "$fan_source" ] || fan_source="hwmon"
+  for fan_file in "$hwmon"/fan*_input; do
+    [ -f "$fan_file" ] || continue
+    rpm=$(cat "$fan_file" 2>/dev/null || true)
+    [ -z "$rpm" ] && continue
+    [ "$rpm" -eq 0 ] 2>/dev/null && continue
+    fan_index="${fan_file##*fan}"
+    fan_index="${fan_index%%_input*}"
+    label_file="${hwmon}/fan${fan_index}_label"
+    fan_label=""
+    [ -f "$label_file" ] && fan_label=$(cat "$label_file" 2>/dev/null || true)
+    [ -z "$fan_label" ] && fan_label="Fan ${fan_index}"
+    fan_label=${fan_label//\\/}
+    fan_label=${fan_label//\"/}
+    [ "$fan_first" -eq 1 ] || fans_json="${fans_json},"
+    fan_first=0
+    fans_json="${fans_json}{\"source\":\"${fan_source}\",\"label\":\"${fan_label}\",\"rpm\":${rpm}}"
+  done
+done
+fans_json="${fans_json}]"
+printf "fans\t%s\n" "$fans_json"
