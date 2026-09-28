@@ -1,0 +1,13 @@
+{
+  // User menu extensions merged over Omarchy's default menu definition.
+  // See https://github.com/omarchy/omarchy (shell/plugins/README.md).
+
+  // Workspace Bindings (icyleaf.workspaces): monitor-aware app -> workspace
+  // routing. The helper edits the current machine profile's source in
+  // .chezmoitemplates and re-applies the runtime file the plugin hot-reloads.
+  "setup.workspace-bindings": {"icon":"󰍹","label":"Workspace Bindings","title":"Workspace Bindings"},
+  "setup.workspace-bindings.assign": {"icon":"󰐕","label":"Assign running app","action":"$HOME/.config/omarchy/plugins/icyleaf.workspaces/bin/omarchy-workspace-bindings assign"},
+  "setup.workspace-bindings.add": {"icon":"󰛔","label":"Add by window class","action":"$HOME/.config/omarchy/plugins/icyleaf.workspaces/bin/omarchy-workspace-bindings add"},
+  "setup.workspace-bindings.manage": {"icon":"󰒓","label":"Manage bindings","action":"$HOME/.config/omarchy/plugins/icyleaf.workspaces/bin/omarchy-workspace-bindings manage"},
+  "setup.workspace-bindings.open": {"icon":"󰈭","label":"Edit source file","action":"$HOME/.config/omarchy/plugins/icyleaf.workspaces/bin/omarchy-workspace-bindings open"}
+}

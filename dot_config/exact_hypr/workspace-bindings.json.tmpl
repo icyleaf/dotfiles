@@ -1,0 +1,22 @@
+{{- /* Monitor-aware workspace bindings for the active machine profile.
+
+       Authoring happens in a per-profile source beside this template:
+
+         .chezmoitemplates/workspace-bindings.<machine_profile>.json
+
+       That source is inlined verbatim to ~/.config/hypr/workspace-bindings.json,
+       which icyleaf.workspaces reads and hot-reloads. A profile with no source
+       (including "custom") deploys an empty binding set, so the runtime file is
+       always valid.
+
+       Edit bindings with the plugin's `omarchy-workspace-bindings` helper or by
+       hand, then run `chezmoi apply`. */ -}}
+{{- $rel := joinPath ".chezmoitemplates" (printf "workspace-bindings.%s.json" .machine_profile) -}}
+{{- if stat (joinPath .chezmoi.sourceDir $rel) -}}
+{{ include $rel -}}
+{{- else -}}
+{
+  "version": 1,
+  "bindings": []
+}
+{{- end }}

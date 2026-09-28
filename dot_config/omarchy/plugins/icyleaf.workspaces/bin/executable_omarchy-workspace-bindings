@@ -1,0 +1,385 @@
+#!/usr/bin/env bash
+# omarchy-workspace-bindings
+#
+# Author and manage monitor-aware Workspace Bindings for the icyleaf.workspaces
+# plugin. Bindings live in a Chezmoi-managed, per-profile source file:
+#
+#   <chezmoi source>/.chezmoitemplates/workspace-bindings.<machine_profile>.json
+#
+# `chezmoi apply` renders that source to the runtime file the plugin reads and
+# hot-reloads:
+#
+#   ~/.config/hypr/workspace-bindings.json
+#
+# The menu flows use `omarchy menu` for selection; the `set`/`remove`/`list`/
+# `status` commands are non-interactive and scriptable.
+
+set -euo pipefail
+
+RUNTIME_TARGET="${HOME}/.config/hypr/workspace-bindings.json"
+
+notify() {
+  command -v omarchy >/dev/null 2>&1 || return 0
+  omarchy notification send "$1" "${2:-}" -g "󰍹" >/dev/null 2>&1 || true
+}
+
+die() {
+  printf 'error: %s\n' "$1" >&2
+  exit 1
+}
+
+require_cmds() {
+  for cmd in chezmoi jq; do
+    command -v "$cmd" >/dev/null 2>&1 || die "required command not found: $cmd"
+  done
+}
+
+# Read the resolved profile from the persisted config rather than `chezmoi data`:
+# the latter re-reads the whole source tree and trips over dangling, OS-specific
+# symlinks that `chezmoi apply` deliberately tolerates.
+machine_profile() {
+  chezmoi dump-config | jq -r '.data.machine_profile // "custom"'
+}
+
+source_dir() {
+  chezmoi source-path
+}
+
+state_file() {
+  printf '%s/.chezmoitemplates/workspace-bindings.%s.json' "$(source_dir)" "$(machine_profile)"
+}
+
+ensure_state() {
+  local file
+  file="$(state_file)"
+  mkdir -p "$(dirname "$file")"
+  if [[ ! -f $file ]]; then
+    printf '{\n  "version": 1,\n  "bindings": []\n}\n' >"$file"
+  elif ! jq -e '.version == 1 and (.bindings | type == "array")' "$file" >/dev/null 2>&1; then
+    die "invalid binding source: $file"
+  fi
+}
+
+# Parse a `monitor` argument into a matcher JSON object:
+#   id:0        -> { "id": 0 }
+#   name:DP-1   -> { "name": "DP-1" }
+#   desc:TEXT   -> { "desc": "TEXT" }
+matcher_json() {
+  local spec="$1" kind value
+  kind="${spec%%:*}"
+  value="${spec#*:}"
+  case "$kind" in
+    id)
+      [[ $value =~ ^[0-9]+$ ]] || die "monitor id must be an integer: $value"
+      jq -cn --argjson id "$value" '{id: $id}'
+      ;;
+    name)
+      [[ -n $value ]] || die "monitor name must not be empty"
+      jq -cn --arg name "$value" '{name: $name}'
+      ;;
+    desc)
+      [[ -n $value ]] || die "monitor desc must not be empty"
+      jq -cn --arg desc "$value" '{desc: $desc}'
+      ;;
+    *)
+      die "monitor must be id:<n>, name:<connector> or desc:<text> (got '$spec')"
+      ;;
+  esac
+}
+
+# Upsert a binding, preserving the position of an existing class so same-class
+# scene variants keep their authored order.
+save_binding() {
+  local class="$1" monitor="$2" slot="$3" focus="$4" file matcher tmp
+  [[ -n $class ]] || die "class must not be empty"
+  [[ $slot =~ ^([1-9]|10)$ ]] || die "slot must be 1..10 (got '$slot')"
+  [[ $focus == "true" || $focus == "false" ]] || die "focus must be true or false"
+
+  ensure_state
+  file="$(state_file)"
+  matcher="$(matcher_json "$monitor")"
+  tmp="$(mktemp "${file}.XXXXXX")"
+
+  # Match on class + monitor so a class may carry one binding per layout
+  # (scene variant); the same class+monitor is updated in place.
+  jq \
+    --arg class "$class" \
+    --argjson monitor "$matcher" \
+    --argjson slot "$slot" \
+    --argjson focus "$focus" \
+    '
+      .version = 1
+      | (.bindings // []) as $bindings
+      | { class: $class, target: { monitor: $monitor, slot: $slot }, focus: $focus } as $entry
+      | ($bindings | map(.class == $class and .target.monitor == $monitor) | index(true)) as $at
+      | .bindings = (if $at == null then $bindings + [$entry] else $bindings | .[$at] = $entry end)
+    ' "$file" >"$tmp"
+  mv "$tmp" "$file"
+}
+
+# Remove all bindings for a class, or only the one targeting <monitor> when
+# given (so scene variants can be removed individually).
+remove_binding() {
+  local class="$1" monitor="${2:-}" file tmp
+  ensure_state
+  file="$(state_file)"
+  tmp="$(mktemp "${file}.XXXXXX")"
+  if [[ -n $monitor ]]; then
+    jq --arg class "$class" --argjson monitor "$(matcher_json "$monitor")" \
+      '.bindings |= map(select(.class != $class or .target.monitor != $monitor))' "$file" >"$tmp"
+  else
+    jq --arg class "$class" '.bindings |= map(select(.class != $class))' "$file" >"$tmp"
+  fi
+  mv "$tmp" "$file"
+}
+
+apply_bindings() {
+  chezmoi apply "$RUNTIME_TARGET" >/dev/null 2>&1 \
+    || notify "Workspace Bindings" "Saved, but chezmoi apply failed."
+}
+
+# ---------------------------------------------------------------------------
+# Selection helpers
+# ---------------------------------------------------------------------------
+
+choose_monitor_spec() {
+  local options=() monitor badge name desc
+  while IFS=$'\t' read -r badge name desc; do
+    [[ -n $name ]] || continue
+    options+=("${badge}"$'\t'"${name} · ${desc}"$'\t'"desc:${desc}")
+  done < <(hyprctl -j monitors 2>/dev/null | jq -r '
+    .[] | select((.disabled // false) == false)
+    | [("󰍹"), (.name // ""), (.description // "")] | @tsv')
+  if (( ${#options[@]} == 0 )); then
+    notify "Workspace Bindings" "No connected monitors were found."
+    return 1
+  fi
+  local selected
+  selected=$(omarchy menu select "Target monitor" "${options[@]}" -- --width 720) || return 1
+  printf '%s' "${selected#*$'\t'}"
+}
+
+choose_slot() {
+  local options=() slot
+  for slot in {1..10}; do options+=("󰍹"$'\t'"$slot"); done
+  local selected
+  selected=$(omarchy menu select "Workspace slot" "${options[@]}" -- --width 360 --maxheight 520) || return 1
+  printf '%s' "$selected"
+}
+
+choose_focus() {
+  local selected
+  selected=$(omarchy menu select \
+    "When the window opens" \
+    "󰘳"$'\t'"Open silently" \
+    "󰍹"$'\t'"Switch to its workspace" \
+    -- --width 460) || return 1
+  case "$selected" in
+    "Open silently") printf 'false' ;;
+    "Switch to its workspace") printf 'true' ;;
+    *) return 1 ;;
+  esac
+}
+
+running_app_options() {
+  local clients
+  clients=$(hyprctl -j clients 2>/dev/null) || return 1
+  jq -r '
+    map({ klass: (if (.initialClass // "") != "" then .initialClass else (.class // "") end), title: (.title // "") })
+    | map(select(.klass != ""))
+    | unique_by(.klass)
+    | sort_by(.klass | ascii_downcase)
+    | .[]
+    | ["", (.klass + (if .title != "" then "  ·  " + .title else "" end)), .klass]
+    | @tsv
+  ' <<<"$clients"
+}
+
+# ---------------------------------------------------------------------------
+# Commands
+# ---------------------------------------------------------------------------
+
+cmd_assign() {
+  local options=() selected class monitor slot focus
+  mapfile -t options < <(running_app_options)
+  if (( ${#options[@]} == 0 )); then
+    notify "Workspace Bindings" "No running windows were found."
+    return 0
+  fi
+  selected=$(omarchy menu select "Assign a running app" "${options[@]}" -- --width 720 --maxheight 620) || return 0
+  class="${selected#*$'\t'}"
+  [[ -n $class ]] || return 0
+  monitor=$(choose_monitor_spec) || return 0
+  slot=$(choose_slot) || return 0
+  focus=$(choose_focus) || return 0
+  save_binding "$class" "$monitor" "$slot" "$focus"
+  apply_bindings
+  notify "Workspace binding saved" "$class → $monitor slot $slot"
+}
+
+cmd_add() {
+  local class title monitor slot focus
+  class=$(omarchy menu input "App class (regex, anchored)") || return 0
+  [[ -n $class ]] || return 0
+  title=$(omarchy menu input "Window title regex (optional)") || return 0
+  monitor=$(choose_monitor_spec) || return 0
+  slot=$(choose_slot) || return 0
+  focus=$(choose_focus) || return 0
+  if [[ -n $title ]]; then
+    set_binding_with_title "$class" "$title" "$monitor" "$slot" "$focus"
+  else
+    save_binding "$class" "$monitor" "$slot" "$focus"
+  fi
+  apply_bindings
+  notify "Workspace binding saved" "$class → $monitor slot $slot"
+}
+
+# The `set` path has no title; the add flow needs one. Keep it in a small
+# variant rather than complicating save_binding.
+set_binding_with_title() {
+  local class="$1" title="$2" monitor="$3" slot="$4" focus="$5" file matcher tmp
+  ensure_state
+  file="$(state_file)"
+  matcher="$(matcher_json "$monitor")"
+  tmp="$(mktemp "${file}.XXXXXX")"
+  jq \
+    --arg class "$class" --arg title "$title" --argjson monitor "$matcher" \
+    --argjson slot "$slot" --argjson focus "$focus" \
+    '
+      .version = 1
+      | (.bindings // []) as $bindings
+      | { class: $class, title: $title, target: { monitor: $monitor, slot: $slot }, focus: $focus } as $entry
+      | ($bindings | map(.class == $class and .target.monitor == $monitor) | index(true)) as $at
+      | .bindings = (if $at == null then $bindings + [$entry] else $bindings | .[$at] = $entry end)
+    ' "$file" >"$tmp"
+  mv "$tmp" "$file"
+}
+
+# Manage by binding index, so same-class scene variants stay distinct.
+cmd_manage() {
+  local options=() selected action index label file tmp
+  ensure_state
+  file="$(state_file)"
+  mapfile -t options < <(jq -r '
+    .bindings
+    | to_entries[]
+    | ["󰍹",
+       (.value.class + "  →  " + (.value.target.monitor | to_entries[0] | "\(.key):\(.value)")
+         + "  slot " + (.value.target.slot | tostring)
+         + (if (.value.focus // false) then "  ·  switch" else "  ·  silent" end)),
+       (.key | tostring)]
+    | @tsv
+  ' "$file")
+  if (( ${#options[@]} == 0 )); then
+    notify "Workspace Bindings" "There are no bindings yet."
+    return 0
+  fi
+  selected=$(omarchy menu select "Manage binding" "${options[@]}" -- --width 720 --maxheight 620) || return 0
+  index="${selected#*$'\t'}"
+  [[ $index =~ ^[0-9]+$ ]] || return 0
+  label=$(jq -r --argjson i "$index" '.bindings[$i].class' "$file")
+  action=$(omarchy menu select "$label" \
+    "󰒓"$'\t'"Move to another slot" \
+    "󰍹"$'\t'"Change monitor" \
+    "󰘳"$'\t'"Toggle focus behaviour" \
+    "󰆴"$'\t'"Remove binding" \
+    -- --width 460) || return 0
+
+  tmp="$(mktemp "${file}.XXXXXX")"
+  case "$action" in
+    "Move to another slot")
+      local slot
+      slot=$(choose_slot) || { rm -f "$tmp"; return 0; }
+      jq --argjson i "$index" --argjson slot "$slot" '.bindings[$i].target.slot = $slot' "$file" >"$tmp"
+      ;;
+    "Change monitor")
+      local monitor
+      monitor=$(choose_monitor_spec) || { rm -f "$tmp"; return 0; }
+      jq --argjson i "$index" --argjson monitor "$(matcher_json "$monitor")" \
+        '.bindings[$i].target.monitor = $monitor' "$file" >"$tmp"
+      ;;
+    "Toggle focus behaviour")
+      jq --argjson i "$index" '.bindings[$i].focus = ((.bindings[$i].focus // false) | not)' "$file" >"$tmp"
+      ;;
+    "Remove binding")
+      jq --argjson i "$index" 'del(.bindings[$i])' "$file" >"$tmp"
+      ;;
+    *)
+      rm -f "$tmp"
+      return 0
+      ;;
+  esac
+  mv "$tmp" "$file"
+  apply_bindings
+  notify "Workspace bindings updated" "$label"
+}
+
+cmd_set() {
+  [[ $# -eq 4 ]] || die "usage: set <class> <monitor> <slot> <focus>"
+  save_binding "$1" "$2" "$3" "$4"
+  apply_bindings
+}
+
+cmd_remove() {
+  [[ $# -ge 1 && $# -le 2 ]] || die "usage: remove <class> [monitor]"
+  remove_binding "$1" "${2:-}"
+  apply_bindings
+}
+
+cmd_list() {
+  ensure_state
+  jq -r '
+    .bindings[]
+    | [.class, (.target.monitor | to_entries[0] | "\(.key):\(.value)"), (.target.slot | tostring), ((.focus // false) | tostring)]
+    | @tsv
+  ' "$(state_file)"
+}
+
+cmd_status() {
+  local file integrated="false" count=0
+  file="$(state_file)"
+  if [[ -f $file ]]; then
+    count=$(jq -r '.bindings | length' "$file" 2>/dev/null || printf '0')
+  fi
+  if [[ -f $RUNTIME_TARGET ]]; then
+    integrated="true"
+  fi
+  jq -cn \
+    --arg profile "$(machine_profile)" \
+    --arg source "$file" \
+    --argjson assignments "$count" \
+    --argjson applied "$integrated" \
+    '{plugin: "icyleaf.workspaces", profile: $profile, source: $source, assignments: $assignments, runtimeDeployed: $applied}'
+}
+
+cmd_open() {
+  ensure_state
+  local file
+  file="$(state_file)"
+  if command -v omarchy-launch-config-editor >/dev/null 2>&1; then
+    omarchy-launch-config-editor "$file"
+  else
+    printf '%s\n' "$file"
+  fi
+}
+
+main() {
+  case "${1:-assign}" in
+    assign) shift || true; cmd_assign "$@" ;;
+    add) shift || true; cmd_add "$@" ;;
+    manage) shift || true; cmd_manage "$@" ;;
+    set) shift || true; cmd_set "$@" ;;
+    remove) shift || true; cmd_remove "$@" ;;
+    list) shift || true; cmd_list "$@" ;;
+    status) shift || true; cmd_status "$@" ;;
+    open) shift || true; cmd_open "$@" ;;
+    apply) shift || true; apply_bindings && notify "Workspace bindings" "Runtime file re-rendered." ;;
+    *)
+      printf 'Usage: %s [assign|add|manage|set|remove|list|status|open|apply]\n' "${0##*/}" >&2
+      return 2
+      ;;
+  esac
+}
+
+require_cmds
+main "$@"

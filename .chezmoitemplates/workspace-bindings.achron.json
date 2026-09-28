@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "bindings": [
+    { "class": "^org\\.telegram\\.desktop$", "target": { "monitor": { "id": 0 }, "slot": 9 }, "focus": true },
+    { "class": "^wechat$", "target": { "monitor": { "id": 0 }, "slot": 9 }, "focus": true },
+    { "class": "^discord$", "target": { "monitor": { "id": 0 }, "slot": 10 }, "focus": true },
+    { "class": "^vesktop$", "target": { "monitor": { "id": 0 }, "slot": 10 }, "focus": true },
+    { "class": "^chrome-.*$", "title": "(LINE|Line)", "target": { "monitor": { "id": 0 }, "slot": 8 }, "focus": false }
+  ]
+}

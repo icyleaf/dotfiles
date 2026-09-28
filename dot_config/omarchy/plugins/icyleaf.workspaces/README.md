@@ -90,6 +90,78 @@ hyprctl clients -j | jq -r '.[] | "\(.pid)\t\(.class)"'
 
 ---
 
+## Workspace Bindings
+
+Monitor-aware app → workspace routing. When `workspaceBindings` is enabled (the
+default), a newly opened window whose initial class matches a binding is routed
+to a workspace slot on the monitor its Monitor Matcher resolves to. This
+replaces hardcoded `workspace` window rules: the mapping is per machine profile
+and can target different physical monitors.
+
+- Author bindings per machine profile in
+  `.chezmoitemplates/workspace-bindings.<machine_profile>.json` (Chezmoi source,
+  not deployed).
+- `chezmoi apply` renders the active profile's source to
+  `~/.config/hypr/workspace-bindings.json`, which the widget reads and
+  hot-reloads — no shell restart needed.
+- A profile with no source (including `custom`) renders an empty binding set.
+
+```json
+{
+  "version": 1,
+  "bindings": [
+    { "class": "^org\\.telegram\\.desktop$",
+      "target": { "monitor": { "desc": "LG Electronics LG HDR 4K 0x0001C243" }, "slot": 9 },
+      "focus": true },
+    { "class": "^chrome-.*$", "title": "(LINE|Line)",
+      "target": { "monitor": { "desc": "LG Electronics LG HDR 4K 0x0001C243" }, "slot": 8 },
+      "focus": false }
+  ]
+}
+```
+
+- `class` — regex, anchored, matched against the window's initial class.
+- `title` (optional) — regex matched against the settled title. The binding is
+  held pending until the title matches, covering webapps whose real title
+  arrives after the window is created.
+- `target.monitor` — exactly one of `id`, `name` (connector, e.g. `DP-1`), or
+  `desc` (case-insensitive substring; an exact description is preferred). A
+  disabled or mirrored monitor never matches.
+- `target.slot` — `1`–`10`, relative to the matched monitor. The global
+  workspace is the monitor's offset plus the slot.
+- `focus` — `true` moves focus to the workspace; `false` (default) opens the
+  window silently.
+
+Bindings are scanned in source order; the first binding whose class matches and
+whose Monitor Matcher resolves to a connected monitor applies. Same-class
+entries let one app land on different monitors across layouts. If no monitor
+matches, the window stays where it opened. Special and scratchpad workspaces
+are never targeted, and a window is only routed once.
+
+### Managing bindings
+
+**Omarchy menu → Setup → Workspace Bindings**, or the helper directly:
+
+```bash
+helper=~/.config/omarchy/plugins/icyleaf.workspaces/bin/omarchy-workspace-bindings
+$helper assign                              # pick a running app, monitor, slot, focus
+$helper add                                 # enter a class (and optional title) by hand
+$helper manage                              # change slot/monitor/focus or remove
+$helper set '^discord$' name:DP-1 10 true   # non-interactive upsert
+$helper remove '^discord$'
+$helper list
+$helper status
+$helper open                                # edit the per-profile source
+```
+
+The helper writes the current profile's source and runs `chezmoi apply` for the
+runtime file, so changes take effect immediately.
+
+Disable routing entirely with the widget setting `workspaceBindings: false`
+(the default is `true`).
+
+---
+
 ## Installation & Deployment
 
 This plugin is managed via [Chezmoi](https://chezmoi.io) within `dot_config/omarchy/plugins/icyleaf.workspaces`.

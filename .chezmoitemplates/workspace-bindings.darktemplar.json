@@ -1,0 +1,56 @@
+{
+  "version": 1,
+  "bindings": [
+    {
+      "class": "^org\\.telegram\\.desktop$",
+      "target": {
+        "monitor": {
+          "desc": "LG Electronics LG HDR 4K 0x0001C243"
+        },
+        "slot": 9
+      },
+      "focus": true
+    },
+    {
+      "class": "^wechat$",
+      "target": {
+        "monitor": {
+          "desc": "LG Electronics LG HDR 4K 0x0001C243"
+        },
+        "slot": 9
+      },
+      "focus": true
+    },
+    {
+      "class": "^discord$",
+      "target": {
+        "monitor": {
+          "desc": "LG Electronics LG HDR 4K 0x0001C243"
+        },
+        "slot": 10
+      },
+      "focus": true
+    },
+    {
+      "class": "^vesktop$",
+      "target": {
+        "monitor": {
+          "desc": "LG Electronics LG HDR 4K 0x0001C243"
+        },
+        "slot": 10
+      },
+      "focus": true
+    },
+    {
+      "class": "^chrome-.*$",
+      "title": "(LINE|Line)",
+      "target": {
+        "monitor": {
+          "desc": "LG Electronics LG HDR 4K 0x0001C243"
+        },
+        "slot": 8
+      },
+      "focus": false
+    }
+  ]
+}

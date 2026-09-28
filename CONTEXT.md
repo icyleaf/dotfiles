@@ -104,6 +104,16 @@ Declarative dotfiles managed by [Chezmoi](https://chezmoi.io). Targets macOS and
 
 **Per-Monitor Layout Preview Overlay** — a read-only, summon-on-demand full-screen overlay in `icyleaf.workspaces`, opened by right-clicking a Monitor Identity Badge, that renders every enabled physical monitor as a compact-pack card (rows preserve true top→bottom/left→right arrangement and aspect ratio but are packed tightly and fit the screen) showing its active workspace's window rectangles plus a 10-slot occupancy strip; clicking a card focuses that monitor and dismisses, complementing rather than replacing interactive overviews.
 
+**Workspace Slot** — one of the ten positions in the Monitor-Anchored Workspace Model. A slot names a workspace relative to its hosting monitor, whereas a workspace number is global across the compositor.
+
+**Workspace Binding** — an assignment of an application's windows (matched by initial window class, optionally only once a matching title settles) to a Workspace Slot on a matched monitor, together with whether opening the window moves focus to that workspace. A window class may carry several bindings, one per layout; the first binding whose Monitor Matcher resolves on the current layout applies.
+
+**Monitor Matcher** — the target selector inside a Workspace Binding that resolves to exactly one connected, enabled, non-mirrored monitor by monitor id, connector name, or monitor description. Only one matcher kind is allowed per binding; when several monitors match a description, an exact description is preferred and remaining ties break toward the lowest monitor id.
+
+**Workspace Binding Profile** — the machine profile (`machine_profile`, the same key that selects Secret Profiles) under which a set of Workspace Bindings applies. It is chosen when the binding source is deployed, not at runtime.
+
+**Workspace Binding Source** — the Chezmoi-managed, per-profile file where Workspace Bindings are authored and edited. The active profile's source is rendered by the binding template to the runtime binding file that `icyleaf.workspaces` consumes.
+
 **Calculator Overlay** — `icyleaf.calculator`, a summon-on-demand full-screen overlay whose entire surface is a single input row with a right-aligned live answer, opened by `SUPER + =` (delivered as `code:21`). Typing evaluates via the `qalc` engine after a debounce; `Enter` copies the answer and dismisses, `Alt+Enter` copies and stays open.
 
 **Evaluation Gate** — the calculator policy that decides whether qalc's output is a real answer or a partial echo of the input, suppressing the result display for trailing-operator expressions (typing `1 +`) and for output that merely equals the input, so the overlay never shows a misleading intermediate value.

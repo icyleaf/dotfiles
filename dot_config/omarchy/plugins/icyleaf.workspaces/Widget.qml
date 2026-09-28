@@ -8,6 +8,7 @@ import Quickshell.Wayland
 import qs.Commons
 import qs.Ui
 import "AppIconModel.js" as AppIconModel
+import "BindingModel.js" as BindingModel
 
 BarWidget {
   id: root
@@ -401,6 +402,10 @@ BarWidget {
   function onClientsFetched(text) {
     root.clientInfo = AppIconModel.parseClients(text)
     root.pumpProbe()
+    if (root.routeFetchRequested) {
+      root.routeFetchRequested = false
+      root.onRoutesFetched(text)
+    }
   }
 
   function pumpProbe() {
@@ -501,6 +506,158 @@ BarWidget {
     }
   }
 
+  // ---------------------------------------------------------- Workspace Bindings
+  // Monitor-aware workspace bindings: a newly opened window whose initial class
+  // matches a binding is routed to a workspace slot on the monitor the binding's
+  // Monitor Matcher resolves to. Resolution runs through the pure BindingModel
+  // seam; this shell owns file reading, monitor snapshots, and dispatch. A
+  // single owner instance handles routing, so a window is never moved twice.
+  readonly property bool workspaceBindingsEnabled: root.setting("workspaceBindings", true) !== false
+  property var workspaceBindings: []
+  property var pendingRoutes: []
+  property var pendingRouteSet: ({})
+  property var routedWindows: ({})
+  property bool routeFetchRequested: false
+
+  function reloadBindings() {
+    var parsed = null
+    try {
+      parsed = JSON.parse(String(bindingsFile.text() || ""))
+    } catch (error) {
+      parsed = null
+    }
+    root.workspaceBindings = parsed ? BindingModel.normalizeBindings(parsed.bindings) : []
+  }
+
+  // Quickshell exposes `disabled`/`mirrorOf` on the raw monitor IPC object
+  // rather than as top-level properties; fall back to the property when present.
+  function monitorField(monitor, name) {
+    if (monitor[name] !== undefined) return monitor[name]
+    var ipc = monitor.lastIpcObject
+    if (ipc && ipc[name] !== undefined) return ipc[name]
+    return undefined
+  }
+
+  function monitorIsMirrored(monitor) {
+    var mirror = root.monitorField(monitor, "mirrorOf")
+    if (mirror === undefined || mirror === null || mirror === "" || mirror === "none") return false
+    return true
+  }
+
+  function bindingMonitors() {
+    var values = Hyprland.monitors.values
+    var out = []
+    for (var i = 0; i < values.length; i++) {
+      var monitor = values[i]
+      out.push({
+        id: monitor.id !== undefined ? Number(monitor.id) : i,
+        name: String(monitor.name || ""),
+        description: String(monitor.description || ""),
+        enabled: root.monitorField(monitor, "disabled") !== true,
+        mirrored: root.monitorIsMirrored(monitor)
+      })
+    }
+    return out
+  }
+
+  // The address (first field) of a Hyprland `openwindow`/`closewindow` event.
+  function eventWindowAddress(data) {
+    var text = String(data || "")
+    var comma = text.indexOf(",")
+    return (comma === -1 ? text : text.substring(0, comma)).trim()
+  }
+
+  function requestRouting(address) {
+    if (!root.isPrimaryMonitor || !root.workspaceBindingsEnabled) return
+    if (root.workspaceBindings.length === 0) return
+    var normalized = BindingModel.normalizeAddress(address)
+    if (!normalized || root.pendingRouteSet[normalized] || root.routedWindows[normalized]) return
+    root.pendingRouteSet[normalized] = true
+    root.pendingRoutes.push(normalized)
+    root.pumpRoutes()
+  }
+
+  function forgetRouted(address) {
+    var normalized = BindingModel.normalizeAddress(address)
+    if (!normalized) return
+    delete root.routedWindows[normalized]
+    if (root.pendingRouteSet[normalized]) {
+      delete root.pendingRouteSet[normalized]
+      var remaining = []
+      for (var i = 0; i < root.pendingRoutes.length; i++) {
+        if (root.pendingRoutes[i] !== normalized) remaining.push(root.pendingRoutes[i])
+      }
+      root.pendingRoutes = remaining
+    }
+  }
+
+  // Reuse the app-icon clients fetch rather than running a second `hyprctl`
+  // process: request a fresh client list and handle it when it lands.
+  function pumpRoutes() {
+    if (root.pendingRoutes.length === 0) return
+    root.routeFetchRequested = true
+    if (!clientFetchProcess.running) clientFetchProcess.running = true
+  }
+
+  function onRoutesFetched(text) {
+    var clients = BindingModel.parseClientWindows(text)
+    var monitors = root.bindingMonitors()
+    var still = []
+    for (var i = 0; i < root.pendingRoutes.length; i++) {
+      var address = root.pendingRoutes[i]
+      var descriptor = clients[address]
+      if (!descriptor) continue
+      // Special/scratchpad workspaces have negative ids and are never targeted.
+      if (descriptor.workspaceId < 0) continue
+      var result = BindingModel.resolve(root.workspaceBindings, descriptor, monitors)
+      if (result.status === "apply") {
+        if (descriptor.workspaceId !== result.workspaceId) root.dispatchRoute(address, result)
+        root.routedWindows[address] = true
+        continue
+      }
+      if (result.status === "pending") still.push(address)
+    }
+    var stillSet = {}
+    for (var j = 0; j < still.length; j++) stillSet[still[j]] = true
+    root.pendingRoutes = still
+    root.pendingRouteSet = stillSet
+    routeTimer.running = still.length > 0
+  }
+
+  function dispatchRoute(address, result) {
+    var workspace = root.quoteLua(String(result.workspaceId))
+    var window = root.quoteLua("address:" + address)
+    var follow = result.follow ? "true" : "false"
+    if (result.monitorName !== "") {
+      root.runLua("hl.dispatch(hl.dsp.workspace.move({ workspace = " + workspace
+        + ", monitor = " + root.quoteLua(result.monitorName) + " })); "
+        + "hl.dispatch(hl.dsp.window.move({ workspace = " + workspace
+        + ", window = " + window + ", follow = " + follow + " }))")
+    } else {
+      root.runLua("hl.dispatch(hl.dsp.window.move({ workspace = " + workspace
+        + ", window = " + window + ", follow = " + follow + " }))")
+    }
+  }
+
+  FileView {
+    id: bindingsFile
+    path: Quickshell.env("HOME") + "/.config/hypr/workspace-bindings.json"
+    watchChanges: true
+    printErrors: false
+    onFileChanged: root.reloadBindings()
+    onLoaded: root.reloadBindings()
+    onLoadFailed: root.workspaceBindings = []
+  }
+
+  // Pending title bindings (e.g. a Chrome webapp whose title settles late) are
+  // re-checked on a short cadence until they resolve or the window closes.
+  Timer {
+    id: routeTimer
+    interval: 1500
+    repeat: true
+    onTriggered: root.pumpRoutes()
+  }
+
   Connections {
     target: Hyprland
     function onRawEvent(event) {
@@ -510,6 +667,8 @@ BarWidget {
           || name === "createworkspace" || name === "destroyworkspace") {
         root.bumpSync()
         root.probeOverrideWindows()
+        if (name === "openwindow") root.requestRouting(root.eventWindowAddress(event.data))
+        if (name === "closewindow") root.forgetRouted(root.eventWindowAddress(event.data))
         return
       }
       if (name === "workspace" || name === "focusedworkspace"
