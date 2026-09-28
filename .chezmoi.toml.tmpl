@@ -24,6 +24,10 @@
 {{   if eq $profile "" }}
 {{     $profile = $hostname }}
 {{   end }}
+{{ else if .machine_profile }}
+{{/* Non-interactive: preserve the already-configured profile instead of
+     silently downgrading to "custom". */}}
+{{   $profile = .machine_profile }}
 {{ else }}
 {{   $profile = "custom" }}
 {{ end }}
