@@ -142,39 +142,18 @@ apply_bindings() {
 # Selection helpers
 # ---------------------------------------------------------------------------
 
-# Pick a target monitor and slot in a single menu, returning "<matcher>|<slot>"
-# (e.g. "desc:LG ...|3") so changing both is one step, not two prompts.
-choose_monitor_slot() {
-  local options=() id badge name desc slot selected
-  while IFS=$'\t' read -r id name desc; do
-    [[ -n $name ]] || continue
-    badge="M$((id + 1))"
-    for slot in {1..10}; do
-      options+=("󰍹"$'\t'"${badge} · ${name} · slot ${slot}"$'\t'"desc:${desc}|${slot}")
-    done
-  done < <(hyprctl -j monitors 2>/dev/null | jq -r '
-    .[] | select((.disabled // false) == false)
-    | [(.id | tostring), (.name // ""), (.description // "")] | @tsv')
-  if (( ${#options[@]} == 0 )); then
-    notify "Workspace Bindings" "No connected monitors were found."
-    return 1
-  fi
-  selected=$(omarchy menu select "Target monitor & slot" "${options[@]}" -- --width 820 --maxheight 640) || return 1
-  printf '%s' "${selected#*$'\t'}"
-}
+# Where the helper drops the prefill the plugin's binding editor reads.
+FORM_FILE="${HOME}/.cache/icyleaf/workspace-binding-form.json"
 
-choose_focus() {
-  local selected
-  selected=$(omarchy menu select \
-    "When the window opens" \
-    "󰘳"$'\t'"Open silently" \
-    "󰍹"$'\t'"Switch to its workspace" \
-    -- --width 460) || return 1
-  case "$selected" in
-    "Open silently") printf 'false' ;;
-    "Switch to its workspace") printf 'true' ;;
-    *) return 1 ;;
-  esac
+# Hand a prefill JSON to the plugin's `editBinding` IPC, which opens the form on
+# the focused monitor. The form calls back with `save-binding` on save.
+open_form() {
+  local json="$1"
+  mkdir -p "$(dirname "$FORM_FILE")"
+  printf '%s\n' "$json" >"$FORM_FILE"
+  command -v omarchy-shell >/dev/null 2>&1 || die "omarchy-shell not found"
+  omarchy-shell -q icyleaf.workspaces editBinding >/dev/null 2>&1 \
+    || notify "Workspace Bindings" "Could not open the binding editor."
 }
 
 running_app_options() {
@@ -196,7 +175,7 @@ running_app_options() {
 # ---------------------------------------------------------------------------
 
 cmd_assign() {
-  local options=() selected class focus target monitor slot
+  local options=() selected class prefill
   mapfile -t options < <(running_app_options)
   if (( ${#options[@]} == 0 )); then
     notify "Workspace Bindings" "No running windows were found."
@@ -205,64 +184,19 @@ cmd_assign() {
   selected=$(omarchy menu select "Assign a running app" "${options[@]}" -- --width 720 --maxheight 620) || return 0
   class="${selected#*$'\t'}"
   [[ -n $class ]] || return 0
-  target=$(choose_monitor_slot) || return 0
-  monitor="${target%%|*}"
-  slot="${target##*|}"
-  focus=$(choose_focus) || return 0
-  save_binding "$class" "$monitor" "$slot" "$focus"
-  apply_bindings
-  notify "Workspace binding saved" "$class → $monitor slot $slot"
+  prefill=$(jq -cn --arg class "$class" \
+    '{mode:"new", index:-1, class:$class, title:"", monitor:null, slot:1, focus:false}')
+  open_form "$prefill"
 }
 
 cmd_add() {
-  local class title monitor slot focus target title_choice
-  class=$(omarchy menu input "App class (regex, anchored)") || return 0
-  [[ -n $class ]] || return 0
-  target=$(choose_monitor_slot) || return 0
-  monitor="${target%%|*}"
-  slot="${target##*|}"
-  focus=$(choose_focus) || return 0
-  # A blank/optional title prompt exits non-zero, so ask explicitly instead of
-  # treating an empty input as a cancellation.
-  title_choice=$(omarchy menu select "Match the window title too?" \
-    "󰅖"$'\t'"No, class only" \
-    "󰈉"$'\t'"Yes, add a title regex" \
-    -- --width 520) || return 0
-  if [[ $title_choice == "Yes, add a title regex" ]]; then
-    title=$(omarchy menu input "Window title regex") || return 0
-    [[ -n $title ]] || return 0
-    set_binding_with_title "$class" "$title" "$monitor" "$slot" "$focus"
-  else
-    save_binding "$class" "$monitor" "$slot" "$focus"
-  fi
-  apply_bindings
-  notify "Workspace binding saved" "$class → $monitor slot $slot"
+  open_form '{"mode":"new","index":-1,"class":"","title":"","monitor":null,"slot":1,"focus":false}'
 }
 
-# The `set` path has no title; the add flow needs one. Keep it in a small
-# variant rather than complicating save_binding.
-set_binding_with_title() {
-  local class="$1" title="$2" monitor="$3" slot="$4" focus="$5" file matcher tmp
-  ensure_state
-  file="$(state_file)"
-  matcher="$(matcher_json "$monitor")"
-  tmp="$(mktemp "${file}.XXXXXX")"
-  jq \
-    --arg class "$class" --arg title "$title" --argjson monitor "$matcher" \
-    --argjson slot "$slot" --argjson focus "$focus" \
-    '
-      .version = 1
-      | (.bindings // []) as $bindings
-      | { class: $class, title: $title, target: { monitor: $monitor, slot: $slot }, focus: $focus } as $entry
-      | ($bindings | map(.class == $class and .target.monitor == $monitor) | index(true)) as $at
-      | .bindings = (if $at == null then $bindings + [$entry] else $bindings | .[$at] = $entry end)
-    ' "$file" >"$tmp"
-  mv "$tmp" "$file"
-}
-
-# Manage by binding index, so same-class scene variants stay distinct.
+# Open the editor prefilled for the selected binding (by index, so same-class
+# scene variants stay distinct).
 cmd_manage() {
-  local options=() selected action index label file tmp
+  local options=() selected index prefill file
   ensure_state
   file="$(state_file)"
   mapfile -t options < <(jq -r '
@@ -270,7 +204,7 @@ cmd_manage() {
     | to_entries[]
     | ["󰍹",
        (.value.class + "  →  " + (.value.target.monitor | to_entries[0] | "\(.key):\(.value)")
-         + "  slot " + (.value.target.slot | tostring)
+         + "  workspace " + (.value.target.slot | tostring)
          + (if (.value.focus // false) then "  ·  switch" else "  ·  silent" end)),
        (.key | tostring)]
     | @tsv
@@ -279,44 +213,60 @@ cmd_manage() {
     notify "Workspace Bindings" "There are no bindings yet."
     return 0
   fi
-  selected=$(omarchy menu select "Manage binding" "${options[@]}" -- --width 720 --maxheight 620) || return 0
+  selected=$(omarchy menu select "Edit binding" "${options[@]}" -- --width 720 --maxheight 620) || return 0
   index="${selected#*$'\t'}"
   [[ $index =~ ^[0-9]+$ ]] || return 0
-  label=$(jq -r --argjson i "$index" '.bindings[$i].class' "$file")
-  action=$(omarchy menu select "$label" \
-    "󰒓"$'\t'"Change target (monitor & slot)" \
-    "󰘳"$'\t'"Toggle focus behaviour" \
-    "󰆴"$'\t'"Remove binding" \
-    -- --width 520) || return 0
+  prefill=$(jq -c --argjson i "$index" '
+    .bindings[$i] as $b
+    | { mode: "edit", index: $i, class: $b.class, title: ($b.title // ""),
+        monitor: ($b.target.monitor | to_entries[0]
+          | { kind: .key, value: (if .key == "id" then (.value | tonumber) else .value end) }),
+        slot: $b.target.slot, focus: ($b.focus // false) }
+  ' "$file")
+  open_form "$prefill"
+}
 
+# Called back by the plugin form:
+# save-binding <new|edit> <index> <class> <title> <monitor> <workspace> <focus>
+cmd_save_binding() {
+  [[ $# -eq 7 ]] || die "usage: save-binding <new|edit> <index> <class> <title> <monitor> <workspace> <focus>"
+  local mode="$1" index="$2" class="$3" title="$4" monitor="$5" slot="$6" focus="$7" file matcher tmp
+  [[ -n $class ]] || die "class must not be empty"
+  [[ $slot =~ ^([1-9]|10)$ ]] || die "workspace must be 1..10 (got '$slot')"
+  [[ $focus == "true" || $focus == "false" ]] || die "focus must be true or false"
+
+  ensure_state
+  file="$(state_file)"
+  matcher="$(matcher_json "$monitor")"
   tmp="$(mktemp "${file}.XXXXXX")"
-  case "$action" in
-    "Change target (monitor & slot)")
-      local target monitor slot
-      target=$(choose_monitor_slot) || { rm -f "$tmp"; return 0; }
-      monitor="${target%%|*}"
-      slot="${target##*|}"
-      jq --argjson i "$index" --argjson monitor "$(matcher_json "$monitor")" --argjson slot "$slot" \
-        '.bindings[$i].target = { monitor: $monitor, slot: $slot }' "$file" >"$tmp"
-      ;;
-    "Toggle focus behaviour")
-      jq --argjson i "$index" '.bindings[$i].focus = ((.bindings[$i].focus // false) | not)' "$file" >"$tmp"
-      ;;
-    "Remove binding")
-      jq --argjson i "$index" 'del(.bindings[$i])' "$file" >"$tmp"
-      ;;
-    *)
-      rm -f "$tmp"
-      return 0
-      ;;
-  esac
+  if [[ $mode == "edit" && $index =~ ^[0-9]+$ ]]; then
+    jq --argjson i "$index" --arg class "$class" --arg title "$title" \
+      --argjson monitor "$matcher" --argjson slot "$slot" --argjson focus "$focus" \
+      '
+        .bindings[$i] = (
+          { class: $class, target: { monitor: $monitor, slot: $slot }, focus: $focus }
+          + (if $title == "" then {} else { title: $title } end)
+        )
+      ' "$file" >"$tmp"
+  else
+    jq --arg class "$class" --arg title "$title" \
+      --argjson monitor "$matcher" --argjson slot "$slot" --argjson focus "$focus" \
+      '
+        .version = 1
+        | (.bindings // []) as $b
+        | ({ class: $class, target: { monitor: $monitor, slot: $slot }, focus: $focus }
+           + (if $title == "" then {} else { title: $title } end)) as $e
+        | ($b | map(.class == $class and .target.monitor == $monitor) | index(true)) as $at
+        | .bindings = (if $at == null then $b + [$e] else ($b | .[$at] = $e) end)
+      ' "$file" >"$tmp"
+  fi
   mv "$tmp" "$file"
   apply_bindings
-  notify "Workspace bindings updated" "$label"
+  notify "Workspace binding saved" "$class"
 }
 
 cmd_set() {
-  [[ $# -eq 4 ]] || die "usage: set <class> <monitor> <slot> <focus>"
+  [[ $# -eq 4 ]] || die "usage: set <class> <monitor> <workspace> <focus>"
   save_binding "$1" "$2" "$3" "$4"
   apply_bindings
 }
@@ -369,6 +319,7 @@ main() {
     assign) shift || true; cmd_assign "$@" ;;
     add) shift || true; cmd_add "$@" ;;
     manage) shift || true; cmd_manage "$@" ;;
+    save-binding) shift || true; cmd_save_binding "$@" ;;
     set) shift || true; cmd_set "$@" ;;
     remove) shift || true; cmd_remove "$@" ;;
     list) shift || true; cmd_list "$@" ;;

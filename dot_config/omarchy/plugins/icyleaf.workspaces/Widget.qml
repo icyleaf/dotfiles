@@ -222,6 +222,13 @@ BarWidget {
       root.openLayoutPreviewOnFocused()
       return "ok"
     }
+
+    function editBinding(): string {
+      // Open the binding editor on the focused monitor, reading the prefill the
+      // helper wrote to ~/.cache/icyleaf/workspace-binding-form.json.
+      root.requestBindingForm()
+      return "ok"
+    }
   }
 
   // -------------------------------------------------------------- monitor anchor
@@ -524,6 +531,9 @@ BarWidget {
   property bool routeFetchRequested: false
   property bool reconcileRequested: false
   property var reconcileClasses: []
+  property bool formPrefillRequested: false
+  property var formPrefillData: ({})
+  readonly property string helperPath: Quickshell.env("HOME") + "/.config/omarchy/plugins/icyleaf.workspaces/bin/omarchy-workspace-bindings"
 
   // `initial` is true for the first load (shell start). Only a later file change
   // re-places already-open windows, so restarting the shell never shuffles the
@@ -683,6 +693,113 @@ BarWidget {
       root.runLua("hl.dispatch(hl.dsp.window.move({ workspace = " + workspace
         + ", window = " + window + ", follow = " + follow + " }))")
     }
+  }
+
+  // ---------------------------------------------------------- Binding editor
+  // The helper writes a prefill JSON and calls the `editBinding` IPC; the form
+  // opens on the focused monitor and, on Save, calls the helper back to persist
+  // the source and re-apply (so open windows re-place).
+  function bindingMonitorOptions() {
+    var values = Hyprland.monitors.values
+    var out = []
+    for (var i = 0; i < values.length; i++) {
+      var monitor = values[i]
+      if (root.monitorField(monitor, "disabled") === true) continue
+      if (root.monitorIsMirrored(monitor)) continue
+      var id = monitor.id !== undefined ? Number(monitor.id) : i
+      out.push({
+        value: "desc:" + String(monitor.description || ""),
+        label: "M" + (id + 1) + " · " + String(monitor.name || "")
+      })
+    }
+    return out
+  }
+
+  function requestBindingForm() {
+    root.formPrefillRequested = true
+    formFile.reload()
+  }
+
+  function onFormPrefillLoaded() {
+    if (!root.formPrefillRequested) return
+    root.formPrefillRequested = false
+    var parsed = null
+    try {
+      parsed = JSON.parse(String(formFile.text() || ""))
+    } catch (error) {
+      parsed = null
+    }
+    if (parsed) root.presentBindingForm(parsed)
+  }
+
+  // Show on whichever per-monitor instance hosts the focused screen.
+  function presentBindingForm(prefill) {
+    var focused = Hyprland.focusedMonitor
+    var targetName = focused ? String(focused.name || "") : root.monitorName
+    var items = root.bar && typeof root.bar.moduleWidgets === "function"
+      ? root.bar.moduleWidgets(root.moduleName) : [root]
+    var host = root
+    for (var i = 0; i < items.length; i++) {
+      if (items[i] && items[i].monitorName === targetName) {
+        host = items[i]
+        break
+      }
+    }
+    host.showBindingForm(prefill)
+  }
+
+  function showBindingForm(prefill) {
+    var options = root.bindingMonitorOptions()
+    var selected = options.length > 0 ? options[0].value : ""
+    if (prefill.monitor) {
+      var monitor = BindingModel.resolveMonitor(
+        { kind: String(prefill.monitor.kind || ""), value: prefill.monitor.value },
+        root.bindingMonitors())
+      if (monitor) selected = "desc:" + String(monitor.description || "")
+    }
+    root.formPrefillData = prefill
+    bindingForm.monitorOptions = options
+    bindingForm.openForm({
+      class: prefill.class,
+      title: prefill.title,
+      monitor: selected,
+      slot: prefill.slot,
+      focus: prefill.focus
+    })
+  }
+
+  function saveBindingForm(result) {
+    var prefill = root.formPrefillData || {}
+    bindingForm.closeForm()
+    bindingSaver.command = [
+      root.helperPath,
+      "save-binding",
+      String(prefill.mode || "new"),
+      String(prefill.index === undefined ? -1 : prefill.index),
+      result.class,
+      result.title,
+      result.monitor,
+      String(result.slot),
+      result.focus ? "true" : "false"
+    ]
+    bindingSaver.running = true
+  }
+
+  function closeBindingForm() {
+    bindingForm.closeForm()
+  }
+
+  FileView {
+    id: formFile
+    path: Quickshell.env("HOME") + "/.cache/icyleaf/workspace-binding-form.json"
+    watchChanges: false
+    printErrors: false
+    onLoaded: root.onFormPrefillLoaded()
+  }
+
+  Process {
+    id: bindingSaver
+    command: []
   }
 
   property bool bindingsLoaded: false
@@ -1260,5 +1377,11 @@ BarWidget {
   MonitorPreview {
     id: layoutPreviewItem
     hostBar: root.bar
+  }
+
+  BindingForm {
+    id: bindingForm
+    onSaveRequested: function(result) { root.saveBindingForm(result) }
+    onCancelRequested: function() { root.closeBindingForm() }
   }
 }

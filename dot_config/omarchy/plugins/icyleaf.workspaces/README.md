@@ -127,8 +127,8 @@ and can target different physical monitors.
 - `target.monitor` — exactly one of `id`, `name` (connector, e.g. `DP-1`), or
   `desc` (case-insensitive substring; an exact description is preferred). A
   disabled or mirrored monitor never matches.
-- `target.slot` — `1`–`10`, relative to the matched monitor. The global
-  workspace is the monitor's offset plus the slot.
+- `target.slot` — the target workspace (`1`–`10`), relative to the matched
+  monitor. The global workspace number is the monitor's offset plus this value.
 - `focus` — `true` moves focus to the workspace; `false` (default) opens the
   window silently.
 
@@ -144,9 +144,9 @@ are never targeted, and a window is only routed once.
 
 ```bash
 helper=~/.config/omarchy/plugins/icyleaf.workspaces/bin/omarchy-workspace-bindings
-$helper assign                              # pick a running app, then monitor+slot, then focus
-$helper add                                 # enter a class, then monitor+slot, focus, optional title
-$helper manage                              # change target (monitor & slot), focus, or remove
+$helper assign                              # pick a running app, then edit in the form
+$helper add                                 # open the form with empty fields
+$helper manage                              # pick a binding, then edit it in the form
 $helper set '^discord$' name:DP-1 10 true   # non-interactive upsert
 $helper remove '^discord$'
 $helper list
@@ -154,15 +154,17 @@ $helper status
 $helper open                                # edit the per-profile source
 ```
 
-Choosing a target monitor lists each display by its Monitor Identity Badge
-(`M1`, `M2`, ...) and connector, matching the badge in the bar, so you can tell
-which physical screen each option refers to.
+`assign`, `add` and `manage` open a **form editor** on the focused monitor with
+all fields at once: app class, optional title regex, monitor, workspace and
+Open (Silent / Switch focus), plus **Cancel** and **Save** buttons (`Esc`
+cancels). The monitor field lists each display by its Monitor Identity Badge
+(`M1`, `M2`, ...) and connector, matching the badge in the bar.
 
 The helper writes the current profile's source and runs `chezmoi apply` for the
 runtime file, so changes take effect immediately. Editing a binding also
 re-places any already-open windows of the affected apps (silently, without
-moving focus), so you can move a running window to a new slot by editing its
-binding rather than reopening it.
+moving focus), so you can move a running window to a new workspace by editing
+its binding rather than reopening it.
 
 Disable routing entirely with the widget setting `workspaceBindings: false`
 (the default is `true`).
