@@ -40,26 +40,47 @@ PanelWindow {
   }
 
   Rectangle {
-    id: labelPill
-    anchors.horizontalCenter: parent.horizontalCenter
-    anchors.top: parent.top
-    anchors.topMargin: Style.space(56)
-    width: labelText.implicitWidth + Style.space(32)
-    height: labelText.implicitHeight + Style.space(18)
-    radius: Style.cornerRadius > 0 ? Style.cornerRadius : 12
+    id: identityCard
+    anchors.centerIn: parent
+    width: identityColumn.implicitWidth + Style.space(56)
+    height: identityColumn.implicitHeight + Style.space(44)
+    radius: Style.cornerRadius > 0 ? Style.cornerRadius : 16
     color: Color.background
-    border.width: 2
+    border.width: 3
     border.color: Color.accent
     opacity: borderRect.opacity
 
-    Text {
-      id: labelText
+    Column {
+      id: identityColumn
       anchors.centerIn: parent
-      text: root.badge + "  " + root.label + (root.detail !== "" ? "   " + root.detail : "")
-      color: Color.foreground
-      font.family: Style.font.family
-      font.pixelSize: Style.font.title
-      font.bold: true
+      spacing: Style.space(8)
+
+      Text {
+        anchors.horizontalCenter: parent.horizontalCenter
+        text: root.badge
+        color: Color.accent
+        font.family: Style.font.family
+        font.pixelSize: Style.font.displayLarge
+        font.bold: true
+      }
+
+      Text {
+        anchors.horizontalCenter: parent.horizontalCenter
+        text: root.label
+        color: Color.foreground
+        font.family: Style.font.family
+        font.pixelSize: Style.font.heading
+        font.bold: true
+      }
+
+      Text {
+        anchors.horizontalCenter: parent.horizontalCenter
+        visible: root.detail !== ""
+        text: root.detail
+        color: Color.muted
+        font.family: Style.font.family
+        font.pixelSize: Style.font.bodySmall
+      }
     }
   }
 

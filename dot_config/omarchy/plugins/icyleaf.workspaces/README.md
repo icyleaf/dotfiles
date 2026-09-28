@@ -154,9 +154,11 @@ $helper status
 $helper open                                # edit the per-profile source
 ```
 
-Choosing a target monitor first outlines every connected display with its
-`name` and `description`, then flashes the chosen one, so you can tell which
-physical screen each option refers to.
+Choosing a target monitor lists each display by its Monitor Identity Badge
+(`M1`, `M2`, ...), matching the badge in the bar, along with its active
+workspace and connector. It also outlines every connected display on screen,
+then flashes the chosen one, so you can tell which physical screen each option
+refers to.
 
 The helper writes the current profile's source and runs `chezmoi apply` for the
 runtime file, so changes take effect immediately.
