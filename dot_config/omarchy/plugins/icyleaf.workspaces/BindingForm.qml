@@ -77,7 +77,7 @@ PanelWindow {
   Rectangle {
     id: card
     anchors.centerIn: parent
-    width: Style.space(600)
+    width: Style.space(480)
     implicitHeight: content.implicitHeight + Style.space(40)
     radius: Style.cornerRadius > 0 ? Style.cornerRadius : 14
     color: Color.popups.background

@@ -239,7 +239,7 @@ cmd_manage() {
     notify "Workspace Bindings" "There are no bindings yet."
     return 0
   fi
-  selected=$(omarchy menu select "Edit binding" "${options[@]}" -- --width 820 --maxheight 640) || return 0
+  selected=$(omarchy menu select "Edit binding" "${options[@]}" -- --width 600 --maxheight 640) || return 0
   for ((i = 0; i < ${#sigs[@]}; i++)); do
     if [[ ${sigs[i]} == "$selected" ]]; then
       index=$i
