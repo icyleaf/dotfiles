@@ -153,10 +153,12 @@ PanelWindow {
           font.family: Style.font.family
           font.pixelSize: Style.font.caption
         }
-        ButtonGroup {
+        SearchableDropdown {
           Layout.fillWidth: true
+          showLabel: false
           options: root.monitorOptions
           value: root.monitorValue
+          placeholderText: "Search monitors..."
           onChanged: function(newValue) { root.monitorValue = newValue }
         }
       }

@@ -708,7 +708,8 @@ BarWidget {
       var id = monitor.id !== undefined ? Number(monitor.id) : i
       out.push({
         value: "desc:" + String(monitor.description || ""),
-        label: "M" + (id + 1) + " · " + String(monitor.name || "")
+        label: "M" + (id + 1) + " · " + String(monitor.name || ""),
+        description: String(monitor.description || "")
       })
     }
     return out
