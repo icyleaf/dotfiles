@@ -142,8 +142,15 @@ apply_bindings() {
 # Selection helpers
 # ---------------------------------------------------------------------------
 
+# Briefly outline monitors on screen: empty target outlines every monitor
+# (identify), otherwise the monitor matching the name/description is outlined.
+flash_monitors() {
+  command -v omarchy-shell >/dev/null 2>&1 || return 0
+  omarchy-shell -q icyleaf.workspaces flashMonitor "${1:-}" "${2:-2600}" >/dev/null 2>&1 || true
+}
+
 choose_monitor_spec() {
-  local options=() monitor badge name desc
+  local options=() monitor badge name desc selected key
   while IFS=$'\t' read -r badge name desc; do
     [[ -n $name ]] || continue
     options+=("${badge}"$'\t'"${name} · ${desc}"$'\t'"desc:${desc}")
@@ -154,9 +161,13 @@ choose_monitor_spec() {
     notify "Workspace Bindings" "No connected monitors were found."
     return 1
   fi
-  local selected
+  # Identify every display, then confirm the chosen one with a second flash.
+  flash_monitors "" 3500
+  sleep 0.2
   selected=$(omarchy menu select "Target monitor" "${options[@]}" -- --width 720) || return 1
-  printf '%s' "${selected#*$'\t'}"
+  key="${selected#*$'\t'}"
+  flash_monitors "${key#desc:}" 1600
+  printf '%s' "$key"
 }
 
 choose_slot() {

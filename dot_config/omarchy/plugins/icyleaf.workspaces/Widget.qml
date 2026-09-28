@@ -222,6 +222,15 @@ BarWidget {
       root.openLayoutPreviewOnFocused()
       return "ok"
     }
+
+    function flashMonitor(nameStr: string, durationStr: string): string {
+      // Briefly outline every monitor (empty target) or one monitor matched by
+      // connector name or description, so the user can tell which display an
+      // option refers to while choosing a Workspace Binding target.
+      var duration = parseInt(String(durationStr || ""))
+      root.flashMonitors(String(nameStr || ""), isFinite(duration) && duration > 0 ? duration : 2600)
+      return "ok"
+    }
   }
 
   // -------------------------------------------------------------- monitor anchor
@@ -234,6 +243,25 @@ BarWidget {
 
   readonly property int offset: monitorId * 10
   readonly property string monitorBadgeText: "󰍹 M" + (monitorId + 1)
+
+  // Outline every peer instance whose monitor matches `target` (empty target =
+  // every monitor) for `duration` ms, using the shared bar host to reach the
+  // other per-monitor surfaces. Used by the Workspace Bindings monitor picker.
+  function flashMonitors(target, duration) {
+    var items = root.bar && typeof root.bar.moduleWidgets === "function"
+      ? root.bar.moduleWidgets(root.moduleName) : [root]
+    for (var i = 0; i < items.length; i++) {
+      var widget = items[i]
+      if (!widget || typeof widget.flash !== "function") continue
+      if (target === "" || widget.monitorName === target || widget.monitorDesc.indexOf(target) !== -1) {
+        widget.flash(duration)
+      }
+    }
+  }
+
+  function flash(durationMs) {
+    flashOverlay.flash(durationMs)
+  }
   readonly property string monitorTooltip: {
     var desc = monitorDesc ? (monitorDesc + (monitorName ? " (" + monitorName + ")" : "")) : (monitorName ? monitorName : ("Monitor " + (monitorId + 1)))
     return desc + (isFocusedMonitor ? " · [Focused]" : "")
@@ -1198,5 +1226,13 @@ BarWidget {
   MonitorPreview {
     id: layoutPreviewItem
     hostBar: root.bar
+  }
+
+  // Click-through outline used to identify a monitor during binding setup.
+  MonitorFlash {
+    id: flashOverlay
+    badge: root.monitorBadgeText
+    label: root.monitorName
+    detail: root.monitorDesc
   }
 }

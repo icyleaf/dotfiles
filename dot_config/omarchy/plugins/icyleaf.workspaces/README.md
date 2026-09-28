@@ -154,6 +154,10 @@ $helper status
 $helper open                                # edit the per-profile source
 ```
 
+Choosing a target monitor first outlines every connected display with its
+`name` and `description`, then flashes the chosen one, so you can tell which
+physical screen each option refers to.
+
 The helper writes the current profile's source and runs `chezmoi apply` for the
 runtime file, so changes take effect immediately.
 
