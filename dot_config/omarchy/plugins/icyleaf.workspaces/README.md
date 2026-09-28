@@ -144,9 +144,9 @@ are never targeted, and a window is only routed once.
 
 ```bash
 helper=~/.config/omarchy/plugins/icyleaf.workspaces/bin/omarchy-workspace-bindings
-$helper assign                              # pick a running app, monitor, slot, focus
-$helper add                                 # enter a class (and optional title) by hand
-$helper manage                              # change slot/monitor/focus or remove
+$helper assign                              # pick a running app, then monitor+slot, then focus
+$helper add                                 # enter a class, then monitor+slot, focus, optional title
+$helper manage                              # change target (monitor & slot), focus, or remove
 $helper set '^discord$' name:DP-1 10 true   # non-interactive upsert
 $helper remove '^discord$'
 $helper list

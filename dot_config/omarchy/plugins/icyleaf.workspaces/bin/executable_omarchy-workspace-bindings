@@ -142,12 +142,16 @@ apply_bindings() {
 # Selection helpers
 # ---------------------------------------------------------------------------
 
-choose_monitor_spec() {
-  local options=() id badge name desc selected key
+# Pick a target monitor and slot in a single menu, returning "<matcher>|<slot>"
+# (e.g. "desc:LG ...|3") so changing both is one step, not two prompts.
+choose_monitor_slot() {
+  local options=() id badge name desc slot selected
   while IFS=$'\t' read -r id name desc; do
     [[ -n $name ]] || continue
     badge="M$((id + 1))"
-    options+=("󰍹"$'\t'"${badge} · ${name}"$'\t'"desc:${desc}")
+    for slot in {1..10}; do
+      options+=("󰍹"$'\t'"${badge} · ${name} · slot ${slot}"$'\t'"desc:${desc}|${slot}")
+    done
   done < <(hyprctl -j monitors 2>/dev/null | jq -r '
     .[] | select((.disabled // false) == false)
     | [(.id | tostring), (.name // ""), (.description // "")] | @tsv')
@@ -155,17 +159,8 @@ choose_monitor_spec() {
     notify "Workspace Bindings" "No connected monitors were found."
     return 1
   fi
-  selected=$(omarchy menu select "Target monitor" "${options[@]}" -- --width 720) || return 1
-  key="${selected#*$'\t'}"
-  printf '%s' "$key"
-}
-
-choose_slot() {
-  local options=() slot
-  for slot in {1..10}; do options+=("󰍹"$'\t'"$slot"); done
-  local selected
-  selected=$(omarchy menu select "Workspace slot" "${options[@]}" -- --width 360 --maxheight 520) || return 1
-  printf '%s' "$selected"
+  selected=$(omarchy menu select "Target monitor & slot" "${options[@]}" -- --width 820 --maxheight 640) || return 1
+  printf '%s' "${selected#*$'\t'}"
 }
 
 choose_focus() {
@@ -201,7 +196,7 @@ running_app_options() {
 # ---------------------------------------------------------------------------
 
 cmd_assign() {
-  local options=() selected class monitor slot focus
+  local options=() selected class focus target monitor slot
   mapfile -t options < <(running_app_options)
   if (( ${#options[@]} == 0 )); then
     notify "Workspace Bindings" "No running windows were found."
@@ -210,8 +205,9 @@ cmd_assign() {
   selected=$(omarchy menu select "Assign a running app" "${options[@]}" -- --width 720 --maxheight 620) || return 0
   class="${selected#*$'\t'}"
   [[ -n $class ]] || return 0
-  monitor=$(choose_monitor_spec) || return 0
-  slot=$(choose_slot) || return 0
+  target=$(choose_monitor_slot) || return 0
+  monitor="${target%%|*}"
+  slot="${target##*|}"
   focus=$(choose_focus) || return 0
   save_binding "$class" "$monitor" "$slot" "$focus"
   apply_bindings
@@ -219,14 +215,22 @@ cmd_assign() {
 }
 
 cmd_add() {
-  local class title monitor slot focus
+  local class title monitor slot focus target title_choice
   class=$(omarchy menu input "App class (regex, anchored)") || return 0
   [[ -n $class ]] || return 0
-  title=$(omarchy menu input "Window title regex (optional)") || return 0
-  monitor=$(choose_monitor_spec) || return 0
-  slot=$(choose_slot) || return 0
+  target=$(choose_monitor_slot) || return 0
+  monitor="${target%%|*}"
+  slot="${target##*|}"
   focus=$(choose_focus) || return 0
-  if [[ -n $title ]]; then
+  # A blank/optional title prompt exits non-zero, so ask explicitly instead of
+  # treating an empty input as a cancellation.
+  title_choice=$(omarchy menu select "Match the window title too?" \
+    "󰅖"$'\t'"No, class only" \
+    "󰈉"$'\t'"Yes, add a title regex" \
+    -- --width 520) || return 0
+  if [[ $title_choice == "Yes, add a title regex" ]]; then
+    title=$(omarchy menu input "Window title regex") || return 0
+    [[ -n $title ]] || return 0
     set_binding_with_title "$class" "$title" "$monitor" "$slot" "$focus"
   else
     save_binding "$class" "$monitor" "$slot" "$focus"
@@ -280,24 +284,20 @@ cmd_manage() {
   [[ $index =~ ^[0-9]+$ ]] || return 0
   label=$(jq -r --argjson i "$index" '.bindings[$i].class' "$file")
   action=$(omarchy menu select "$label" \
-    "󰒓"$'\t'"Move to another slot" \
-    "󰍹"$'\t'"Change monitor" \
+    "󰒓"$'\t'"Change target (monitor & slot)" \
     "󰘳"$'\t'"Toggle focus behaviour" \
     "󰆴"$'\t'"Remove binding" \
-    -- --width 460) || return 0
+    -- --width 520) || return 0
 
   tmp="$(mktemp "${file}.XXXXXX")"
   case "$action" in
-    "Move to another slot")
-      local slot
-      slot=$(choose_slot) || { rm -f "$tmp"; return 0; }
-      jq --argjson i "$index" --argjson slot "$slot" '.bindings[$i].target.slot = $slot' "$file" >"$tmp"
-      ;;
-    "Change monitor")
-      local monitor
-      monitor=$(choose_monitor_spec) || { rm -f "$tmp"; return 0; }
-      jq --argjson i "$index" --argjson monitor "$(matcher_json "$monitor")" \
-        '.bindings[$i].target.monitor = $monitor' "$file" >"$tmp"
+    "Change target (monitor & slot)")
+      local target monitor slot
+      target=$(choose_monitor_slot) || { rm -f "$tmp"; return 0; }
+      monitor="${target%%|*}"
+      slot="${target##*|}"
+      jq --argjson i "$index" --argjson monitor "$(matcher_json "$monitor")" --argjson slot "$slot" \
+        '.bindings[$i].target = { monitor: $monitor, slot: $slot }' "$file" >"$tmp"
       ;;
     "Toggle focus behaviour")
       jq --argjson i "$index" '.bindings[$i].focus = ((.bindings[$i].focus // false) | not)' "$file" >"$tmp"
