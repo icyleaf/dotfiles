@@ -135,38 +135,29 @@ For a profile secret, decrypt with that machine's identity and re-encrypt with
    ```bash
    age -r <profile_public_key> -o secrets/profiles/<profile_name>/local.zsh.age local.zsh
    ```
-3. Declare which SSH config groups the profile should receive (see below):
-   ```bash
-   printf 'common\n' > secrets/profiles/<profile_name>/ssh_config.groups
-   ```
-4. Commit the encrypted `.age` files (never commit the plaintext versions).
+3. Commit the encrypted `.age` files (never commit the plaintext versions).
 
-### SSH Config Groups
+### SSH Config Fragments
 
 SSH `Host` entries live in encrypted, reusable fragments instead of a single
 plaintext `~/.ssh/config`:
 
-- `secrets/base/ssh_config.d/<group>/<fragment>.conf.age` — shared groups
-  (`common`, `homelab`, `tokyo`, `vps`, `work_wst`). Each fragment is decrypted to
-  `~/.ssh/config.d/<group>_<fragment>.conf`.
+- `secrets/base/ssh_config.d/<group>/<fragment>.conf.age` — shared fragments,
+  grouped for organisation (`common`, `homelab`, `tokyo`, `vps`, `work_wst`).
+  Every group is deployed to every machine and decrypted to
+  `~/.ssh/config.d/<group>_<fragment>.conf`. A fragment the active age identity
+  cannot decrypt is skipped. The group name only namespaces the deployed
+  filename.
 - `secrets/profiles/<profile>/ssh_config.d/<fragment>.conf.age` — fragments
   exclusive to one profile, decrypted to
   `~/.ssh/config.d/<profile>_<fragment>.conf`.
 
 The managed, plaintext `~/.ssh/config` (source: `private_dot_ssh/config`) holds only
-`Include config.d/*.conf` plus the global `Host *` defaults. A profile selects
-shared groups through `secrets/profiles/<profile>/ssh_config.groups`, one group
-name per line (`common` is used when the manifest is absent):
-
-```
-common
-homelab
-tokyo
-```
+`Include config.d/*.conf` plus the global `Host *` defaults.
 
 `run_onchange_deploy-secrets.sh` regenerates `~/.ssh/config.d/*.conf` on every
-apply and removes stale fragments, so dropping a group from the manifest or
-deleting a `.age` file also removes its deployed config.
+apply and removes stale fragments, so deleting a `.age` file also removes its
+deployed config.
 
 To add a host:
 
@@ -174,8 +165,8 @@ To add a host:
 # 1. Create a plaintext fragment (e.g. secrets/base/ssh_config.d/homelab/20_db.conf)
 vim secrets/base/ssh_config.d/homelab/20_db.conf
 
-# 2. Encrypt it into the group
-age -r age1r7hzm4zqsyu880e3f8yn97g7d6jqtxaeg8jjk2xpzqv2d9zgkelq00nmxn \
+# 2. Encrypt it into the group, to every recipient like other base secrets
+age -R secrets/recipients.txt \
   -o secrets/base/ssh_config.d/homelab/20_db.conf.age \
   secrets/base/ssh_config.d/homelab/20_db.conf
 rm secrets/base/ssh_config.d/homelab/20_db.conf   # never commit plaintext
