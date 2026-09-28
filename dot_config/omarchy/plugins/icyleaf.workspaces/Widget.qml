@@ -685,14 +685,30 @@ BarWidget {
     }
   }
 
+  property bool bindingsLoaded: false
+
   FileView {
     id: bindingsFile
     path: Quickshell.env("HOME") + "/.config/hypr/workspace-bindings.json"
     watchChanges: true
     printErrors: false
-    onFileChanged: root.reloadBindings(false)
-    onLoaded: root.reloadBindings(true)
+    // onFileChanged fires before the cached text updates, so re-read here and
+    // parse in onLoaded; the first load is the "initial" one (no reconcile).
+    onFileChanged: bindingsFile.reload()
+    onLoaded: {
+      root.reloadBindings(!root.bindingsLoaded)
+      root.bindingsLoaded = true
+    }
     onLoadFailed: root.workspaceBindings = []
+  }
+
+  // chezmoi writes the runtime file by rename, which can defeat an inotify watch
+  // on the path; poll as a safety net so a binding edit always lands.
+  Timer {
+    interval: 2000
+    repeat: true
+    running: root.isPrimaryMonitor
+    onTriggered: bindingsFile.reload()
   }
 
   // Pending title bindings (e.g. a Chrome webapp whose title settles late) are
