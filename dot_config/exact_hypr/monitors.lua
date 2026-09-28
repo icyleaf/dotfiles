@@ -89,3 +89,15 @@ hl.monitor({
 -- -- 4. Workspace rules
 -- hl.workspace_rule({ workspace = "1", name = "Main", monitor = "eDP-1", default = true })
 -- hl.workspace_rule({ workspace = "21", name = "Browser", monitor = "desc:YTH HS-140KP", default = true })
+
+-- M2 slot 10 (global workspace 20) uses the master layout: one full-height
+-- master on the right, everything else stacked to its left. Every other
+-- workspace keeps the global dwindle default.
+hl.workspace_rule({ workspace = "20", layout = "master" })
+hl.config({
+  master = {
+    orientation = "right",
+    new_status = "master",
+    mfact = 0.5,
+  },
+})
