@@ -62,6 +62,37 @@ function regexTest(pattern, value, anchored) {
   return re !== null && re.test(String(value))
 }
 
+// Does a window class match a binding's anchored class regex?
+function classMatches(pattern, value) {
+  return regexTest(pattern, value, true)
+}
+
+// One binding's stable signature, used to detect configuration changes.
+function signatureFor(bindings, klass) {
+  if (!bindings || bindings.length === undefined) return ""
+  var parts = []
+  for (var i = 0; i < bindings.length; i++) {
+    if (bindings[i].class === klass) parts.push(JSON.stringify(bindings[i]))
+  }
+  return parts.join("|")
+}
+
+// The window classes whose bindings were added or changed between two binding
+// lists. Used to re-place already-open windows of only the classes that moved,
+// so editing one binding never disturbs unrelated apps.
+function changedClasses(previous, next) {
+  var changed = []
+  var seen = {}
+  if (!next || next.length === undefined) return changed
+  for (var i = 0; i < next.length; i++) {
+    var klass = next[i].class
+    if (seen[klass]) continue
+    seen[klass] = true
+    if (signatureFor(previous, klass) !== signatureFor(next, klass)) changed.push(klass)
+  }
+  return changed
+}
+
 function normalizeMatcher(target) {
   var monitor = target && target.monitor ? target.monitor : null
   if (!monitor || typeof monitor !== "object") return null

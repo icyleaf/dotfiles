@@ -139,6 +139,35 @@ TestCase {
     compare(m, null)
   }
 
+  // ------------------------------------------------------- change detection
+
+  function test_classMatchesAnchored() {
+    verify(BindingModel.classMatches("^wechat$", "wechat"))
+    verify(!BindingModel.classMatches("^wechat$", "wechat-canary"))
+  }
+
+  function test_changedClassesDetectsAddChangeAndNoOp() {
+    var base = BindingModel.normalizeBindings([
+      { class: "^wechat$", target: { monitor: { id: 0 }, slot: 9 } }
+    ])
+    compare(BindingModel.changedClasses(base, base).length, 0)
+
+    var moved = BindingModel.normalizeBindings([
+      { class: "^wechat$", target: { monitor: { id: 0 }, slot: 10 } }
+    ])
+    var changed = BindingModel.changedClasses(base, moved)
+    compare(changed.length, 1)
+    compare(changed[0], "^wechat$")
+
+    var added = BindingModel.normalizeBindings([
+      { class: "^wechat$", target: { monitor: { id: 0 }, slot: 9 } },
+      { class: "^discord$", target: { monitor: { id: 0 }, slot: 10 } }
+    ])
+    var changedAdded = BindingModel.changedClasses(base, added)
+    compare(changedAdded.length, 1)
+    compare(changedAdded[0], "^discord$")
+  }
+
   // ---------------------------------------------------------------- resolve
 
   function test_resolveComputesGlobalWorkspaceFromOffset() {

@@ -402,6 +402,10 @@ BarWidget {
   function onClientsFetched(text) {
     root.clientInfo = AppIconModel.parseClients(text)
     root.pumpProbe()
+    if (root.reconcileRequested) {
+      root.reconcileRequested = false
+      root.reconcileFromClients(text)
+    }
     if (root.routeFetchRequested) {
       root.routeFetchRequested = false
       root.onRoutesFetched(text)
@@ -518,15 +522,25 @@ BarWidget {
   property var pendingRouteSet: ({})
   property var routedWindows: ({})
   property bool routeFetchRequested: false
+  property bool reconcileRequested: false
+  property var reconcileClasses: []
 
-  function reloadBindings() {
+  // `initial` is true for the first load (shell start). Only a later file change
+  // re-places already-open windows, so restarting the shell never shuffles the
+  // desktop on its own.
+  function reloadBindings(initial) {
     var parsed = null
     try {
       parsed = JSON.parse(String(bindingsFile.text() || ""))
     } catch (error) {
       parsed = null
     }
-    root.workspaceBindings = parsed ? BindingModel.normalizeBindings(parsed.bindings) : []
+    var next = parsed ? BindingModel.normalizeBindings(parsed.bindings) : []
+    if (!initial) {
+      var changed = BindingModel.changedClasses(root.workspaceBindings, next)
+      if (changed.length > 0) root.requestReconcile(changed)
+    }
+    root.workspaceBindings = next
   }
 
   // Quickshell exposes `disabled`/`mirrorOf` on the raw monitor IPC object
@@ -624,10 +638,42 @@ BarWidget {
     routeTimer.running = still.length > 0
   }
 
-  function dispatchRoute(address, result) {
+  // A binding edit re-places already-open windows of the classes that changed,
+  // so "configure it and it moves now" works without reopening the app. Moves
+  // are silent to avoid yanking focus while the user edits bindings.
+  function requestReconcile(classes) {
+    if (!root.isPrimaryMonitor || !root.workspaceBindingsEnabled) return
+    root.reconcileClasses = classes
+    root.reconcileRequested = true
+    if (!clientFetchProcess.running) clientFetchProcess.running = true
+  }
+
+  function classChanged(klass) {
+    for (var i = 0; i < root.reconcileClasses.length; i++) {
+      if (BindingModel.classMatches(root.reconcileClasses[i], klass)) return true
+    }
+    return false
+  }
+
+  function reconcileFromClients(text) {
+    var clients = BindingModel.parseClientWindows(text)
+    var monitors = root.bindingMonitors()
+    for (var address in clients) {
+      var descriptor = clients[address]
+      if (descriptor.workspaceId < 0) continue
+      if (!root.classChanged(descriptor.initialClass)) continue
+      var result = BindingModel.resolve(root.workspaceBindings, descriptor, monitors)
+      if (result.status !== "apply") continue
+      if (descriptor.workspaceId === result.workspaceId) continue
+      root.dispatchRoute(address, result, false)
+    }
+  }
+
+  function dispatchRoute(address, result, followOverride) {
     var workspace = root.quoteLua(String(result.workspaceId))
     var window = root.quoteLua("address:" + address)
-    var follow = result.follow ? "true" : "false"
+    var follow = followOverride === undefined ? result.follow : followOverride
+    follow = follow ? "true" : "false"
     if (result.monitorName !== "") {
       root.runLua("hl.dispatch(hl.dsp.workspace.move({ workspace = " + workspace
         + ", monitor = " + root.quoteLua(result.monitorName) + " })); "
@@ -644,8 +690,8 @@ BarWidget {
     path: Quickshell.env("HOME") + "/.config/hypr/workspace-bindings.json"
     watchChanges: true
     printErrors: false
-    onFileChanged: root.reloadBindings()
-    onLoaded: root.reloadBindings()
+    onFileChanged: root.reloadBindings(false)
+    onLoaded: root.reloadBindings(true)
     onLoadFailed: root.workspaceBindings = []
   }
 

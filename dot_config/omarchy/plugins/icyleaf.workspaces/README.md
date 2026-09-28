@@ -159,7 +159,10 @@ Choosing a target monitor lists each display by its Monitor Identity Badge
 which physical screen each option refers to.
 
 The helper writes the current profile's source and runs `chezmoi apply` for the
-runtime file, so changes take effect immediately.
+runtime file, so changes take effect immediately. Editing a binding also
+re-places any already-open windows of the affected apps (silently, without
+moving focus), so you can move a running window to a new slot by editing its
+binding rather than reopening it.
 
 Disable routing entirely with the widget setting `workspaceBindings: false`
 (the default is `true`).
