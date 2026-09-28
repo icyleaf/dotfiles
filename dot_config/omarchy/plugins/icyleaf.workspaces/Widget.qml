@@ -531,7 +531,6 @@ BarWidget {
   property bool routeFetchRequested: false
   property bool reconcileRequested: false
   property var reconcileClasses: []
-  property bool formPrefillRequested: false
   property var formPrefillData: ({})
   readonly property string helperPath: Quickshell.env("HOME") + "/.config/omarchy/plugins/icyleaf.workspaces/bin/omarchy-workspace-bindings"
 
@@ -715,17 +714,17 @@ BarWidget {
     return out
   }
 
+  // Read the prefill fresh via `cat` rather than a watched FileView, so a
+  // repeated edit with identical prefill still opens the form.
   function requestBindingForm() {
-    root.formPrefillRequested = true
-    formFile.reload()
+    formPrefillProcess.command = ["cat", Quickshell.env("HOME") + "/.cache/icyleaf/workspace-binding-form.json"]
+    formPrefillProcess.running = true
   }
 
-  function onFormPrefillLoaded() {
-    if (!root.formPrefillRequested) return
-    root.formPrefillRequested = false
+  function onFormPrefillText(text) {
     var parsed = null
     try {
-      parsed = JSON.parse(String(formFile.text() || ""))
+      parsed = JSON.parse(String(text || ""))
     } catch (error) {
       parsed = null
     }
@@ -789,12 +788,14 @@ BarWidget {
     bindingForm.closeForm()
   }
 
-  FileView {
-    id: formFile
-    path: Quickshell.env("HOME") + "/.cache/icyleaf/workspace-binding-form.json"
-    watchChanges: false
-    printErrors: false
-    onLoaded: root.onFormPrefillLoaded()
+  Process {
+    id: formPrefillProcess
+    command: []
+    stdout: StdioCollector {
+      id: formPrefillCollector
+      waitForEnd: true
+    }
+    onExited: root.onFormPrefillText(formPrefillCollector.text)
   }
 
   Process {
