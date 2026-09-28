@@ -21,6 +21,7 @@ hl.unbind("SUPER + ALT + D")
 hl.unbind("SUPER + F1")
 hl.unbind("SUPER + slash")
 hl.unbind("SUPER + PRINT")
+hl.unbind("CTRL + ENTER")
 hl.unbind("SUPER + SHIFT + PRINT")
 hl.unbind("SUPER + CTRL + PRINT")
 hl.unbind("SUPER + ALT + PRINT")
@@ -155,7 +156,3 @@ hl.gesture({
 
 -- o.bind("mouse:275", "Orbit press", "~/.config/omarchy/plugins/local.orbit/scripts/orbit-press.sh --button 275", { locked = true })
 -- o.bind("mouse:275", "Orbit release fallback", "~/.config/omarchy/plugins/local.orbit/scripts/orbit-release.sh", { locked = true, release = true })
-
--- >>> japanquake hotkey (managed by Japan Quake Monitor settings — change it there)
-o.bind("SUPER + F12", "Japan Quake Monitor (earthquake map)", "omarchy-shell shell toggle io.github.weedwhitesandwine.japanquake")
--- <<< japanquake hotkey
