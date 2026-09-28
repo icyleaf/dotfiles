@@ -142,20 +142,6 @@ apply_bindings() {
 # Selection helpers
 # ---------------------------------------------------------------------------
 
-# Briefly outline monitors on screen: an empty target outlines every monitor
-# (identify), otherwise the monitor matching the name/description is outlined.
-# The optional delay (seconds) lets the flash surface map after the menu, so it
-# draws above the menu's scrim instead of being dimmed underneath it.
-flash_monitors() {
-  command -v omarchy-shell >/dev/null 2>&1 || return 0
-  local target="${1:-}" duration="${2:-2600}" delay="${3:-0}"
-  if [[ $delay == "0" || $delay == "0.0" ]]; then
-    omarchy-shell -q icyleaf.workspaces flashMonitor "$target" "$duration" >/dev/null 2>&1 || true
-  else
-    ( sleep "$delay"; omarchy-shell -q icyleaf.workspaces flashMonitor "$target" "$duration" >/dev/null 2>&1 || true ) &
-  fi
-}
-
 choose_monitor_spec() {
   local options=() id badge name desc active selected key
   while IFS=$'\t' read -r id name desc active; do
@@ -169,11 +155,8 @@ choose_monitor_spec() {
     notify "Workspace Bindings" "No connected monitors were found."
     return 1
   fi
-  # Identify every display once the menu is up, then confirm the selection.
-  flash_monitors "" 3500 0.5
   selected=$(omarchy menu select "Target monitor" "${options[@]}" -- --width 720) || return 1
   key="${selected#*$'\t'}"
-  flash_monitors "${key#desc:}" 1600
   printf '%s' "$key"
 }
 
