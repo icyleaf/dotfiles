@@ -1,0 +1,17 @@
+[tools]
+antigravity-cli = "latest"
+bun = "latest"
+claude = "latest"
+codex = "latest"
+crush = "latest"
+gh = "latest"
+node = "latest"
+opencode = "latest"
+ruby = "3.4.5"
+talosctl = "latest"
+
+[settings]
+minimum_release_age = "0"
+
+[settings.upgrade]
+auto_prune = false

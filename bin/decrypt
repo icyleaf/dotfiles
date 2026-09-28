@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-
-find . -name "*.enc.zsh" | grep -v "/\." | xargs -rt -n1 sops --decrypt --in-place --input-type dotenv --output-type dotenv

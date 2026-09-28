@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+#
+# Install plymouth theme via Chezmoi (run-onchange)
+
+set -euo pipefail
+
+# Plymouth themes hash:
+# {{ output "sh" "-c" (printf "cd %s/assets/plymouth/themes && find . -type f -exec sha256sum {} + | sort | sha256sum" .chezmoi.sourceDir) }}
+
+
+hostname={{ .chezmoi.hostname | quote }}
+theme_name="$hostname"
+src_theme_path="{{ .chezmoi.sourceDir }}/assets/plymouth/themes/${theme_name}"
+
+if [[ ! -d "$src_theme_path" ]]; then
+  # Fallback to achron theme if hostname-specific theme is not found
+  src_theme_path="{{ .chezmoi.sourceDir }}/assets/plymouth/themes/achron"
+  theme_name="achron"
+fi
+
+echo "Installing plymouth theme ${theme_name}...${src_theme_path}"
+
+if [[ -d "$src_theme_path" ]]; then
+  echo "Installing plymouth theme ... ${theme_name}"
+
+  # Skip when sudo cannot run non-interactively (e.g. chezmoi apply without a TTY).
+  if ! sudo -n true >/dev/null 2>&1; then
+    echo "Warning: passwordless sudo unavailable; skipping plymouth theme install." >&2
+    echo "Re-run with a TTY or configure sudoers, then apply again to install ${theme_name}." >&2
+    exit 0
+  fi
+
+  sudo mkdir -p "/usr/share/plymouth/themes"
+  sudo cp -rf "$src_theme_path" "/usr/share/plymouth/themes/"
+
+  echo "Setting plymouth theme ${theme_name} as default..."
+  if command -v plymouth-set-default-theme &>/dev/null; then
+    sudo plymouth-set-default-theme "$theme_name"
+  else
+    echo "Mocked set theme to ${theme_name}"
+  fi
+
+  echo "plymouth theme ${theme_name} installed successfully."
+fi

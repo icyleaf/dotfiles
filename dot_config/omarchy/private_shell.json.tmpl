@@ -1,0 +1,131 @@
+{{- /* Dev/test-only Omarchy plugins (sunny0826.quick-fcitx,
+       hancore.voxtype-enhance) are referenced only on the dev machine,
+       identified by machine_profile "darktemplar". They are intentionally
+       absent from .chezmoiexternals/03_omarchy.toml.tmpl, so portable machines
+       receive the plugin-free subset instead of references to plugins they
+       never cloned. */ -}}
+{{- $local := eq .machine_profile "darktemplar" -}}
+{
+  "version": 1,
+  "idle": {
+    "screensaver": 30000000000000000,
+    "lock": 150
+  },
+  "bar": {
+    "position": "top",
+    "transparent": true,
+    "centerAnchor": "icyleaf.workspaces",
+    "layout": {
+      "left": [
+        {
+          "id": "evindor.keystroke"
+        },
+        {
+          "id": "tiertek.tekscan"
+        },
+        {
+          "id": "ryuhzk.simfarm",
+          "serverUrl": "http://192.168.10.2:8801",
+          "sshHost": "tokyo-mini4",
+          "browser": "google-chrome-stable"
+        },
+        {
+          "id": "icyleaf.herdr"
+        },
+        {
+          "id": "icyleaf.resources"
+        },
+        {
+          "id": "omarchy.indicators"
+        }
+      ],
+      "center": [
+        {
+          "id": "icyleaf.workspaces"
+        }
+      ],
+      "right": [
+        {
+          "id": "omarchy.tray",
+          "expanded": true
+        },
+        {
+          "id": "icyleaf.input-fusion"
+        },
+        {
+          "id": "storage-drives"
+        },
+        {
+          "id": "omarchy.bluetooth"
+        },
+        {
+          "id": "omarchy.network"
+        },
+        {
+          "id": "omarchy.audio"
+        },
+        {
+          "id": "omarchy.power"
+        },
+        {
+          "id": "jankeesvw.notification-center"
+        },
+        {
+          "id": "local.clock",
+          "showSettingsGear": false,
+          "format": "MM-dd HH:mm ddd",
+          "formatAlt": "dd MMMM 'W'ww yyyy",
+          "verticalFormat": "HH\n—\nmm",
+          "firstDayOfWeek": "monday",
+          "locale": "ja"
+        }
+      ]
+    }
+  },
+  "plugins": [
+    {
+      "id": "local.orbit"
+    },
+    {
+      "id": "mirador"
+    },
+    {
+      "id": "icyleaf.notifications"
+    },
+    {
+      "id": "icyleaf.bitwarden"
+    },
+    {
+      "id": "icyleaf.modict"
+    },
+    {
+      "id": "icyleaf.qalculator",
+      "position": "top",
+      "edgeMargin": 5
+    },
+    {
+      "id": "alanfortlink.clipboard"
+    },
+    {
+      "id": "io.github.sirjul1337.lock-explorer",
+      "design": "my-dock"
+    },
+    {
+      "id": "de.gransoftware.yank"
+    }
+  ],
+  "disabledPlugins": [
+    "omarchy.notifications",
+    "omarchy.clipboard",
+    "omarchy.lock",
+    "omarchy.menu"
+  ],
+  "cloneSourceRestores": [
+    "icyleaf.notifications",
+    "ryuhzk.simfarm",
+    "local.clock",
+    "alanfortlink.clipboard",
+    "io.github.sirjul1337.lock-explorer",
+    "evindor.keystroke"
+  ]
+}

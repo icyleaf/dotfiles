@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=wechat
+Name[zh_CN]=微信
+Exec=env QT_SCALE_FACTOR=1 QT_AUTO_SCREEN_SCALE_FACTOR=0 /opt/wechat/wechat %U
+StartupNotify=true
+Terminal=false
+Icon=/usr/share/icons/hicolor/256x256/apps/wechat.png
+Type=Application
+Categories=Utility;
+Comment=Wechat Desktop
+Comment[zh_CN]=微信桌面版

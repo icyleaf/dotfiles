@@ -1,0 +1,74 @@
+# Ignore always
+.config/ghostty/fonts/**
+.config/ghostty/keybinds/current.conf
+.config/ghostty/keybinds/macos.conf
+.config/ghostty/platform/current.conf
+.config/ghostty/platform/linux.conf
+.config/ghostty/platform/macos.conf
+.config/ghostty/presets/**
+.config/ghostty/themes/**
+.config/ghostty/tmux/**
+
+# Ignore files by OS
+
+{{ if eq .chezmoi.os "linux" }}
+# Ignore macOS specific configurations on Linux
+.chezmoiscripts/install-brew.sh
+.Brewfile
+.amethyst.yml
+Library/**
+.config/iterm2/**
+.config/karabiner/**
+.config/linearmouse/**
+.config/raycast/**
+
+# Ignore fcitx5 some config
+.config/fcitx5/conf/notifications.conf
+.config/fcitx5/conf/wayland.conf
+{{ end }}
+
+{{ if eq .chezmoi.os "darwin" }}
+# Ignore Linux specific configurations on macOS
+.config/hypr/**
+.config/fcitx5/**
+.config/btop/**
+.config/omarchy/**
+.config/chrome-flags.conf
+.config/user-dirs.dirs
+.local/bin/pm.sh
+.local/bin/systemupdate.sh
+run_onchange_install-packages-linux.sh.tmpl
+run_onchange_install-fcitx5-themes.sh.tmpl
+{{ end }}
+
+{{ if ne .machine_profile "darktemplar" }}
+# Ignore host-specific configuration (AMD HDMI/DP audio + Dual LG 4K wiring)
+.config/wireplumber/**
+{{ end }}
+
+# Ignore legacy files and directories
+config/**
+functions/**
+bin/**
+docs/**
+scripts/**
+.scratch/**
+AGENTS.md
+README.md
+CONTEXT.md
+LICENSE
+
+.config/.gemini/antigravity-cli/
+.config/.gemini/oauth_creds.json
+.config/.gemini/user_id
+
+# Ignore encrypted secrets store — deployed by run_onchange_deploy-secrets.sh.tmpl
+secrets/**
+
+# Ignore non-deployed repository metadata files
+linux-packages.txt
+install.sh
+assets/**
+
+# Ignore vendored third-party source (managed via git submodules, deployed by run_once scripts)
+vendor/**

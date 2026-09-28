@@ -1,0 +1,69 @@
+# Chezmoi configuration template
+{{ $hostname := .chezmoi.hostname }}
+
+{{/* Discover known Secret Profiles by scanning secrets/profiles/
+     Any sub-directory that is not "custom" and doesn't start with "." is a known profile. */}}
+{{ $knownProfiles := list }}
+{{ range (glob (joinPath .chezmoi.sourceDir "secrets" "profiles" "*")) }}
+{{   $name := base . }}
+{{   if and (ne $name "custom") (not (hasPrefix "." $name)) }}
+{{     $knownProfiles = append $knownProfiles $name }}
+{{   end }}
+{{ end }}
+
+{{/* Profile Selection:
+     1. hostname matches a known profile → silent auto-select
+     2. hostname unknown + TTY          → interactive prompt listing known profiles
+     3. hostname unknown + no TTY       → default to "custom" */}}
+{{ $profile := "" }}
+{{ if has $hostname $knownProfiles }}
+{{   $profile = $hostname }}
+{{ else if stdinIsATTY }}
+{{   writeToStdout (printf "Known profiles: [%s]\n" (join ", " $knownProfiles)) }}
+{{   $profile = promptStringOnce . "machine_profile" "Enter machine profile name" $hostname }}
+{{   if eq $profile "" }}
+{{     $profile = $hostname }}
+{{   end }}
+{{ else if .machine_profile }}
+{{/* Non-interactive: preserve the already-configured profile instead of
+     silently downgrading to "custom". */}}
+{{   $profile = .machine_profile }}
+{{ else }}
+{{   $profile = "custom" }}
+{{ end }}
+
+{{/* Resolve this machine's age identity: prefer a per-profile key named after
+     the profile (e.g. ~/.local/share/age/darktemplar.txt), falling back to the
+     shared default-key.txt. */}}
+{{ $ageKey := joinPath .chezmoi.homeDir ".local" "share" "age" "default-key.txt" }}
+{{ $profileKey := joinPath .chezmoi.homeDir ".local" "share" "age" (printf "%s.txt" $profile) }}
+{{ if (glob $profileKey) }}
+{{   $ageKey = $profileKey }}
+{{ end }}
+
+# Persist the active source directory across `chezmoi init` regenerations.
+# Without this, a bare `chezmoi init` falls back to the default empty source
+# and `chezmoi apply` becomes a no-op.
+sourceDir = {{ .chezmoi.sourceDir | quote }}
+
+encryption = "age"
+
+[data]
+    os = {{ .chezmoi.os | quote }}
+    machine_profile = {{ $profile | quote }}
+    age_identity = {{ $ageKey | quote }}
+
+    # Git configuration
+    git_name = {{ promptStringOnce . "git_name" "What is your git author name?" | quote }}
+    git_email = {{ promptStringOnce . "git_email" "What is your git author email?" | quote }}
+
+    # Ask if it is a headless setup (no GUI)
+    {{ $headless := false }}
+    {{ if stdinIsATTY }}
+    {{   $headless = promptBoolOnce . "headless" "Is this a headless machine (no GUI)?" false }}
+    {{ end }}
+    headless = {{ $headless }}
+
+[age]
+    identity = {{ $ageKey | quote }}
+    recipient = "age1r7hzm4zqsyu880e3f8yn97g7d6jqtxaeg8jjk2xpzqv2d9zgkelq00nmxn"

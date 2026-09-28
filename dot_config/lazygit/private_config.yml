@@ -1,0 +1,119 @@
+os:
+  editCommand: "nvim"
+  editCommandTemplate: "nvim +{{line}} {{filename}}"
+  copyToClipboardCmd: >
+    if [ -n "$SSH_TTY" ] || [ -n "$SSH_CLIENT" ]; then
+      payload=$(printf '%s' {{text | quote}} | base64 -w 0)
+      if [[ "$TERM" =~ ^(screen|tmux) ]]; then
+        printf "\033Ptmux;\033\033]52;c;%s\a\033\\" "$payload" > /dev/tty
+      else
+        printf "\033]52;c;%s\a" "$payload" > /dev/tty
+      fi
+    elif command -v wl-copy >/dev/null 2>&1; then
+      printf '%s' {{text | quote}} | wl-copy
+    elif command -v xclip >/dev/null 2>&1; then
+      printf '%s' {{text | quote}} | xclip -selection clipboard
+    elif command -v xsel >/dev/null 2>&1; then
+      printf '%s' {{text | quote}} | xsel --clipboard --input
+    fi
+
+gui:
+  nerdFontsVersion: "3"
+  showFileIcons: true
+  showCommandLog: true
+  showBottomLine: true
+
+customCommands:
+  - key: "b"
+    description: "Branch actions"
+    commandMenu:
+      - key: "n"
+        command: "git switch -c {{.Form.BranchName | quote}}"
+        description: "New branch from current"
+        context: "localBranches"
+        prompts:
+          - type: "input"
+            title: "Branch name"
+            key: "BranchName"
+      - key: "f"
+        command: "git switch -c feature/{{.Form.BranchName | quote}}"
+        description: "New feature branch"
+        context: "localBranches"
+        prompts:
+          - type: "input"
+            title: "Feature name"
+            key: "BranchName"
+      - key: "x"
+        command: "git switch -c fix/{{.Form.BranchName | quote}}"
+        description: "New fix branch"
+        context: "localBranches"
+        prompts:
+          - type: "input"
+            title: "Fix name"
+            key: "BranchName"
+      - key: "F"
+        command: "git pull --ff-only"
+        description: "Fast-forward from upstream"
+        context: "localBranches"
+      - key: "U"
+        command: "git push -u origin {{.CheckedOutBranch.Name | quote}}"
+        description: "Push and set upstream"
+        context: "localBranches"
+      - key: "m"
+        command: "git merge {{.SelectedLocalBranch.Name | quote}}"
+        description: "Merge selected into current"
+        context: "localBranches"
+        prompts:
+          - type: "confirm"
+            title: "Merge"
+            body: "Merge '{{.SelectedLocalBranch.Name}}' into '{{.CheckedOutBranch.Name}}'?"
+      - key: "r"
+        command: "git rebase {{.SelectedLocalBranch.Name | quote}}"
+        description: "Rebase current onto selected"
+        context: "localBranches"
+        prompts:
+          - type: "confirm"
+            title: "Rebase"
+            body: "Rebase '{{.CheckedOutBranch.Name}}' onto '{{.SelectedLocalBranch.Name}}'?"
+
+  - key: "c"
+    command: 'git commit -m "{{.Form.Type}}: {{.Form.Description}}"'
+    description: "Conventional commit"
+    context: "files"
+    output: log
+    prompts:
+      - type: "menu"
+        title: "Type"
+        key: "Type"
+        options:
+          - { name: "feat", value: "feat" }
+          - { name: "fix", value: "fix" }
+          - { name: "docs", value: "docs" }
+          - { name: "style", value: "style" }
+          - { name: "refactor", value: "refactor" }
+          - { name: "test", value: "test" }
+          - { name: "ci", value: "ci" }
+          - { name: "chore", value: "chore" }
+          - { name: "revert", value: "revert" }
+      - type: "input"
+        title: "Description"
+        key: "Description"
+      - type: "confirm"
+        title: "Commit"
+        body: "{{.Form.Type}}: {{.Form.Description}}"
+
+  - key: "w"
+    command: "git add -A && git commit -m 'wip'"
+    description: "WIP commit"
+    context: "files"
+    output: log
+
+  - key: "u"
+    command: "git reset --soft HEAD^"
+    description: "Undo last commit and keep changes"
+    context: "commits"
+    output: log
+    prompts:
+      - type: "confirm"
+        title: "Undo last commit"
+        body: "Move HEAD back one commit and keep its changes staged?"

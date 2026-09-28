@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# run_onchange_configure-gnupg.sh.tmpl
+#
+# Applies the parts of the GnuPG setup that a template cannot express:
+#   - macOS: let pinentry-mac store passphrases in the login keychain.
+#   - All OSes: restart gpg-agent so the freshly deployed gpg-agent.conf
+#     (pinentry-program, cache TTLs) takes effect.
+#
+# Re-runs whenever the GnuPG config contents change.
+# gpg.conf hash:          {{ include "private_dot_gnupg/gpg.conf" | sha256sum }}
+# gpg-agent.conf hash:    {{ include "private_dot_gnupg/gpg-agent.conf.tmpl" | sha256sum }}
+
+set -euo pipefail
+
+{{ if eq .chezmoi.os "darwin" -}}
+if command -v pinentry-mac >/dev/null 2>&1; then
+  echo "Enabling GnuPG passphrase storage in the macOS keychain..."
+  defaults write org.gpgtools.common DisableKeychain -bool no
+fi
+{{- end }}
+
+if command -v gpgconf >/dev/null 2>&1; then
+  echo "Restarting gpg-agent to pick up gpg-agent.conf..."
+  gpgconf --kill gpg-agent || true
+fi
+
+echo "GnuPG configuration applied."

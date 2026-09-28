@@ -1,0 +1,27 @@
+# Essential system packages
+git
+zsh
+tmux
+age
+neovim
+fzf
+btop
+fastfetch
+
+# Development tools & shells
+stow
+jq
+rsync
+
+# gui
+# Graphical environment & Terminal (Hyprland stack)
+hyprland
+fcitx5
+fcitx5-rime
+fcitx5-configtool
+snapper
+
+# AUR
+hypr-input-switcher-bin
+wl-gammarelay-rs
+synology-drive

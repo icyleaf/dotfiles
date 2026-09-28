@@ -1,6 +1,9 @@
+
 **/vim/dotfiles/vim/bundle/*
 **/brew/*.lock.json
-**/gnupg/gpg-agent.conf
+
+__pycache__/
+*.pyc
 
 **/git/gitconfig.local.symlink
 **/vscode/syncLocalSettings.json
@@ -16,3 +19,17 @@ ssh/
 *.bak.*
 
 .scratch/
+
+dot_gemini/oauth_creds.json
+dot_gemini/user_id
+
+# ghostty-wrapper
+dot_config/ghostty/fonts/
+dot_config/ghostty/keybinds/
+dot_config/ghostty/platform/
+dot_config/ghostty/presets/
+dot_config/ghostty/themes/
+dot_config/ghostty/tmux/
+
+# external dependencies
+vendor/

@@ -1,0 +1,16 @@
+# pinentry-program
+pinentry-timeout 60
+default-cache-ttl 3600
+default-cache-ttl-ssh 3600
+
+# Managed by chezmoi. pinentry-program is resolved per OS at apply time.
+{{- $pinentry := "" -}}
+{{- if eq .chezmoi.os "darwin" -}}
+{{-   $pinentry = lookPath "pinentry-mac" -}}
+{{- else -}}
+{{-   $pinentry = lookPath "pinentry-gnome3" -}}
+{{-   if eq $pinentry "" -}}{{- $pinentry = lookPath "pinentry-curses" -}}{{- end -}}
+{{- end -}}
+{{- if ne $pinentry "" }}
+pinentry-program {{ $pinentry }}
+{{- end }}

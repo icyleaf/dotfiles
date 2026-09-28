@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+#
+# Set zsh as the login shell (run-onchange, idempotent).
+#
+# `chsh` is PAM-based: on Linux it prompts for the account password, so this
+# only works when a TTY is attached (a plain interactive `chezmoi apply`).
+# When no TTY is available it prints manual instructions and exits 0 so the
+# rest of the apply is never blocked.
+#
+# Note: changing the login shell does not affect already-running sessions.
+# Log out (or reboot) for the graphical/terminal session to pick it up.
+
+set -euo pipefail
+
+ZSH_PATH="$(command -v zsh || true)"
+
+if [ -z "${ZSH_PATH}" ]; then
+  echo "zsh not found; skipping login shell change." >&2
+  exit 0
+fi
+
+# Do not touch the real account when running against a copied HOME (e.g. the
+# local chezmoi verification harness).
+real_home=""
+if command -v getent >/dev/null 2>&1; then
+  real_home="$(getent passwd "$(id -un)" | cut -d: -f6)"
+elif command -v dscl >/dev/null 2>&1; then
+  real_home="$(dscl . -read "/Users/$(id -un)" NFSHomeDirectory 2>/dev/null | awk '{print $2}')"
+fi
+
+if [ -n "${real_home}" ] && [ "${HOME}" != "${real_home}" ]; then
+  echo "HOME (${HOME}) is not the login user's home (${real_home}); skipping login shell change." >&2
+  exit 0
+fi
+
+# Resolve the current login shell.
+current_shell=""
+if command -v getent >/dev/null 2>&1; then
+  current_shell="$(getent passwd "$(id -un)" | cut -d: -f7)"
+elif command -v dscl >/dev/null 2>&1; then
+  current_shell="$(dscl . -read "/Users/$(id -un)" UserShell 2>/dev/null | awk '{print $2}')"
+fi
+
+if [ "${current_shell}" = "${ZSH_PATH}" ]; then
+  echo "Login shell is already ${ZSH_PATH}."
+  exit 0
+fi
+
+if [ ! -f /etc/shells ] || ! grep -qxF "${ZSH_PATH}" /etc/shells; then
+  echo "Warning: ${ZSH_PATH} is not listed in /etc/shells; skipping." >&2
+  exit 0
+fi
+
+echo "Changing login shell from ${current_shell:-unknown} to ${ZSH_PATH}..."
+
+if [ -t 0 ] && chsh -s "${ZSH_PATH}"; then
+  echo "Login shell updated. Log out and back in for it to take effect."
+  exit 0
+fi
+
+echo "Warning: cannot change the login shell non-interactively." >&2
+echo "Run this manually, then log out and back in:  chsh -s ${ZSH_PATH}" >&2
+exit 0

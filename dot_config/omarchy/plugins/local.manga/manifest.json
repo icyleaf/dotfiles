@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "id": "local.manga",
+  "name": "Local Manga",
+  "version": "1.0.0",
+  "author": "AyushKr2003",
+  "description": "Detached manga browser, library, reader, and downloader window.",
+  "kinds": [
+    "panel"
+  ],
+  "keepLoaded": true,
+  "entryPoints": {
+    "panel": "Panel.qml"
+  },
+  "settings": {
+    "defaults": {
+      "windowWidth": 580,
+      "windowHeight": 1045,
+      "enableServer": true
+    },
+    "schema": [
+      {
+        "key": "windowWidth",
+        "type": "number",
+        "label": "Window width",
+        "defaultValue": 580,
+        "min": 560,
+        "max": 1200
+      },
+      {
+        "key": "windowHeight",
+        "type": "number",
+        "label": "Window height",
+        "defaultValue": 1045,
+        "min": 520,
+        "max": 1100
+      },
+      {
+        "key": "enableServer",
+        "type": "boolean",
+        "label": "Enable manga backend server",
+        "defaultValue": true
+      }
+    ]
+  }
+}

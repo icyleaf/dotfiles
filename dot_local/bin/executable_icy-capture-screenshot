@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+#
+# icy-capture-screenshot: middleware wrapper around omarchy-capture-screenshot
+#
+# This is the Omarchy-agnostic entry point used by Hyprland/Waybar configs.
+# Replace the implementation below to remove the Omarchy dependency.
+#
+# To replace: implement the desired behaviour directly here and remove
+# the delegation to omarchy-capture-screenshot.
+
+if command -v "omarchy-capture-screenshot" >/dev/null 2>&1; then
+  exec "omarchy-capture-screenshot" "$@"
+else
+  echo "icy-capture-screenshot: 'omarchy-capture-screenshot' not found. Install Omarchy or implement a replacement." >&2
+  exit 127
+fi

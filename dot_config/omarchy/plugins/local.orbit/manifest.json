@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "local.orbit",
+  "name": "Local Orbit",
+  "version": "0.1.0",
+  "author": "AyushKr2003",
+  "license": "MIT",
+  "description": "A cursor-centered radial launcher for mouse-button workflows.",
+  "kinds": ["overlay"],
+  "activation": "on-demand",
+  "keepLoaded": true,
+  "entryPoints": {
+    "overlay": "Orbit.qml"
+  }
+}
