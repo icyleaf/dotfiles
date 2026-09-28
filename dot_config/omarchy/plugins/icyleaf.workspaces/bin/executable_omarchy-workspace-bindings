@@ -215,6 +215,14 @@ cmd_manage() {
             disp: ("M" + ((.id + 1) | tostring) + ", " + (.name // "")) }
     | . as $m | ($m.id, $m.name, $m.desc) as $k | [$k, $m.disp] | join("\u001f")')
 
+  # A "new" row leads the list so adding is available right where bindings are
+  # browsed; the rest are the existing bindings, two lines each.
+  local new_label=$'\u2795 New binding'
+  local new_sub='Add a new workspace binding'
+  local new_sig="${new_label}"$'\t'"${new_sub}"
+  options+=("󰐕"$'\t'"${new_label}"$'\t'"${new_sub}")
+  sigs+=("$new_sig")
+
   local count i class title kind value slot focus key disp label subtext
   count=$(jq -r '.bindings | length' "$file")
   for ((i = 0; i < count; i++)); do
@@ -235,14 +243,14 @@ cmd_manage() {
     sigs+=("${label}"$'\t'"${subtext}")
   done
 
-  if (( ${#options[@]} == 0 )); then
-    notify "Workspace Bindings" "There are no bindings yet."
+  selected=$(omarchy menu select "Workspace Bindings" "${options[@]}" -- --width 600 --maxheight 640) || return 0
+  if [[ $selected == "$new_sig" ]]; then
+    cmd_add
     return 0
   fi
-  selected=$(omarchy menu select "Edit binding" "${options[@]}" -- --width 600 --maxheight 640) || return 0
-  for ((i = 0; i < ${#sigs[@]}; i++)); do
+  for ((i = 1; i < ${#sigs[@]}; i++)); do
     if [[ ${sigs[i]} == "$selected" ]]; then
-      index=$i
+      index=$((i - 1))
       break
     fi
   done
