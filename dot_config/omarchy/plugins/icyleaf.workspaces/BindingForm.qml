@@ -153,13 +153,62 @@ PanelWindow {
           font.family: Style.font.family
           font.pixelSize: Style.font.caption
         }
-        SearchableDropdown {
+        ColumnLayout {
           Layout.fillWidth: true
-          showLabel: false
-          options: root.monitorOptions
-          value: root.monitorValue
-          placeholderText: "Search monitors..."
-          onChanged: function(newValue) { root.monitorValue = newValue }
+          spacing: Style.space(6)
+
+          Repeater {
+            model: root.monitorOptions
+
+            delegate: Rectangle {
+              required property var modelData
+              Layout.fillWidth: true
+              implicitHeight: rowColumn.implicitHeight + Style.space(20)
+              radius: Style.cornerRadius > 0 ? Style.cornerRadius : 8
+              color: root.monitorValue === modelData.value
+                ? Util.alpha(Color.accent, 0.18)
+                : Util.alpha(Color.foreground, 0.04)
+              border.width: 1
+              border.color: root.monitorValue === modelData.value
+                ? Color.accent
+                : Util.alpha(Color.foreground, 0.12)
+
+              Column {
+                id: rowColumn
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: parent.top
+                anchors.leftMargin: Style.space(12)
+                anchors.rightMargin: Style.space(12)
+                anchors.topMargin: Style.space(10)
+                spacing: 2
+
+                Text {
+                  width: parent.width
+                  text: modelData.label
+                  color: Color.foreground
+                  font.family: Style.font.family
+                  font.pixelSize: Style.font.body
+                  font.bold: true
+                  elide: Text.ElideRight
+                }
+
+                Text {
+                  width: parent.width
+                  text: modelData.description
+                  color: Color.muted
+                  font.family: Style.font.family
+                  font.pixelSize: Style.font.caption
+                  elide: Text.ElideRight
+                }
+              }
+
+              MouseArea {
+                anchors.fill: parent
+                onClicked: root.monitorValue = modelData.value
+              }
+            }
+          }
         }
       }
 
