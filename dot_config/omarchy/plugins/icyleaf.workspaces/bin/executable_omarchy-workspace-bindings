@@ -193,29 +193,62 @@ cmd_add() {
   open_form '{"mode":"new","index":-1,"class":"","title":"","monitor":null,"slot":1,"focus":false}'
 }
 
-# Open the editor prefilled for the selected binding (by index, so same-class
-# scene variants stay distinct).
+# Open the editor prefilled for the selected binding. The list is two lines per
+# binding: "<class> · <title?> · <silent|switch>" then
+# "M1, DP-1, Workspace 10". The selection is matched back to an index by its
+# exact rendered signature, so same-class scene variants stay distinct.
 cmd_manage() {
-  local options=() selected index prefill file
+  local file index=-1 selected
+  local -a options=() sigs=()
+  declare -A mon_display=()
   ensure_state
   file="$(state_file)"
-  mapfile -t options < <(jq -r '
-    .bindings
-    | to_entries[]
-    | ["󰍹",
-       (.value.class + "  →  " + (.value.target.monitor | to_entries[0] | "\(.key):\(.value)")
-         + "  workspace " + (.value.target.slot | tostring)
-         + (if (.value.focus // false) then "  ·  switch" else "  ·  silent" end)),
-       (.key | tostring)]
-    | @tsv
-  ' "$file")
+
+  # Use unit-separator (not tab) so empty fields (a missing title) survive
+  # `read`: tab counts as IFS whitespace and would collapse empty fields.
+  while IFS=$'\x1f' read -r key disp; do
+    [[ -n $key ]] && mon_display["$key"]="$disp"
+  done < <(hyprctl -j monitors 2>/dev/null | jq -r '
+    .[] | { id: ("id:" + (.id | tostring)),
+            name: ("name:" + (.name // "")),
+            desc: ("desc:" + (.description // "")),
+            disp: ("M" + ((.id + 1) | tostring) + ", " + (.name // "")) }
+    | . as $m | ($m.id, $m.name, $m.desc) as $k | [$k, $m.disp] | join("\u001f")')
+
+  local count i class title kind value slot focus key disp label subtext
+  count=$(jq -r '.bindings | length' "$file")
+  for ((i = 0; i < count; i++)); do
+    IFS=$'\x1f' read -r class title kind value slot focus < <(jq -r --argjson i "$i" '
+      .bindings[$i]
+      | [ .class, (.title // ""),
+          (.target.monitor | to_entries[0].key),
+          (.target.monitor | to_entries[0].value | tostring),
+          (.target.slot | tostring),
+          ((.focus // false) | tostring) ] | join("\u001f")' "$file")
+    key="${kind}:${value}"
+    disp="${mon_display[$key]:-${kind}:${value}}"
+    label="$class"
+    [[ -n $title ]] && label+=" · $title"
+    if [[ $focus == "true" ]]; then label+=" · switch"; else label+=" · silent"; fi
+    subtext="${disp}, Workspace ${slot}"
+    options+=("󰍹"$'\t'"${label}"$'\t'"${subtext}")
+    sigs+=("${label}"$'\t'"${subtext}")
+  done
+
   if (( ${#options[@]} == 0 )); then
     notify "Workspace Bindings" "There are no bindings yet."
     return 0
   fi
-  selected=$(omarchy menu select "Edit binding" "${options[@]}" -- --width 720 --maxheight 620) || return 0
-  index="${selected#*$'\t'}"
-  [[ $index =~ ^[0-9]+$ ]] || return 0
+  selected=$(omarchy menu select "Edit binding" "${options[@]}" -- --width 820 --maxheight 640) || return 0
+  for ((i = 0; i < ${#sigs[@]}; i++)); do
+    if [[ ${sigs[i]} == "$selected" ]]; then
+      index=$i
+      break
+    fi
+  done
+  (( index >= 0 )) || return 0
+
+  local prefill
   prefill=$(jq -c --argjson i "$index" '
     .bindings[$i] as $b
     | { mode: "edit", index: $i, class: $b.class, title: ($b.title // ""),
@@ -224,6 +257,19 @@ cmd_manage() {
         slot: $b.target.slot, focus: ($b.focus // false) }
   ' "$file")
   open_form "$prefill"
+}
+
+# Remove a binding by index (used by the editor's Delete button).
+cmd_remove_index() {
+  [[ $# -eq 1 && $1 =~ ^[0-9]+$ ]] || die "usage: remove-index <index>"
+  ensure_state
+  local file
+  file="$(state_file)"
+  local tmp
+  tmp="$(mktemp "${file}.XXXXXX")"
+  jq --argjson i "$1" 'del(.bindings[$i])' "$file" >"$tmp"
+  mv "$tmp" "$file"
+  apply_bindings
 }
 
 # Called back by the plugin form:
@@ -320,6 +366,7 @@ main() {
     add) shift || true; cmd_add "$@" ;;
     manage) shift || true; cmd_manage "$@" ;;
     save-binding) shift || true; cmd_save_binding "$@" ;;
+    remove-index) shift || true; cmd_remove_index "$@" ;;
     set) shift || true; cmd_set "$@" ;;
     remove) shift || true; cmd_remove "$@" ;;
     list) shift || true; cmd_list "$@" ;;

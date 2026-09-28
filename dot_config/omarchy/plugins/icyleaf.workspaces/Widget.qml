@@ -758,6 +758,7 @@ BarWidget {
       if (monitor) selected = "desc:" + String(monitor.description || "")
     }
     root.formPrefillData = prefill
+    bindingForm.allowDelete = String(prefill.mode || "") === "edit"
     bindingForm.monitorOptions = options
     bindingForm.openForm({
       class: prefill.class,
@@ -787,6 +788,14 @@ BarWidget {
 
   function closeBindingForm() {
     bindingForm.closeForm()
+  }
+
+  function deleteBindingForm() {
+    var prefill = root.formPrefillData || {}
+    bindingForm.closeForm()
+    if (prefill.index === undefined || Number(prefill.index) < 0) return
+    bindingSaver.command = [root.helperPath, "remove-index", String(prefill.index)]
+    bindingSaver.running = true
   }
 
   Process {
@@ -1384,6 +1393,7 @@ BarWidget {
   BindingForm {
     id: bindingForm
     onSaveRequested: function(result) { root.saveBindingForm(result) }
+    onDeleteRequested: function() { root.deleteBindingForm() }
     onCancelRequested: function() { root.closeBindingForm() }
   }
 }

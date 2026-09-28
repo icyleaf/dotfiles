@@ -13,11 +13,13 @@ PanelWindow {
   id: root
 
   property bool formOpen: false
-  property var monitorOptions: [] // [{ value: "desc:...", label: "M1 · DP-1" }]
+  property bool allowDelete: false
+  property var monitorOptions: [] // [{ value: "desc:...", label: "M1 · DP-1", description }]
   property var initial: ({})
 
   signal saveRequested(var result)
   signal cancelRequested()
+  signal deleteRequested()
 
   property string classText: ""
   property string titleText: ""
@@ -253,6 +255,13 @@ PanelWindow {
         Layout.fillWidth: true
         Layout.topMargin: Style.space(6)
         spacing: Style.space(10)
+
+        Button {
+          visible: root.allowDelete
+          text: "Delete"
+          bordered: true
+          onClicked: root.deleteRequested()
+        }
 
         Item { Layout.fillWidth: true }
 
