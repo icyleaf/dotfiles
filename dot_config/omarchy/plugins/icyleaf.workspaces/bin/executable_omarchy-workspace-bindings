@@ -143,14 +143,14 @@ apply_bindings() {
 # ---------------------------------------------------------------------------
 
 choose_monitor_spec() {
-  local options=() id badge name desc active selected key
-  while IFS=$'\t' read -r id name desc active; do
+  local options=() id badge name desc selected key
+  while IFS=$'\t' read -r id name desc; do
     [[ -n $name ]] || continue
     badge="M$((id + 1))"
-    options+=("󰍹"$'\t'"${badge} · ${name} · ws ${active}"$'\t'"desc:${desc}")
+    options+=("󰍹"$'\t'"${badge} · ${name}"$'\t'"desc:${desc}")
   done < <(hyprctl -j monitors 2>/dev/null | jq -r '
     .[] | select((.disabled // false) == false)
-    | [(.id | tostring), (.name // ""), (.description // ""), ((.activeWorkspace.id // 0) | tostring)] | @tsv')
+    | [(.id | tostring), (.name // ""), (.description // "")] | @tsv')
   if (( ${#options[@]} == 0 )); then
     notify "Workspace Bindings" "No connected monitors were found."
     return 1
