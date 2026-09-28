@@ -51,6 +51,7 @@ config/**
 functions/**
 bin/**
 docs/**
+scripts/**
 .scratch/**
 AGENTS.md
 README.md

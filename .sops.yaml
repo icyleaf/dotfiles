@@ -1,18 +1,37 @@
 ---
 keys:
-  - &main age1r7hzm4zqsyu880e3f8yn97g7d6jqtxaeg8jjk2xpzqv2d9zgkelq00nmxn
+  # achron (shared/main key)
+  - &achron age1r7hzm4zqsyu880e3f8yn97g7d6jqtxaeg8jjk2xpzqv2d9zgkelq00nmxn
+  # darktemplar
+  - &darktemplar age1af2dnn665w2wkeq0k8kwamehtxuqf3gz22rkxj933ctfs2xzqq3qnl7qw4
 creation_rules:
-  # Secret Profiles: environment variables and SSH private keys per device
-  # Encrypt with: age -r <pubkey> -o secrets/profiles/<profile>/local.zsh.age <plaintext>
-  # Decrypt with: age -d -i ~/.local/share/age/default-key.txt <file>.age
+  # Shared secrets: readable by every machine (encrypted to all recipients).
+  # Encrypt with: age -R secrets/recipients.txt -o <file>.age <plaintext>
+  # Re-encrypt everything after adding a machine: scripts/reencrypt-secrets.sh
+  - path_regex: secrets/base/.+\.age$
+    age:
+      - *achron
+      - *darktemplar
+
+  # Profile-only secrets: readable by the owning machine alone.
+  - path_regex: secrets/profiles/achron/.+\.age$
+    age: *achron
+  - path_regex: secrets/profiles/darktemplar/.+\.age$
+    age: *darktemplar
+
+  # Fallback for any other secrets/**/*.age: full recipient set.
   - path_regex: secrets/.+\.age$
-    age: *main
+    age:
+      - *achron
+      - *darktemplar
 
   # Legacy: zsh encrypted env files (dotenv-style, use --input-type/--output-type dotenv)
   # See: https://github.com/getsops/sops/issues/982
   - path_regex: config/general/zsh/.*.enc.zsh
     unencrypted-regex: '^(PATH|LDFLAGS|CPPFLAGS)$'
-    age: *main
+    age:
+      - *achron
+      - *darktemplar
     pgp: ''
 stores:
   yaml:

@@ -18,7 +18,9 @@ Declarative dotfiles managed by [Chezmoi](https://chezmoi.io). Targets macOS and
 
 **Managed SSH Config** — the plaintext `~/.ssh/config` deployed from `private_dot_ssh/config`, containing only `Include config.d/*.conf` and the global `Host *` defaults. All `Host` entries live in encrypted config fragments; `~/.ssh/config.d/` is fully generated and its stale `*.conf` files are pruned on each apply.
 
-**Age Key** — the single shared age private key stored at `~/.local/share/age/default-key.txt`. All secrets in the repository are encrypted against the corresponding public key. One key serves all devices.
+**Age Key** — a per-machine age key pair used to decrypt repository secrets. The active identity is resolved at `chezmoi init` time: `~/.local/share/age/<machine_profile>.txt` when present, otherwise the shared `~/.local/share/age/default-key.txt`. Shared secrets are encrypted to every machine's public key (see Recipient Set); profile-only secrets to the owning machine's key alone.
+
+**Recipient Set** — the list of age public keys authorised to decrypt shared secrets, stored in `secrets/recipients.txt` (public keys only, safe to commit). `secrets/base/**` is encrypted to every recipient; after adding a machine's key, run `scripts/reencrypt-secrets.sh` to re-encrypt the shared secrets.
 
 **Profile Selection** — the mechanism in `.chezmoi.toml.tmpl` that resolves `machine_profile`. Order: (1) hostname matches a known profile name → silent auto-select; (2) no match and stdin is a TTY → interactive prompt listing known profiles, accepting a custom string; (3) no TTY → `custom`.
 

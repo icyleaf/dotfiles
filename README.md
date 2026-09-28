@@ -61,37 +61,69 @@ Sensitive private data (SSH keys, environment variables) is managed using Age en
 
 ### Prerequisite
 
-Before running `chezmoi apply` for the first time, you must ensure the shared Age private key is present in your home directory:
+Each machine has its own Age key pair. The active identity is resolved at
+`chezmoi init` time as `~/.local/share/age/<machine_profile>.txt` when present,
+otherwise the shared `~/.local/share/age/default-key.txt`. To use an existing
+key, place it at the resolved path before the first apply:
 
 ```bash
 mkdir -p ~/.local/share/age
-cp /path/to/your/backup/default-key.txt ~/.local/share/age/default-key.txt
-chmod 600 ~/.local/share/age/default-key.txt
+cp /path/to/your/backup/<profile>.txt ~/.local/share/age/    # or default-key.txt
+chmod 600 ~/.local/share/age/<profile>.txt
 ```
 
-If it is not present on the first apply, the bootstrap script `run_before_once_setup-age-key.sh` will automatically generate a new key pair at `~/.local/share/age/default-key.txt`. A newly generated key **cannot** decrypt existing repository secrets — restore the shared private key from backup first.
+If no key is present, `run_once_before_setup-age-key.sh` generates one at the
+resolved path. A newly generated key **cannot** decrypt existing repository
+secrets — restore the matching private key from backup, or add its public key to
+`secrets/recipients.txt` and re-encrypt (see below).
 
-### How to Encrypt a New File
+### Shared vs Profile Secrets
 
-All encrypted secrets reside in the `secrets/` directory.
+- `secrets/base/**` — shared by every machine; encrypted to **all** recipients
+  listed in `secrets/recipients.txt` (public keys only, safe to commit).
+- `secrets/profiles/<profile>/**` — readable by the owning machine alone;
+  encrypted to that machine's key.
 
-To encrypt a new secret (e.g., a file `foo` in a profile directory):
+### Add a Machine (Recipient)
+
+1. On the new machine, print its public key:
+   ```bash
+   age-keygen -y ~/.local/share/age/<profile>.txt
+   ```
+2. Append the public key to `secrets/recipients.txt`.
+3. Re-encrypt the shared secrets so the new machine can read them:
+   ```bash
+   scripts/reencrypt-secrets.sh                    # uses ~/.local/share/age/default-key.txt
+   scripts/reencrypt-secrets.sh /path/to/key.txt   # or an explicit identity
+   ```
+4. Commit `secrets/recipients.txt` and the re-encrypted `secrets/base/**`.
+
+### How to Encrypt a New Shared Secret
 
 ```bash
-age -r age1r7hzm4zqsyu880e3f8yn97g7d6jqtxaeg8jjk2xpzqv2d9zgkelq00nmxn -o secrets/profiles/<profile_name>/foo.age foo
+age -R secrets/recipients.txt -o secrets/base/foo.age foo
 ```
 
-### How to Edit and Re-encrypt Secrets
+### How to Encrypt a New Profile Secret
 
-To edit an existing encrypted file:
+Encrypt to that profile's public key alone:
 
 ```bash
-# Decrypt, edit, and re-encrypt
-age -d -i ~/.local/share/age/default-key.txt secrets/profiles/<profile_name>/foo.age > /tmp/foo
+age -r <profile_public_key> -o secrets/profiles/<profile_name>/foo.age foo
+```
+
+### How to Edit and Re-encrypt a Secret
+
+```bash
+# Shared secret
+age -d -i ~/.local/share/age/default-key.txt secrets/base/foo.age > /tmp/foo
 nano /tmp/foo
-age -r age1r7hzm4zqsyu880e3f8yn97g7d6jqtxaeg8jjk2xpzqv2d9zgkelq00nmxn -o secrets/profiles/<profile_name>/foo.age /tmp/foo
+age -R secrets/recipients.txt -o secrets/base/foo.age /tmp/foo
 rm /tmp/foo
 ```
+
+For a profile secret, decrypt with that machine's identity and re-encrypt with
+`age -r <profile_public_key>`.
 
 ### How to Add a New Secret Profile
 
@@ -99,9 +131,9 @@ rm /tmp/foo
    ```bash
    mkdir -p secrets/profiles/<profile_name>/ssh
    ```
-2. Encrypt the profile's environment variables:
+2. Encrypt the profile's environment variables to that profile's key:
    ```bash
-   age -r age1r7hzm4zqsyu880e3f8yn97g7d6jqtxaeg8jjk2xpzqv2d9zgkelq00nmxn -o secrets/profiles/<profile_name>/local.zsh.age local.zsh
+   age -r <profile_public_key> -o secrets/profiles/<profile_name>/local.zsh.age local.zsh
    ```
 3. Declare which SSH config groups the profile should receive (see below):
    ```bash

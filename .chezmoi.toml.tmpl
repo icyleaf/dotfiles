@@ -28,6 +28,15 @@
 {{   $profile = "custom" }}
 {{ end }}
 
+{{/* Resolve this machine's age identity: prefer a per-profile key named after
+     the profile (e.g. ~/.local/share/age/darktemplar.txt), falling back to the
+     shared default-key.txt. */}}
+{{ $ageKey := joinPath .chezmoi.homeDir ".local" "share" "age" "default-key.txt" }}
+{{ $profileKey := joinPath .chezmoi.homeDir ".local" "share" "age" (printf "%s.txt" $profile) }}
+{{ if (glob $profileKey) }}
+{{   $ageKey = $profileKey }}
+{{ end }}
+
 # Persist the active source directory across `chezmoi init` regenerations.
 # Without this, a bare `chezmoi init` falls back to the default empty source
 # and `chezmoi apply` becomes a no-op.
@@ -38,7 +47,7 @@ encryption = "age"
 [data]
     os = {{ .chezmoi.os | quote }}
     machine_profile = {{ $profile | quote }}
-    age_identity = {{ joinPath .chezmoi.homeDir ".local" "share" "age" "default-key.txt" | quote }}
+    age_identity = {{ $ageKey | quote }}
 
     # Git configuration
     git_name = {{ promptStringOnce . "git_name" "What is your git author name?" | quote }}
@@ -52,5 +61,5 @@ encryption = "age"
     headless = {{ $headless }}
 
 [age]
-    identity = {{ joinPath .chezmoi.homeDir ".local" "share" "age" "default-key.txt" | quote }}
+    identity = {{ $ageKey | quote }}
     recipient = "age1r7hzm4zqsyu880e3f8yn97g7d6jqtxaeg8jjk2xpzqv2d9zgkelq00nmxn"
