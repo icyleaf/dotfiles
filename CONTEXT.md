@@ -8,9 +8,15 @@ Declarative dotfiles managed by [Chezmoi](https://chezmoi.io). Targets macOS and
 
 **Chezmoi Source Directory** — `~/.dotfiles/`. The single source of truth. All files follow Chezmoi naming conventions (`dot_`, `executable_`, `encrypted_`, `exact_`, `private_`, `run_once_`, `run_onchange_`, `run_before_once_`).
 
-**Secret Profile** — a named, per-device collection of secrets: environment variables (deployed as `~/.config/zsh/local.zsh`) and any device-specific SSH private keys. Identified by a string key (`machine_profile`). Lives under `secrets/profiles/<name>/` in the Chezmoi source directory.
+**Secret Profile** — a named, per-device collection of secrets: environment variables (deployed as `~/.config/zsh/local.zsh`), device-specific SSH private keys, and profile-only SSH config fragments. Identified by a string key (`machine_profile`). Lives under `secrets/profiles/<name>/` in the Chezmoi source directory.
 
-**Base Secret** — an SSH private key that every device receives, regardless of profile. Lives under `secrets/base/` in the Chezmoi source directory.
+**Base Secret** — a secret that every device receives, regardless of profile. Covers shared SSH private keys and shared SSH config groups, both living under `secrets/base/` in the Chezmoi source directory (`*.age` keys and `ssh_config.d/<group>/` fragments).
+
+**SSH Config Group** — a named, reusable set of encrypted SSH `Host` fragments under `secrets/base/ssh_config.d/<group>/`, decrypted and deployed to `~/.ssh/config.d/<group>_<fragment>.conf`. A profile opts into groups via its Profile SSH Whitelist.
+
+**Profile SSH Whitelist** — `secrets/profiles/<profile>/ssh_config.groups`, a plaintext manifest listing the SSH Config Groups (one per line, `#` comments allowed) that a profile receives. Falls back to the `common` group when absent.
+
+**Managed SSH Config** — the plaintext `~/.ssh/config` deployed from `private_dot_ssh/config`, containing only `Include config.d/*.conf` and the global `Host *` defaults. All `Host` entries live in encrypted config fragments; `~/.ssh/config.d/` is fully generated and its stale `*.conf` files are pruned on each apply.
 
 **Age Key** — the single shared age private key stored at `~/.local/share/age/default-key.txt`. All secrets in the repository are encrypted against the corresponding public key. One key serves all devices.
 

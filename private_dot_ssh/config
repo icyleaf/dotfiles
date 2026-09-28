@@ -1,0 +1,6 @@
+Include config.d/*.conf
+
+Host *
+  ServerAliveCountMax 10
+  ServerAliveInterval 20
+  # WarnWeakCrypto no

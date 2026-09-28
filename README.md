@@ -103,4 +103,51 @@ rm /tmp/foo
    ```bash
    age -r age1r7hzm4zqsyu880e3f8yn97g7d6jqtxaeg8jjk2xpzqv2d9zgkelq00nmxn -o secrets/profiles/<profile_name>/local.zsh.age local.zsh
    ```
-3. Commit the encrypted `.age` files (never commit the plaintext versions).
+3. Declare which SSH config groups the profile should receive (see below):
+   ```bash
+   printf 'common\n' > secrets/profiles/<profile_name>/ssh_config.groups
+   ```
+4. Commit the encrypted `.age` files (never commit the plaintext versions).
+
+### SSH Config Groups
+
+SSH `Host` entries live in encrypted, reusable fragments instead of a single
+plaintext `~/.ssh/config`:
+
+- `secrets/base/ssh_config.d/<group>/<fragment>.conf.age` — shared groups
+  (`common`, `homelab`, `tokyo`, `vps`, `work_wst`). Each fragment is decrypted to
+  `~/.ssh/config.d/<group>_<fragment>.conf`.
+- `secrets/profiles/<profile>/ssh_config.d/<fragment>.conf.age` — fragments
+  exclusive to one profile, decrypted to
+  `~/.ssh/config.d/<profile>_<fragment>.conf`.
+
+The managed, plaintext `~/.ssh/config` (source: `private_dot_ssh/config`) holds only
+`Include config.d/*.conf` plus the global `Host *` defaults. A profile selects
+shared groups through `secrets/profiles/<profile>/ssh_config.groups`, one group
+name per line (`common` is used when the manifest is absent):
+
+```
+common
+homelab
+tokyo
+```
+
+`run_onchange_deploy-secrets.sh` regenerates `~/.ssh/config.d/*.conf` on every
+apply and removes stale fragments, so dropping a group from the manifest or
+deleting a `.age` file also removes its deployed config.
+
+To add a host:
+
+```bash
+# 1. Create a plaintext fragment (e.g. secrets/base/ssh_config.d/homelab/20_db.conf)
+vim secrets/base/ssh_config.d/homelab/20_db.conf
+
+# 2. Encrypt it into the group
+age -r age1r7hzm4zqsyu880e3f8yn97g7d6jqtxaeg8jjk2xpzqv2d9zgkelq00nmxn \
+  -o secrets/base/ssh_config.d/homelab/20_db.conf.age \
+  secrets/base/ssh_config.d/homelab/20_db.conf
+rm secrets/base/ssh_config.d/homelab/20_db.conf   # never commit plaintext
+
+# 3. Deploy
+chezmoi apply
+```
