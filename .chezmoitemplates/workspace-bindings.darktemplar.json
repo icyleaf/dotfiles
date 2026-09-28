@@ -2,55 +2,44 @@
   "version": 1,
   "bindings": [
     {
-      "class": "^org\\.telegram\\.desktop$",
+      "class": "^io.github.yukigram$",
       "target": {
         "monitor": {
-          "desc": "LG Electronics LG HDR 4K 0x0001C243"
+          "desc": "LG Electronics LG HDR 4K 0x0000323A"
         },
-        "slot": 9
+        "slot": 10
       },
-      "focus": true
+      "focus": false
     },
     {
       "class": "^wechat$",
       "target": {
         "monitor": {
-          "desc": "LG Electronics LG HDR 4K 0x0001C243"
+          "desc": "LG Electronics LG HDR 4K 0x0000323A"
         },
-        "slot": 9
+        "slot": 10
       },
-      "focus": true
+      "focus": false
     },
     {
       "class": "^discord$",
       "target": {
         "monitor": {
-          "desc": "LG Electronics LG HDR 4K 0x0001C243"
+          "desc": "LG Electronics LG HDR 4K 0x0000323A"
         },
         "slot": 10
       },
-      "focus": true
+      "focus": false
     },
     {
       "class": "^vesktop$",
       "target": {
         "monitor": {
-          "desc": "LG Electronics LG HDR 4K 0x0001C243"
+          "desc": "LG Electronics LG HDR 4K 0x0000323A"
         },
         "slot": 10
       },
       "focus": true
-    },
-    {
-      "class": "^chrome-.*$",
-      "title": "(LINE|Line)",
-      "target": {
-        "monitor": {
-          "desc": "LG Electronics LG HDR 4K 0x0001C243"
-        },
-        "slot": 8
-      },
-      "focus": false
     }
   ]
 }
