@@ -296,6 +296,18 @@ BarWidget {
   property int probeTick: 0
   property int syncToken: 0
 
+  // Hyprland raw events that change which windows exist where vs. only state.
+  readonly property var structuralEvents: [
+    "openwindow", "closewindow", "movewindow", "movewindowv2",
+    "createworkspace", "destroyworkspace", "moveworkspace", "moveworkspacev2",
+    "changefloatingmode", "fullscreen", "pin",
+    "togglegroup", "moveintogroup", "moveoutofgroup"
+  ]
+  readonly property var stateEvents: [
+    "workspace", "focusedworkspace", "activewindow", "urgent", "activespecial",
+    "focusedmon", "windowtitle", "windowtitlev2"
+  ]
+
   readonly property color iconTintColor: root.bar ? root.bar.barForeground : Color.foreground
   readonly property bool isLightTheme: {
     var color = root.bar ? root.bar.background : Color.background
@@ -853,18 +865,17 @@ BarWidget {
     function onRawEvent(event) {
       if (!event) return
       var name = String(event.name || "")
-      if (name === "openwindow" || name === "closewindow" || name === "movewindow"
-          || name === "createworkspace" || name === "destroyworkspace") {
+      // Events that change which windows exist where (bump + re-probe icons).
+      // v2 variants exist alongside the classic names on recent Hyprland.
+      if (root.structuralEvents.indexOf(name) !== -1) {
         root.bumpSync()
         root.probeOverrideWindows()
         if (name === "openwindow") root.requestRouting(root.eventWindowAddress(event.data))
         if (name === "closewindow") root.forgetRouted(root.eventWindowAddress(event.data))
         return
       }
-      if (name === "workspace" || name === "focusedworkspace"
-          || name === "activewindow" || name === "urgent" || name === "activespecial") {
-        root.bumpSync()
-      }
+      // Events that change focus/occupancy state only.
+      if (root.stateEvents.indexOf(name) !== -1) root.bumpSync()
     }
   }
 
@@ -1034,11 +1045,22 @@ BarWidget {
           var _clients = root.clientInfo
           return root.workspaceById(wsId)
         }
-        readonly property bool occupied: workspace !== null && workspace.toplevels && workspace.toplevels.values.length > 0
+        // These must read syncToken/clientInfo directly: `workspace` returns the
+        // same object reference, so depending on it alone would not re-evaluate
+        // when a window moves in or out of the workspace.
+        readonly property bool occupied: {
+          var _sync = root.syncToken
+          var _clients = root.clientInfo
+          return workspace !== null && workspace.toplevels && workspace.toplevels.values.length > 0
+        }
         readonly property bool activeOnMonitor: root.monitor !== null && root.monitor.activeWorkspace !== null && root.monitor.activeWorkspace.id === wsId
         readonly property bool focusedGlobally: Hyprland.focusedWorkspace !== null && Hyprland.focusedWorkspace.id === wsId
         readonly property bool isActive: activeOnMonitor || focusedGlobally
-        readonly property var biggestWindow: root.biggestWindowFor(workspace)
+        readonly property var biggestWindow: {
+          var _sync = root.syncToken
+          var _clients = root.clientInfo
+          return root.biggestWindowFor(workspace)
+        }
         readonly property string iconSource: {
           var _tick = root.probeTick
           var _clients = root.clientInfo
@@ -1129,7 +1151,10 @@ BarWidget {
         readonly property string specialName: String(modelData.name || "")
         readonly property string specialIcon: String(modelData.icon || "󰘳")
         readonly property var ws: root.specialWorkspaceByName(specialName)
-        readonly property bool occupied: ws !== null && ws.toplevels && ws.toplevels.values.length > 0
+        readonly property bool occupied: {
+          var _sync = root.syncToken
+          return ws !== null && ws.toplevels && ws.toplevels.values.length > 0
+        }
         readonly property bool activeOnScreen: root.isSpecialActive(specialName)
 
         visible: {
