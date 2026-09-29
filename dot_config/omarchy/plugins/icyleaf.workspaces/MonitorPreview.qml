@@ -23,7 +23,7 @@ import "LayoutModel.js" as LayoutModel
 PanelWindow {
   id: root
 
-  required property Item hostBar
+  required property var hostBar
   property bool open: false
   property int preselectMonitorId: -1
   // A full-screen PanelWindow created as a child of a per-monitor bar surface
