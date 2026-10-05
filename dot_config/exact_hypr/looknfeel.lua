@@ -37,5 +37,12 @@ hl.config({
   xwayland = {
     enabled = true,
     force_zero_scaling = true
+  },
+
+  -- Do not steal focus (and warp the cursor across monitors) when a window
+  -- requests activation, e.g. an incoming IM message or a newly opened app.
+  -- Overrides Omarchy's default focus_on_activate = true.
+  misc = {
+    focus_on_activate = false,
   }
 })
