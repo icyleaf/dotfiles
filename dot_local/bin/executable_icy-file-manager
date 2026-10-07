@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+#
+# icy-file-manager: middleware wrapper around the file manager
+#
+# This is the Omarchy-agnostic entry point used by Hyprland/Waybar configs.
+# Replace the implementation below to remove the Omarchy dependency.
+#
+# To replace: implement the desired behaviour directly here and remove
+# the delegation to hyprlock.
+
+if command -v "omarchy-launch-nautilus" >/dev/null 2>&1; then
+  exec "omarchy-launch-nautilus" "$@"
+elif command -v "nemo" >/dev/null 2>&1; then
+  exec "nemo" "$@"
+else
+  echo "icy-file-manager: 'nemo' or 'omarchy-launch-nautilus' not found. Install Omarchy or implement a replacement." >&2
+  exit 127
+fi
