@@ -40,5 +40,25 @@ mkdir -p "${themes_path}"
 # overwritten, user-added themes are left untouched.
 cp -rf "${tmp_clone}/fcitx5/src/." "${themes_path}/"
 
+# Normalize Catppuccin themes: enable rounded SVGs and balanced text padding
+find "${themes_path}" -name "theme.conf" -exec sed -i \
+  -e 's/ScaleWithDPI=True/ScaleWithDPI=False/g' \
+  -e 's/Spacing=3/Spacing=3/g' \
+  -e 's/# Image=panel.svg/Image=panel.svg/g' \
+  -e 's/# Image=highlight.svg/Image=highlight.svg/g' \
+  -e '/\[InputPanel\/Background\/Margin\]/,+4s/Left=[0-9]\+/Left=9/' \
+  -e '/\[InputPanel\/Background\/Margin\]/,+4s/Right=[0-9]\+/Right=9/' \
+  -e '/\[InputPanel\/Background\/Margin\]/,+4s/Top=[0-9]\+/Top=8/' \
+  -e '/\[InputPanel\/Background\/Margin\]/,+4s/Bottom=[0-9]\+/Bottom=8/' \
+  -e '/\[InputPanel\/TextMargin\]/,+4s/Left=[0-9]\+/Left=9/' \
+  -e '/\[InputPanel\/TextMargin\]/,+4s/Right=[0-9]\+/Right=9/' \
+  -e '/\[InputPanel\/TextMargin\]/,+4s/Top=[0-9]\+/Top=5/' \
+  -e '/\[InputPanel\/TextMargin\]/,+4s/Bottom=[0-9]\+/Bottom=5/' \
+  -e '/\[InputPanel\/Highlight\/Margin\]/,+4s/Left=[0-9]\+/Left=9/' \
+  -e '/\[InputPanel\/Highlight\/Margin\]/,+4s/Right=[0-9]\+/Right=9/' \
+  -e '/\[InputPanel\/Highlight\/Margin\]/,+4s/Top=[0-9]\+/Top=4/' \
+  -e '/\[InputPanel\/Highlight\/Margin\]/,+4s/Bottom=[0-9]\+/Bottom=4/' \
+  {} +
+
 echo "fcitx5 themes installed to ${themes_path}."
 {{- end }}

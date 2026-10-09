@@ -1,4 +1,4 @@
-# [Hotkey]
+[Hotkey]
 # Enumerate when holding modifier of Toggle key
 # EnumerateWithTriggerKeys=True
 # Enumerate Input Method Forward
@@ -21,8 +21,8 @@
 # [Hotkey/DeactivateKeys]
 # 0=Hangul_Romaja
 
-# [Hotkey/AltTriggerKeys]
-# 0=Shift_L
+[Hotkey/AltTriggerKeys]
+0=Shift+Shift_L
 
 # [Hotkey/EnumerateGroupForwardKeys]
 # 0=Super+space
@@ -51,7 +51,7 @@ ActiveByDefault=True
 # Reset state on Focus In
 # resetStateWhenFocusIn=No
 # Share Input State
-ShareInputState=All
+# ShareInputState=No
 # Show preedit in application
 # PreeditEnabledByDefault=True
 # Show Input Method Information when switch input method
