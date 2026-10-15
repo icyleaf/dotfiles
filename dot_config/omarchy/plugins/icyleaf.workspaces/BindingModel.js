@@ -15,8 +15,9 @@
 // ---------------------------------------------------------------------------
 
 function normalizeAddress(value) {
-  var address = String(value === null || value === undefined ? "" : value).toLowerCase()
-  return address.indexOf("0x") === 0 ? address : ""
+  var address = String(value === null || value === undefined ? "" : value).trim().toLowerCase()
+  if (!address || address === "0x") return ""
+  return address.indexOf("0x") === 0 ? address : ("0x" + address)
 }
 
 // Parse `hyprctl clients -j` output into an address -> window descriptor map.

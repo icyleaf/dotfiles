@@ -3,8 +3,8 @@
 -- Evince PDF viewer fullscreen override
 o.window("org.gnome.Evince", { fullscreen = false })
 
--- WeChat popups focus fix
--- o.window({ class = "wechat", float = true }, { stay_focused = true })
+-- WeChat
+o.window({ class = "(wechat|Wechat)" }, { tile = true })
 o.window({ class = "(wechat|Wechat)", title = "(Moments)" }, { float = true, center = true })
 o.window({ class = "(wechat|Wechat)", title = "(Photos and Videos)" }, { float = true, fullscreen = true })
 

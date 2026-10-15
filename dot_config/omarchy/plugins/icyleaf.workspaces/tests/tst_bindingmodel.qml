@@ -273,4 +273,19 @@ TestCase {
     compare(Object.keys(BindingModel.parseClientWindows("")).length, 0)
     compare(Object.keys(BindingModel.parseClientWindows("null")).length, 0)
   }
+
+  function test_normalizeAddressAcceptsBareHexAndPrefix() {
+    compare(BindingModel.normalizeAddress("0x6457ebc63cf0"), "0x6457ebc63cf0")
+    compare(BindingModel.normalizeAddress("6457ebc63cf0"), "0x6457ebc63cf0")
+    compare(BindingModel.normalizeAddress("  6457EBC63CF0  "), "0x6457ebc63cf0")
+    compare(BindingModel.normalizeAddress("0xABC"), "0xabc")
+    compare(BindingModel.normalizeAddress("ABC"), "0xabc")
+  }
+
+  function test_normalizeAddressRejectsInvalid() {
+    compare(BindingModel.normalizeAddress(""), "")
+    compare(BindingModel.normalizeAddress(null), "")
+    compare(BindingModel.normalizeAddress(undefined), "")
+    compare(BindingModel.normalizeAddress("0x"), "")
+  }
 }
