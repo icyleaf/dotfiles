@@ -50,7 +50,7 @@ Panel {
   property var fans: []
   readonly property var groupedTemps: groupTemps(temps)
 
-  readonly property int refreshSeconds: Math.max(1, Number(setting("refreshSeconds", 2)) || 2)
+  readonly property int refreshSeconds: Math.max(1, Number(setting("refreshSeconds", 3)) || 3)
   readonly property string diskPath: String(setting("diskPath", "/") || "/")
   readonly property bool showGpu: boolSetting("showGpu", true)
   readonly property string displayMode: String(setting("displayMode", "utilization"))

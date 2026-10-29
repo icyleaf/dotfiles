@@ -17,7 +17,7 @@
     "category": "System",
     "allowMultiple": false,
     "defaults": {
-      "refreshSeconds": 2,
+      "refreshSeconds": 3,
       "diskPath": "/",
       "showGpu": true,
       "displayMode": "utilization"
@@ -30,7 +30,7 @@
         "min": 1,
         "max": 60,
         "step": 1,
-        "defaultValue": 2
+        "defaultValue": 3
       },
       {
         "key": "diskPath",

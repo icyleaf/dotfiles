@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 # This script collects system status information including host, uptime, CPU, memory, load average, disk usage, GPU status, and CPU details.
-# Copy from https://github.com/AyushKr2003/omarchy-dotfiles
-# Copyright (c) Ayush Kumar
+# Copyright (c) Ayush Kumar, modified and optimized for omarchy by icyleaf
 
 set -uo pipefail
 
 disk_path="${1:-/}"
 
 # Host & Uptime Info
-uptime_sec="$(awk '{print int($1)}' /proc/uptime 2>/dev/null || echo 0)"
+read -r uptime_raw _ < /proc/uptime 2>/dev/null || uptime_raw="0"
+uptime_sec="${uptime_raw%%.*}"
 uptime_hrs=$((uptime_sec / 3600))
 uptime_mins=$(((uptime_sec % 3600) / 60))
 if [ "$uptime_hrs" -gt 0 ]; then
@@ -17,7 +17,7 @@ else
   uptime_str="${uptime_mins}m"
 fi
 kernel_str="$(uname -r 2>/dev/null || echo 'Linux')"
-host_name="$(hostname 2>/dev/null || echo 'localhost')"
+host_name="${HOSTNAME:-localhost}"
 printf "host\t%s\t%s\t%s\n" "$host_name" "$kernel_str" "$uptime_str"
 
 # CPU Info
@@ -26,11 +26,10 @@ awk '
     idle = $5
     total = 0
     for (i = 2; i <= NF; i++) total += $i
-    cores = 0
-    while ((getline line < "/proc/cpuinfo") > 0) {
-      if (line ~ /^processor[[:space:]]*:/) cores++
-    }
-    close("/proc/cpuinfo")
+    next
+  }
+  /^cpu[0-9]/ { cores++ }
+  END {
     if (cores < 1) cores = 1
     printf "cpu\t%s\t%s\t%s\n", idle, total, cores
   }
@@ -54,7 +53,8 @@ awk '
 ' /proc/meminfo
 
 # Load Average
-awk '{ printf "load\t%s\t%s\t%s\n", $1, $2, $3 }' /proc/loadavg
+read -r l1 l5 l15 _ < /proc/loadavg
+printf "load\t%s\t%s\t%s\n" "$l1" "$l5" "$l15"
 
 # Disk Info
 df -P -B1 "$disk_path" 2>/dev/null | awk 'NR == 2 {
@@ -64,9 +64,9 @@ df -P -B1 "$disk_path" 2>/dev/null | awk 'NR == 2 {
   printf "disk\t%.2f\t%.2f\t%.2f\t%s\n", pct, used / 1024 / 1024 / 1024, total / 1024 / 1024 / 1024, $6
 }'
 
-# GPU Info
+# GPU Info (Device-guarded: only call nvidia-smi if active NVIDIA character device exists)
 gpu_printed=0
-if command -v nvidia-smi >/dev/null 2>&1; then
+if [ -c /dev/nvidiactl ] && command -v nvidia-smi >/dev/null 2>&1; then
   gpu_line="$(nvidia-smi --query-gpu=utilization.gpu,memory.used,memory.total,temperature.gpu,name --format=csv,noheader,nounits 2>/dev/null | head -n 1 || true)"
   if [[ "${gpu_line:-}" =~ ^[[:space:]]*[0-9]+([.][0-9]+)?[[:space:]]*, ]]; then
     awk -F ', ' '{ printf "gpu\t%s\t%s\t%s\t%s\t%s\n", $1, $2, $3, $4, $5 }' <<<"$gpu_line"
@@ -78,7 +78,7 @@ if [ "$gpu_printed" -eq 0 ]; then
   for busy_file in /sys/class/drm/card*/device/gpu_busy_percent; do
     if [ -r "$busy_file" ]; then
       device_dir="$(dirname "$busy_file")"
-      busy="$(cat "$busy_file" 2>/dev/null || true)"
+      read -r busy < "$busy_file" 2>/dev/null || busy=0
       name="$(awk -F= '/^DRIVER=/ { print $2; exit }' "$device_dir/uevent" 2>/dev/null || true)"
       printf "gpu\t%s\t\t\t\t%s\n" "${busy:-0}" "${name:-GPU}"
       gpu_printed=1
@@ -91,69 +91,97 @@ if [ "$gpu_printed" -eq 0 ]; then
   printf "gpu\t\t\t\t\tUnavailable\n"
 fi
 
-# CPU Extra Details: Temp, Max Freq, Cur Freq, Model Name
-cpu_temp=$(sensors 2>/dev/null | awk 'BEGIN { first = 1 } /^Package id 0:|^Tctl:|^temp1:/ { if (first) { if (match($0, /[+]?[0-9]+(\.[0-9]+)?/)) { value = substr($0, RSTART, RLENGTH); sub(/^\+/, "", value); sub(/\..*/, "", value); print value; first = 0 } } }' 2>/dev/null || echo 0)
-cpu_max_mhz=$(awk '{printf "%.0f\n", $1/1000}' /sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq 2>/dev/null || echo 0)
-cpu_cur_mhz=$(awk '{sum+=$1; count++} END {if (count>0) printf "%.0f\n", sum/count/1000}' /sys/devices/system/cpu/cpu*/cpufreq/scaling_cur_freq 2>/dev/null || echo 0)
-cpu_model=$(awk -F: '/model name/ { gsub(/^[ \t]+|[ \t]+$/, "", $2); sub(/ CPU.*/, "", $2); print $2; exit }' /proc/cpuinfo 2>/dev/null || echo "")
-
-printf "cpu_detail\t%s\t%s\t%s\t%s\n" "${cpu_temp:-0}" "${cpu_max_mhz:-0}" "${cpu_cur_mhz:-0}" "${cpu_model:-}"
-
-# Thermal sensors: every readable hwmon temp*_input as a JSON array.
-# Grouping/per-core collapsing happens in the panel, not here.
+# Thermal sensors & CPU details (Direct sysfs read; single-pass across /sys/class/hwmon)
+cpu_temp=0
 sensors_json="["
 sensor_first=1
+fans_json="["
+fan_first=1
+
 for hwmon in /sys/class/hwmon/hwmon*; do
   [ -d "$hwmon" ] || continue
-  sensor_source="hwmon"
-  [ -f "$hwmon/name" ] && sensor_source=$(cat "$hwmon/name" 2>/dev/null) && [ -n "$sensor_source" ] || sensor_source="hwmon"
-  for temp_file in "$hwmon"/temp*_input; do
+  hwmon_name="hwmon"
+  if [ -r "$hwmon/name" ]; then
+    read -r hwmon_name < "$hwmon/name" 2>/dev/null || hwmon_name="hwmon"
+  fi
+
+  # For nvme devices, read composite temp1_input only to avoid repeated PCIe SMART queries
+  if [ "$hwmon_name" = "nvme" ]; then
+    temp_files=("$hwmon/temp1_input")
+  else
+    temp_files=("$hwmon"/temp*_input)
+  fi
+
+  for temp_file in "${temp_files[@]}"; do
     [ -f "$temp_file" ] || continue
-    raw=$(cat "$temp_file" 2>/dev/null || true)
+    read -r raw < "$temp_file" 2>/dev/null || continue
     [ -z "$raw" ] && continue
     temp_c=$((raw / 1000))
     [ "$temp_c" -le 0 ] && continue
     [ "$temp_c" -gt 200 ] && continue
+
+    case "$hwmon_name" in
+      k10temp|coretemp|zenpower)
+        [ "$cpu_temp" -eq 0 ] && cpu_temp=$temp_c
+        ;;
+      acpitz)
+        [ "$cpu_temp" -eq 0 ] && cpu_temp=$temp_c
+        ;;
+    esac
+
     sensor_index="${temp_file##*temp}"
     sensor_index="${sensor_index%%_input*}"
     label_file="${hwmon}/temp${sensor_index}_label"
     sensor_label=""
-    [ -f "$label_file" ] && sensor_label=$(cat "$label_file" 2>/dev/null || true)
+    if [ -r "$label_file" ]; then
+      read -r sensor_label < "$label_file" 2>/dev/null || true
+    fi
     [ -z "$sensor_label" ] && sensor_label="Sensor ${sensor_index}"
     sensor_label=${sensor_label//\\/}
     sensor_label=${sensor_label//\"/}
     [ "$sensor_first" -eq 1 ] || sensors_json="${sensors_json},"
     sensor_first=0
-    sensors_json="${sensors_json}{\"source\":\"${sensor_source}\",\"label\":\"${sensor_label}\",\"temp\":${temp_c}}"
+    sensors_json="${sensors_json}{\"source\":\"${hwmon_name}\",\"label\":\"${sensor_label}\",\"temp\":${temp_c}}"
   done
-done
-sensors_json="${sensors_json}]"
-printf "temps\t%s\n" "$sensors_json"
 
-# Fans: every spinning hwmon fan*_input as a JSON array.
-fans_json="["
-fan_first=1
-for hwmon in /sys/class/hwmon/hwmon*; do
-  [ -d "$hwmon" ] || continue
-  fan_source="hwmon"
-  [ -f "$hwmon/name" ] && fan_source=$(cat "$hwmon/name" 2>/dev/null) && [ -n "$fan_source" ] || fan_source="hwmon"
   for fan_file in "$hwmon"/fan*_input; do
     [ -f "$fan_file" ] || continue
-    rpm=$(cat "$fan_file" 2>/dev/null || true)
+    read -r rpm < "$fan_file" 2>/dev/null || continue
     [ -z "$rpm" ] && continue
     [ "$rpm" -eq 0 ] 2>/dev/null && continue
     fan_index="${fan_file##*fan}"
     fan_index="${fan_index%%_input*}"
     label_file="${hwmon}/fan${fan_index}_label"
     fan_label=""
-    [ -f "$label_file" ] && fan_label=$(cat "$label_file" 2>/dev/null || true)
+    if [ -r "$label_file" ]; then
+      read -r fan_label < "$label_file" 2>/dev/null || true
+    fi
     [ -z "$fan_label" ] && fan_label="Fan ${fan_index}"
     fan_label=${fan_label//\\/}
     fan_label=${fan_label//\"/}
     [ "$fan_first" -eq 1 ] || fans_json="${fans_json},"
     fan_first=0
-    fans_json="${fans_json}{\"source\":\"${fan_source}\",\"label\":\"${fan_label}\",\"rpm\":${rpm}}"
+    fans_json="${fans_json}{\"source\":\"${hwmon_name}\",\"label\":\"${fan_label}\",\"rpm\":${rpm}}"
   done
 done
+sensors_json="${sensors_json}]"
 fans_json="${fans_json}]"
+
+read -r max_freq < /sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq 2>/dev/null || max_freq=0
+cpu_max_mhz=$((max_freq / 1000))
+
+cur_sum=0
+cur_cnt=0
+for f in /sys/devices/system/cpu/cpu*/cpufreq/scaling_cur_freq; do
+  [ -f "$f" ] || continue
+  read -r cf < "$f" 2>/dev/null || continue
+  cur_sum=$((cur_sum + cf))
+  ((cur_cnt++))
+done
+cpu_cur_mhz=$((cur_cnt > 0 ? cur_sum / cur_cnt / 1000 : 0))
+
+cpu_model=$(awk -F: '/model name/ { gsub(/^[ \t]+|[ \t]+$/, "", $2); sub(/ CPU.*/, "", $2); print $2; exit }' /proc/cpuinfo 2>/dev/null || echo "")
+
+printf "cpu_detail\t%s\t%s\t%s\t%s\n" "${cpu_temp:-0}" "${cpu_max_mhz:-0}" "${cpu_cur_mhz:-0}" "${cpu_model:-}"
+printf "temps\t%s\n" "$sensors_json"
 printf "fans\t%s\n" "$fans_json"
