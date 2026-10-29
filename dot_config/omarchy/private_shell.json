@@ -1,10 +1,3 @@
-{{- /* Dev/test-only Omarchy plugins (sunny0826.quick-fcitx,
-       hancore.voxtype-enhance) are referenced only on the dev machine,
-       identified by machine_profile "darktemplar". They are intentionally
-       absent from .chezmoiexternals/03_omarchy.toml.tmpl, so portable machines
-       receive the plugin-free subset instead of references to plugins they
-       never cloned. */ -}}
-{{- $local := eq .machine_profile "darktemplar" -}}
 {
   "version": 1,
   "idle": {
@@ -13,13 +6,10 @@
   },
   "bar": {
     "position": "top",
-    "transparent": true,
+    "transparent": false,
     "centerAnchor": "icyleaf.workspaces",
     "layout": {
       "left": [
-        {
-          "id": "evindor.keystroke"
-        },
         {
           "id": "tiertek.tekscan"
         },
@@ -28,6 +18,17 @@
           "serverUrl": "http://192.168.10.2:8801",
           "sshHost": "tokyo-mini4",
           "browser": "google-chrome-stable"
+        },
+        {
+          "id": "storage-drives"
+        },
+        {
+          "id": "io.github.qempexe.omanager",
+          "density": "compact",
+          "cornerRadius": "4",
+          "viewMode": "split",
+          "barText": "Plugins",
+          "barDisplay": "icon"
         },
         {
           "id": "icyleaf.herdr"
@@ -46,14 +47,14 @@
       ],
       "right": [
         {
-          "id": "omarchy.tray",
+          "id": "reysu.tray",
           "expanded": true
         },
         {
-          "id": "icyleaf.input-fusion"
+          "id": "lutfi.eco"
         },
         {
-          "id": "storage-drives"
+          "id": "icyleaf.input-fusion"
         },
         {
           "id": "omarchy.bluetooth"
@@ -63,9 +64,6 @@
         },
         {
           "id": "omarchy.audio"
-        },
-        {
-          "id": "omarchy.power"
         },
         {
           "id": "jankeesvw.notification-center"
@@ -78,6 +76,10 @@
           "verticalFormat": "HH\n—\nmm",
           "firstDayOfWeek": "monday",
           "locale": "ja"
+        },
+        {
+          "id": "omarchy.power",
+          "showPercentage": false
         }
       ]
     }
@@ -107,25 +109,18 @@
       "id": "alanfortlink.clipboard"
     },
     {
-      "id": "io.github.sirjul1337.lock-explorer",
-      "design": "my-dock"
-    },
-    {
       "id": "de.gransoftware.yank"
     }
   ],
   "disabledPlugins": [
     "omarchy.notifications",
-    "omarchy.clipboard",
-    "omarchy.lock",
-    "omarchy.menu"
+    "omarchy.clipboard"
   ],
   "cloneSourceRestores": [
     "icyleaf.notifications",
     "ryuhzk.simfarm",
     "local.clock",
     "alanfortlink.clipboard",
-    "io.github.sirjul1337.lock-explorer",
     "evindor.keystroke"
   ]
 }
