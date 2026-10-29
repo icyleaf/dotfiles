@@ -446,10 +446,15 @@ BarWidget {
     if (root.probeNameList().length === 0) return
     var seen = {}
     var wanted = []
+    var customTerminals = root.setting("terminalClasses", [])
     for (var slot = 1; slot <= 10; slot++) {
       var workspace = root.workspaceById(root.offset + slot)
       if (!workspace || !workspace.toplevels) continue
-      var pid = AppIconModel.windowPid(root.biggestWindowFor(workspace), root.clientInfo)
+      var win = root.biggestWindowFor(workspace)
+      if (!win) continue
+      var klass = AppIconModel.windowClass(win, root.clientInfo)
+      if (!AppIconModel.isTerminalClass(klass, customTerminals)) continue
+      var pid = AppIconModel.windowPid(win, root.clientInfo)
       if (pid <= 0 || seen[pid]) continue
       seen[pid] = true
       wanted.push(pid)
@@ -464,12 +469,12 @@ BarWidget {
       if (wantedPid === root.probeBusyPid || root.probeQueue.indexOf(wantedPid) !== -1) continue
       root.probeQueue.push(wantedPid)
     }
-    if (!clientFetchProcess.running) clientFetchProcess.running = true
+    if (wanted.length > 0 && !clientFetchProcess.running) clientFetchProcess.running = true
   }
 
   Timer {
     id: probeTimer
-    interval: 3000
+    interval: Math.max(1000, Number(root.setting("probeIntervalMs", 5000)) || 5000)
     repeat: true
     running: root.probeNameList().length > 0
     onTriggered: root.probeOverrideWindows()

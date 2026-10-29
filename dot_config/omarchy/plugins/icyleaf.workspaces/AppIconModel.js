@@ -83,7 +83,7 @@ function buildProbeCommand(pid, names) {
     list.push(name)
   }
   var pattern = list.length > 0 ? list.join("|") : "\\b\\B"
-  return "pstree -p " + String(parseInt(pid, 10) || 0)
+  return "pstree -T -p " + String(parseInt(pid, 10) || 0)
     + " 2>/dev/null | grep -oE '(" + pattern + ")\\(' | head -n1 | tr -d '('"
 }
 
@@ -285,3 +285,50 @@ function knownTuiApps() {
     "irssi", "weechat", "calcurse", "taskwarrior", "btm", "bandwhich"
   ]
 }
+
+// Curated list of known terminal emulator window classes. Terminal windows
+// are probed to detect the active TUI app running inside them; non-terminal
+// GUI applications (browsers, editors, mail clients) are skipped to avoid
+// useless process-tree inspection.
+function knownTerminalClasses() {
+  return [
+    "kitty",
+    "alacritty",
+    "foot", "footclient",
+    "ghostty", "com.mitchellh.ghostty",
+    "wezterm", "org.wezfurlong.wezterm",
+    "gnome-terminal", "gnome-terminal-server",
+    "xterm", "uxterm",
+    "urxvt", "rxvt",
+    "st", "st-256color",
+    "terminator",
+    "tilix",
+    "konsole", "org.kde.konsole",
+    "xfce4-terminal",
+    "rio",
+    "contour",
+    "blackbox", "com.raggesilver.blackbox",
+    "ptyxis", "org.gnome.ptyxis",
+    "warp",
+    "tabby",
+    "hyper"
+  ]
+}
+
+// Check whether a window class represents a terminal emulator. Case-insensitive
+// match against the curated known terminal classes plus any user-specified overrides.
+function isTerminalClass(klass, customList) {
+  var value = String(klass === null || klass === undefined ? "" : klass).trim().toLowerCase()
+  if (!value) return false
+  var known = knownTerminalClasses()
+  for (var i = 0; i < known.length; i++) {
+    if (value === known[i].toLowerCase()) return true
+  }
+  var extra = customList || []
+  for (var j = 0; j < extra.length; j++) {
+    var item = String(extra[j] || "").trim().toLowerCase()
+    if (item && value === item) return true
+  }
+  return false
+}
+

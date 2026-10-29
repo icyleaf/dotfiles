@@ -83,6 +83,8 @@ hyprctl clients -j | jq -r '.[] | "\(.pid)\t\(.class)"'
 | `monochromeIcons` | `true` | Tint icons to the bar foreground; ignored on light themes and transparent bars, where icons keep their own colours |
 | `iconScale` | `1.0` | Icon size multiplier |
 | `iconOverrides` | `[]` | Explicit `{ process, icon }` mappings |
+| `probeIntervalMs` | `5000` | Cadence for probing terminal window process trees (ms) |
+| `terminalClasses` | `[]` | Extra terminal window classes to probe for TUI apps |
 
 ### Requirements
 

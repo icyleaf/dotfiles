@@ -66,7 +66,7 @@ TestCase {
 
   function test_buildProbeCommandTargetsPidAndNames() {
     var cmd = AppIconModel.buildProbeCommand(1234, ["btop", "nvim"])
-    verify(cmd.indexOf("pstree -p 1234") !== -1)
+    verify(cmd.indexOf("pstree -T -p 1234") !== -1)
     verify(cmd.indexOf("(btop|nvim)") !== -1)
   }
 
@@ -80,7 +80,7 @@ TestCase {
 
   function test_buildProbeCommandWithNoNamesCannotMatchEverything() {
     var cmd = AppIconModel.buildProbeCommand(7, [])
-    verify(cmd.indexOf("pstree -p 7") !== -1)
+    verify(cmd.indexOf("pstree -T -p 7") !== -1)
     // No empty alternation like "()" that would match every process line.
     verify(cmd.indexOf("()") === -1)
   }
@@ -227,4 +227,33 @@ TestCase {
     for (var i = 0; i < apps.length; i++)
       compare(AppIconModel.sanitizeProcessName(apps[i]), apps[i])
   }
+
+  // ── Terminal class detection ─────────────────────────────────────────────
+
+  function test_isTerminalClassMatchesKnownTerminals() {
+    verify(AppIconModel.isTerminalClass("kitty"))
+    verify(AppIconModel.isTerminalClass("Ghostty"))
+    verify(AppIconModel.isTerminalClass("com.mitchellh.ghostty"))
+    verify(AppIconModel.isTerminalClass("alacritty"))
+    verify(AppIconModel.isTerminalClass("foot"))
+    verify(AppIconModel.isTerminalClass("org.wezfurlong.wezterm"))
+  }
+
+  function test_isTerminalClassRejectsNonTerminals() {
+    verify(!AppIconModel.isTerminalClass("google-chrome"))
+    verify(!AppIconModel.isTerminalClass("com.microsoft.VSCode"))
+    verify(!AppIconModel.isTerminalClass("org.mozilla.Thunderbird"))
+    verify(!AppIconModel.isTerminalClass("wechat"))
+    verify(!AppIconModel.isTerminalClass("org.telegram.desktop"))
+    verify(!AppIconModel.isTerminalClass("disktree"))
+    verify(!AppIconModel.isTerminalClass(""))
+    verify(!AppIconModel.isTerminalClass(null))
+  }
+
+  function test_isTerminalClassRespectsCustomList() {
+    verify(!AppIconModel.isTerminalClass("mycustomterm", []))
+    verify(AppIconModel.isTerminalClass("mycustomterm", ["mycustomterm"]))
+    verify(AppIconModel.isTerminalClass("MyCustomTerm", ["mycustomterm"]))
+  }
 }
+

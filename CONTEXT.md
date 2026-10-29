@@ -120,4 +120,13 @@ Declarative dotfiles managed by [Chezmoi](https://chezmoi.io). Targets macOS and
 
 **Calculator History** — the newest-first list of the last 50 successful expressions in `icyleaf.calculator`, persisted at `~/.local/state/omarchy/calculator-history.json` on commit (Enter), deduplicated by expression, and shown when the input is empty for `↑`/`↓` selection.
 
+**Terminal-Gated Window Probing** — a selective inspection policy in `icyleaf.workspaces` that restricts process-tree (`pstree`) probing to known terminal emulator windows (e.g. `kitty`, `ghostty`, `alacritty`, `foot`, `wezterm`) and user-configured `terminalClasses`, skipping GUI applications (browsers, editors, mail clients) to eliminate CPU-intensive process traversal and thread enumeration.
+
+**Thread-Suppressed Tree Inspection** — the practice of passing `-T` to `pstree` (`pstree -T -p <pid>`) during terminal process-tree probing to omit thread nodes, drastically cutting traversal time and output volume when scanning multi-threaded terminal hosts.
+
+**Device-Guarded Telemetry** — an inspection pattern in `icyleaf.resources` (`status.sh`) that checks for active device character nodes (e.g. `/dev/nvidiactl`) before invoking heavy external management utilities like `nvidia-smi`, falling back instantly to direct sysfs reads (`/sys/class/drm/card*/device/gpu_busy_percent`) on non-NVIDIA hardware.
+
+**Direct Sysfs Thermal Reading** — single-pass direct reading of `/sys/class/hwmon` entries using shell built-in file reads rather than spawning external `sensors` commands, eliminating fork storms and avoiding I/O timeouts on flaky or unreadable hardware sensors (such as SPD memory modules).
+
+
 
