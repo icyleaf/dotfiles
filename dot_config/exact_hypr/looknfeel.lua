@@ -7,10 +7,7 @@ hl.config({
     gaps_out = 4,
     border_size = 2,
 
-    col = {
-      active_border = active_border_color,
-      inactive_border = inactive_border_color,
-    },
+    -- Border colors are handled by Omarchy theme defaults
 
     resize_on_border = true,
     allow_tearing = false,

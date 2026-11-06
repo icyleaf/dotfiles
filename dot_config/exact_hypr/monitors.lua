@@ -1,7 +1,7 @@
 -- Personal monitors configuration
 
 -- Omarchy clamshell recovery reads this value for internal display rescale.
-local omarchy_monitor_scale = 1.8
+local omarchy_monitor_scale = 2.0
 
 -- Internal display / eDP-1 (Noneed changes)
 hl.monitor({

@@ -1,100 +1,69 @@
 -- Personal keybindings overrides
 -- Loaded after Omarchy's defaults to allow customization and unbinding.
 
--- 1. Unbind defaults we want to override
-hl.unbind("SUPER + B")
-hl.unbind("SUPER + S")
--- SUPER + = (code:21) is Omarchy's "Shrink window left"; reclaim it for the
--- calculator overlay. The Shift/Alt/Ctrl resize variants stay bound.
-hl.unbind("SUPER + code:21")
-hl.unbind("SUPER + F")
-hl.unbind("SUPER + T")
-hl.unbind("SUPER + E")
-hl.unbind("SUPER + D")
-hl.unbind("SUPER + W")
-hl.unbind("SUPER + P")
-hl.unbind("SUPER + L")
-hl.unbind("SUPER + ALT + S")
-hl.unbind("SUPER + SHIFT + S")
-hl.unbind("SUPER + SHIFT + T")
-hl.unbind("SUPER + ALT + D")
-hl.unbind("SUPER + F1")
-hl.unbind("SUPER + slash")
-hl.unbind("SUPER + PRINT")
+-- 1. Unbind defaults we do not replace with a Hyprland action (handed to apps / Fcitx5 / disabled)
+hl.unbind("CTRL + SPACE")
 hl.unbind("CTRL + ENTER")
+hl.unbind("PRINT")
+hl.unbind("SUPER + Q")            -- Keep SUPER + W as our only close-window key
+hl.unbind("SUPER + M")            -- No dock, unbind minimize
+hl.unbind("SUPER + A")            -- Disable macOS-style Super+A select all (use Ctrl+A)
+hl.unbind("SUPER + grave")        -- Disable qconsole dropdown overlay
+hl.unbind("SUPER + SHIFT + grave")
+hl.unbind("SUPER + SHIFT + Q")    -- Disable omacalc (use icyleaf.qalculator via SUPER + =)
+hl.unbind("SUPER + SHIFT + T")
 hl.unbind("SUPER + SHIFT + PRINT")
-hl.unbind("SUPER + CTRL + PRINT")
-hl.unbind("SUPER + ALT + PRINT")
-hl.unbind("SUPER + SHIFT + V")
 hl.unbind("SUPER + CTRL + V")
-hl.unbind("SUPER + COMMA")
-hl.unbind("SUPER + CTRL + PERIOD")
-hl.unbind("SUPER + SHIFT + R")
-hl.unbind("SUPER + SHIFT + ALT + R")
-hl.unbind("SUPER + SHIFT + CTRL + R")
 hl.unbind("SUPER + CTRL + ALT + B")
 hl.unbind("SUPER + CTRL + ALT + W")
 hl.unbind("SUPER + SHIFT + B")
 hl.unbind("SUPER + CTRL + S")
-hl.unbind("CTRL + ALT + DELETE")
-hl.unbind("SUPER + U")
-hl.unbind("PRINT")
 
--- 2. Bind personal customized keys (Option A - custom apps & wrappers)
--- o.bind("SUPER + SHIFT + T", "Tmux", "uwsm-app -- xdg-terminal-exec --dir=\"$(icy-cmd-terminal-cwd)\" tmux new")
-o.bind("SUPER + T", "Terminal", "uwsm-app -- xdg-terminal-exec --dir=\"$(icy-cmd-terminal-cwd)\"")
-o.bind("SUPER + B", "Browser", "icy-launch-browser")
-o.bind("SUPER + F", "File manager", "icy-file-manager")
-o.bind("SUPER + E", "Editor", "code")
-o.bind("SUPER + D", "discord", "vesktop")
-o.bind("SUPER + L", "Lock screen", "icy-system-lock")
+-- 2. Personal customized keys (using o.rebind to replace Omarchy defaults cleanly)
+o.rebind("SUPER + T", "Terminal", "uwsm-app -- xdg-terminal-exec --dir=\"$(icy-cmd-terminal-cwd)\"")
+o.rebind("SUPER + B", "Browser", "icy-launch-browser")
+o.rebind("SUPER + F", "File manager", "icy-file-manager")
+o.rebind("SUPER + E", "Editor", "code")
+o.rebind("SUPER + D", "discord", "vesktop")
+o.rebind("SUPER + L", "Lock screen", "icy-system-lock")
 o.bind("SUPER + SHIFT + L", "Sleep", function()
     hl.timer(function()
       hl.dispatch(hl.dsp.dpms({ action = "disable" }))
     end, {timeout = 500, type = "oneshot"})
   end)
 o.bind("SUPER + SHIFT + P", "Orbit Quick Launcher", "omarchy-shell shell toggle local.orbit")
-o.bind("SUPER + ALT + D", "Docker",  "icy-launch-tui lazydocker")
-o.bind("SUPER + F1", "Activity", "icy-launch-tui btop")
+o.rebind("SUPER + ALT + D", "Docker",  "icy-launch-tui lazydocker")
+o.rebind("SUPER + F1", "Activity", "icy-launch-tui btop")
 o.bind("SUPER + F2", "System Monitor", "omarchy-shell icyleaf.resources toggle")
-o.bind("SUPER + slash", "Passwords", "uwsm app -- flatpak run com.bitwarden.desktop")
+o.rebind("SUPER + slash", "Passwords", "uwsm app -- flatpak run com.bitwarden.desktop")
 
--- Qalculator overlay (Raycast-style). SUPER + = is the unbound code:21 above.
-o.bind("SUPER + code:21", "Qalculator", "omarchy-shell shell toggle icyleaf.qalculator")
+-- Qalculator overlay (Raycast-style). SUPER + = is the unbound code:21.
+o.rebind("SUPER + code:21", "Qalculator", "omarchy-shell shell toggle icyleaf.qalculator")
 
 -- Captures
-o.bind("SUPER + PRINT", "Screenshot with editing", "icy-capture-screenshot")
--- o.bind("SUPER + SHIFT + PRINT", "Screenshot to clipboard", "icy-cmd-screenshot smart clipboard")
-o.bind("SUPER + CTRL + PRINT", "Extract text (OCR) from screenshot", "icy-capture-text")
-o.bind("SUPER + ALT + PRINT", "Screenrecording", "icy-capture-screenrecording")
+o.rebind("SUPER + PRINT", "Screenshot with editing", "icy-capture-screenshot")
+o.rebind("SUPER + CTRL + PRINT", "Extract text (OCR) from screenshot", "icy-capture-text")
+o.rebind("SUPER + ALT + PRINT", "Screenrecording", "icy-capture-screenrecording")
 
 -- Clipboard manager
-o.bind("SUPER + SHIFT + V", "Clipboard", "icy-clipboard")
-
--- Notifications
--- o.bind("SUPER + COMMA", "Notifications", "swaync-client -t -sw")
+o.rebind("SUPER + SHIFT + V", "Clipboard", "icy-clipboard")
 
 -- Transcoding
-o.bind("SUPER + CTRL + PERIOD", "Transcode", "icy-transcode")
+o.rebind("SUPER + CTRL + PERIOD", "Transcode", "icy-transcode")
 
 -- Reminders
-o.bind("SUPER + SHIFT + R", "Set reminder", "icy-menu reminder-set")
-o.bind("SUPER + SHIFT + ALT + R", "Show reminders", "icy-reminder show")
-o.bind("SUPER + SHIFT + CTRL + R", "Clear reminders", "icy-reminder clear")
+o.rebind("SUPER + SHIFT + R", "Set reminder", "icy-menu reminder-set")
+o.rebind("SUPER + SHIFT + ALT + R", "Show reminders", "icy-reminder show")
+o.rebind("SUPER + SHIFT + CTRL + R", "Clear reminders", "icy-reminder clear")
 
 -- Localsend share
 o.bind("SUPER + SHIFT + O", "Share", "omarchy-menu toggle share")
 
--- Waybar-less info
--- o.bind("SUPER + CTRL + ALT + T", "Show time", o.notify("    $(date +\"%A %H:%M  ·  %d %B %Y  ·  Week %V\")"))
--- o.bind("SUPER + CTRL + ALT + B", "Show battery remaining", o.notify("$(icy-battery-status)"))
--- o.bind("SUPER + CTRL + ALT + W", "Show weather", o.notify("$(icy-weather-status)"))
-
 -- System window management
-o.bind("CTRL + ALT + DELETE", "Close all Windows", "icy-cmd-close-all-windows")
-o.bind("SUPER + W", "Close active window", hl.dsp.window.close())
-o.bind("SUPER + U", "Toggle floating", hl.dsp.window.float({ action = "toggle" }))
-o.bind("SUPER + P", "Pseudo window", hl.dsp.window.pseudo())
+o.rebind("CTRL + ALT + DELETE", "Close all Windows", "icy-cmd-close-all-windows")
+o.rebind("SUPER + W", "Close active window", hl.dsp.window.close())
+o.rebind("SUPER + U", "Toggle floating", hl.dsp.window.float({ action = "toggle" }))
+o.rebind("SUPER + P", "Pseudo window", hl.dsp.window.pseudo())
 
 -- Mouse binds
 o.bind("SUPER + mouse:272", "Move window", hl.dsp.window.drag(), { mouse = true })
@@ -103,21 +72,17 @@ o.bind("SUPER + Z", "Move window", hl.dsp.window.drag(), { mouse = true })
 o.bind("SUPER + X", "Resize window", hl.dsp.window.resize(), { mouse = true })
 
 -- Custom special workspaces switching (Scratchpads via icyleaf.workspaces IPC)
-o.bind("SUPER + S", "Toggle silent scratchpad", "omarchy-shell -q icyleaf.workspaces toggleSpecial silent")
-o.bind("SUPER + SHIFT + S", "Move window to silent scratchpad", "omarchy-shell -q icyleaf.workspaces moveSpecial silent")
-o.bind("SUPER + ALT + S", "Special scratchpad picker", "omarchy-shell -q icyleaf.workspaces selectSpecial")
+o.rebind("SUPER + S", "Toggle silent scratchpad", "omarchy-shell -q icyleaf.workspaces toggleSpecial silent")
+o.rebind("SUPER + SHIFT + S", "Move window to silent scratchpad", "omarchy-shell -q icyleaf.workspaces moveSpecial silent")
+o.rebind("SUPER + ALT + S", "Special scratchpad picker", "omarchy-shell -q icyleaf.workspaces selectSpecial")
 
 -- Custom numbered workspaces switching (delegated to icyleaf.workspaces plugin via IPC)
 for workspace = 1, 10 do
   local key = "code:" .. tostring(workspace + 9)
-  hl.unbind("SUPER + " .. key)
-  hl.unbind("SUPER + SHIFT + " .. key)
   hl.unbind("SUPER + SHIFT + ALT + " .. key)
-  hl.unbind("SUPER + SHIFT + CTRL + " .. key)
-
-  o.bind("SUPER + " .. key, "Switch to workspace " .. workspace, "omarchy-shell -q icyleaf.workspaces focus " .. workspace)
-  o.bind("SUPER + SHIFT + " .. key, "Move window to workspace " .. workspace, "omarchy-shell -q icyleaf.workspaces move " .. workspace)
-  o.bind("SUPER + SHIFT + CTRL + " .. key, "Move window silently to workspace " .. workspace, "omarchy-shell -q icyleaf.workspaces movesilent " .. workspace)
+  o.rebind("SUPER + " .. key, "Switch to workspace " .. workspace, "omarchy-shell -q icyleaf.workspaces focus " .. workspace)
+  o.rebind("SUPER + SHIFT + " .. key, "Move window to workspace " .. workspace, "omarchy-shell -q icyleaf.workspaces move " .. workspace)
+  o.rebind("SUPER + SHIFT + CTRL + " .. key, "Move window silently to workspace " .. workspace, "omarchy-shell -q icyleaf.workspaces movesilent " .. workspace)
 end
 
 -- omarchy plugins
@@ -133,7 +98,7 @@ o.bind("SUPER + SHIFT + W", "Mirador", function()
   hl.dispatch(hl.dsp.exec_cmd("omarchy-shell shell summon mirador '{}'"))
 end)
 
-o.bind("SUPER + comma", "Bitwarden", function()
+o.rebind("SUPER + comma", "Bitwarden", function()
   hl.dispatch(hl.dsp.exec_cmd("omarchy-shell shell toggle icyleaf.bitwarden"))
 end)
 
@@ -153,6 +118,9 @@ hl.gesture({
   end,
 })
 
-
--- o.bind("mouse:275", "Orbit press", "~/.config/omarchy/plugins/local.orbit/scripts/orbit-press.sh --button 275", { locked = true })
--- o.bind("mouse:275", "Orbit release fallback", "~/.config/omarchy/plugins/local.orbit/scripts/orbit-release.sh", { locked = true, release = true })
+-- Dictation keys from before Alt + Space and Right Alt became the defaults.
+-- Remove these lines to give the keys back to applications.
+if o.dictation_installed and o.dictation_installed() then
+  o.bind("SUPER + CTRL + X", "Toggle dictation", "omarchy-dictation toggle")
+  o.bind_hold("F9", "Start dictation (push-to-talk)", "omarchy-dictation start", "Stop dictation (push-to-talk)", "omarchy-dictation stop")
+end

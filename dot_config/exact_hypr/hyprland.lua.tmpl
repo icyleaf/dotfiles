@@ -36,6 +36,9 @@ dofile(omarchy_path .. "/default/hypr/bootstrap.lua")
 -- -- keeping core window-manager bindings:
 omarchy_preinstalled_bindings = false
 
+-- Prevent Omarchy's startup-cursor hook from desynchronizing Hyprcursor state and crashing Hyprland on cold boot
+package.loaded["default.hypr.startup-cursor"] = true
+
 -- -- Load Omarchy defaults.
 require("default.hypr.omarchy")
 
