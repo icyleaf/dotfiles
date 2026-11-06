@@ -6,8 +6,7 @@
   },
   "bar": {
     "position": "top",
-    "transparent": false,
-    "centerAnchor": "icyleaf.workspaces",
+    "transparent": true,
     "layout": {
       "left": [
         {
@@ -51,7 +50,40 @@
           "expanded": true
         },
         {
-          "id": "lutfi.eco"
+          "id": "omarchy.elsewhen",
+          "cities": [
+            {
+              "name": "Tokyo",
+              "zone": "Asia/Tokyo"
+            },
+            {
+              "name": "Beijing",
+              "zone": "Asia/Shanghai"
+            },
+            {
+              "name": "Los Angeles",
+              "zone": "America/Los_Angeles"
+            },
+            {
+              "name": "New York",
+              "zone": "America/New_York"
+            },
+            {
+              "name": "London",
+              "zone": "Europe/London"
+            },
+            {
+              "name": "Dubai",
+              "zone": "Asia/Dubai"
+            }
+          ]
+        },
+        {
+          "id": "metasequoia.msime"
+        },
+        {
+          "id": "lutfi.eco",
+          "showTimeInBar": false
         },
         {
           "id": "icyleaf.input-fusion"
@@ -81,7 +113,9 @@
           "id": "omarchy.power",
           "showPercentage": false
         }
-      ]
+      ],
+      "centerBegin": [],
+      "centerEnd": []
     }
   },
   "plugins": [
@@ -92,7 +126,7 @@
       "id": "mirador"
     },
     {
-      "id": "icyleaf.notifications"
+      "id": "omarchy.notifications"
     },
     {
       "id": "icyleaf.bitwarden"
@@ -113,11 +147,10 @@
     }
   ],
   "disabledPlugins": [
-    "omarchy.notifications",
-    "omarchy.clipboard"
+    "omarchy.clipboard",
+    "icyleaf.notifications"
   ],
   "cloneSourceRestores": [
-    "icyleaf.notifications",
     "ryuhzk.simfarm",
     "local.clock",
     "alanfortlink.clipboard",

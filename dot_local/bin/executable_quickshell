@@ -9,5 +9,9 @@ if [[ -z ${WAYLAND_DISPLAY:-} ]]; then
   [[ -n $socket ]] && export WAYLAND_DISPLAY=${socket##*/}
 fi
 
+# Ensure Quickshell uses native Wayland monitor scaling and avoids DPI mismatch in OverlayWindow
+unset QT_SCALE_FACTOR
+unset QT_AUTO_SCREEN_SCALE_FACTOR
+
 # Execute the real quickshell binary
 exec /usr/bin/quickshell "$@"
