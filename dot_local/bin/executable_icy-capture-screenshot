@@ -2,11 +2,8 @@
 #
 # icy-capture-screenshot: middleware wrapper around omarchy-capture-screenshot
 #
-# This is the Omarchy-agnostic entry point used by Hyprland/Waybar configs.
-# Replace the implementation below to remove the Omarchy dependency.
-#
-# To replace: implement the desired behaviour directly here and remove
-# the delegation to omarchy-capture-screenshot.
+# Clear inherited Qt/GTK scaling factors so omasnap uses exact compositor geometry
+unset QT_SCALE_FACTOR QT_AUTO_SCREEN_SCALE_FACTOR GDK_SCALE
 
 if command -v "omarchy-capture-screenshot" >/dev/null 2>&1; then
   exec "omarchy-capture-screenshot" "$@"
